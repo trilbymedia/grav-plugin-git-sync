@@ -1,0 +1,1 @@
+# trilby-grav-plugin-gitsync
