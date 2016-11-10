@@ -1,0 +1,41 @@
+{
+  "name": "trilby-grav-plugin-gitsync",
+  "version": "1.0.0",
+  "description": "Trilby Git Sync Grav Plugin",
+  "main": "app/main.js",
+  "scripts": {
+    "watch": "webpack --watch --progress --colors --config webpack.conf.js",
+    "dev": "webpack --progress --colors --config webpack.conf.js",
+    "prod": "NODE_ENV=production webpack -p --config webpack.conf.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/w00fz/trilby-grav-plugin-gitsync.git"
+  },
+  "author": "Trilby Media, LLC",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/w00fz/trilby-grav-plugin-gitsync/issues"
+  },
+  "homepage": "https://github.com/w00fz/trilby-grav-plugin-gitsync#readme",
+  "dependencies": {
+    "vex-js": "^3.0.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.18.2",
+    "babel-eslint": "^7.1.0",
+    "babel-loader": "^6.2.7",
+    "babel-polyfill": "^6.16.0",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-stage-3": "^6.17.0",
+    "css-loader": "^0.25.0",
+    "eslint": "^3.9.1",
+    "eslint-loader": "^1.6.1",
+    "exports-loader": "^0.6.3",
+    "imports-loader": "^0.6.5",
+    "json-loader": "^0.5.4",
+    "style-loader": "^0.13.1",
+    "webpack": "^1.13.3",
+    "whatwg-fetch": "^1.0.0"
+  }
+}

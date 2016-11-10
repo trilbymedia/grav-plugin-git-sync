@@ -1,0 +1,88 @@
+name: Git Sync
+version: 1.0.0
+description: Allows to synchronize portions of Grav with Git Repositories (GitHub, BitBucket, GitLab)
+icon: git
+author:
+  name: Trilby Media, LLC
+  email: devs@trilbymedia.com
+homepage: http://trilby.media/plugins/git-sync
+keywords: grav, plugin, git, sync
+issues: https://github.com/trilbymedia/trilby-grav-plugin-gitsync/issues
+docs: http://trilby.media/plugins/git-sync
+license: MIT
+
+form:
+  validation: strict
+  fields:
+    Settings:
+      type: section
+      title: Settings
+      underline: true
+    enabled:
+      type: toggle
+      label: Plugin status
+      highlight: 1
+      default: 0
+      options:
+        1: Enabled
+        0: Disabled
+      validate:
+        type: bool
+    folders:
+      type: select
+      multiple: true
+      size: medium
+      label: Sync Folders
+      classes: fancy
+      default: ['user/pages']
+      options:
+        'user/pages': Pages
+        'user/themes': Themes
+      validate:
+        type: commalist
+    repository:
+      type: text
+      label: Git Repository
+      placeholder: https://github.com/user/repository.git
+    user:
+      type: text
+      label: Git User
+      placeholder: Username, not email
+    password:
+      type: password
+      label: Git Password
+      placeholder: Your Git Password
+    Advanced:
+      type: section
+      title: Advanced
+      underline: true
+    branch:
+      type: text
+      default: master
+      label: Local Branch
+      placeholder: master
+    remote.name:
+      type: text
+      default: origin
+      label: Remote Name
+      placeholder: origin
+    remote.branch:
+      type: text
+      default: master
+      label: Remote Branch
+      placeholder: master
+    git.name:
+      type: text
+      default: GitSync
+      label: Commiter Name
+      placeholder: GitSync
+    git.email:
+      type: text
+      default: gitsync@getgrav.org
+      label: Committer Email
+      placeholder: gitsync@getgrav.org
+    _wizard:
+      type: git-wizard
+      label: Text Variable
+      help: Text to add to the top of a page
+

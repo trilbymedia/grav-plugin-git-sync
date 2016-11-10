@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="git" default="build">
+ <target name="build" depends="prepare,lint,phpcs"/>
+
+ <target name="clean" description="Cleanup build artifacts">
+ </target>
+
+ <target name="prepare" depends="clean" description="Prepare for build">
+ </target>
+
+ <target name="lint">
+  <apply executable="php" failonerror="true">
+   <arg value="-l" />
+
+   <fileset dir="${basedir}/src">
+    <include name="**/*.php" />
+    <modified />
+   </fileset>
+  </apply>
+ </target>
+
+ <target name="phpcs" description="Find coding standard violations using PHP_CodeSniffer">
+  <exec executable="phpcs">
+   <arg value="--standard=PSR2" />
+   <arg value="--extensions=php" />
+   <arg path="${basedir}/src" />
+  </exec>
+ </target>
+</project>
+

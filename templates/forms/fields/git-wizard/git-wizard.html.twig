@@ -1,0 +1,12 @@
+{% extends "forms/default/field.html.twig" %}
+
+{% block label %}{% endblock %}
+
+{% block input %}
+    <script type="text/javascript">
+        GitSync = {
+            'first_time': {{ git_sync.first_time|json_encode|raw }}
+        };
+    </script>
+    {% include 'partials/modal.html.twig' %}
+{% endblock %}

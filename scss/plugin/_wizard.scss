@@ -1,0 +1,51 @@
+[data-remodal-id="wizard"] {
+    form [class^="step-"] a:not(.button) {
+        vertical-align: middle;
+        color: #5591c7;
+
+        &:hover {
+            color: #366188;
+        }
+    }
+
+    .center {
+        text-align: center;
+    }
+
+    h1 {
+        margin-bottom: 0;
+        padding-top: 0.5rem;
+        border-top: 3px solid transparent;
+    }
+
+    .wizard-padding {
+        padding: 0 3rem;
+
+        p {
+            padding: 0;
+        }
+    }
+
+    label {
+        img {
+            max-width: 100px;
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 0.5rem;
+        }
+
+        a {
+            margin-left: 0.5rem;
+        }
+    }
+
+    .columns {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .column {
+            flex: 1;
+        }
+    }
+}

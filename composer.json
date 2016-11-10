@@ -1,0 +1,17 @@
+{
+    "require": {
+        "sebastian/git": "^2.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Grav\\Plugin\\GitSync\\": "classes/"
+        }
+    },
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "Trilby Media, LLC",
+            "email": "devs@trilbymedia.com"
+        }
+    ]
+}
