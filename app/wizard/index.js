@@ -23,6 +23,15 @@ $(document).on('click', '[data-gitsync-action]', (event) => {
     const save = WIZARD.find('[data-gitsync-action="save"]');
     const action = target.data('gitsyncAction');
 
+    if (action === 'save') {
+
+    }
+
+    if (action === 'test') {
+        alert('false');
+        return false;
+    }
+
     WIZARD.find(`.step-${STEP} > .panel`).slideUp();
     STEP += action === 'next' ? +1 : -1;
     WIZARD.find(`.step-${STEP} > .panel`).slideDown();

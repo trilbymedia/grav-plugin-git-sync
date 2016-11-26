@@ -2,6 +2,7 @@
 namespace Grav\Plugin;
 
 use Grav\Common\Plugin;
+use Grav\Plugin\GitSync\AdminController;
 use Grav\Plugin\GitSync\Helper;
 use RocketTheme\Toolbox\Event\Event;
 
@@ -12,13 +13,16 @@ use RocketTheme\Toolbox\Event\Event;
  */
 class GitSyncPlugin extends Plugin
 {
+    protected $controller;
+
     /**
      * @return array
      */
     public static function getSubscribedEvents()
     {
         return [
-            'onPluginsInitialized' => ['onPluginsInitialized', 0]
+            'onPluginsInitialized' => ['onPluginsInitialized', 0],
+            'onPageInitialized'    => ['onPageInitialized', 0],
         ];
     }
 
@@ -35,6 +39,9 @@ class GitSyncPlugin extends Plugin
                 'onTwigTemplatePaths' => ['onTwigTemplatePaths', 0],
                 'onTwigSiteVariables' => ['onTwigSiteVariables', 0],
             ]);
+
+            /** @var AdminController controller */
+            $this->controller = new AdminController($this);
 
             return;
         }
@@ -53,9 +60,9 @@ class GitSyncPlugin extends Plugin
      */
     public function onTwigSiteVariables()
     {
-        $paths = $this->config->get('plugins.git-sync.folders', ['user/pages']);
+        // $paths = $this->config->get('plugins.git-sync.folders', ['user/pages']);
         $settings = [
-            'first_time' => !Helper::isGitInitialized($paths),
+            'first_time' => !Helper::isGitInitialized(),
         ];
 
         $this->grav['twig']->twig_vars['git_sync'] = $settings;
@@ -63,6 +70,14 @@ class GitSyncPlugin extends Plugin
         if ($this->grav['uri']->path() === '/admin/plugins/git-sync') {
             $this->grav['assets']->addCss('plugin://git-sync/css/git-sync.css');
             $this->grav['assets']->addJs('plugin://git-sync/js/app.js', ['loading' => 'defer']);
+        }
+    }
+
+    public function onPageInitialized()
+    {
+        if ($this->controller->isActive()) {
+            $this->controller->execute();
+            $this->controller->redirect();
         }
     }
 }
