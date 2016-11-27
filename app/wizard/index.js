@@ -53,8 +53,6 @@ $(document).on('click', '[data-gitsync-action]', (event) => {
         request(URI, {
             method: 'post',
             body: { test, task: 'testConnection' }
-        }, (response) => {
-            console.log(response);
         });
 
         return false;
