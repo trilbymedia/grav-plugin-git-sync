@@ -1,5 +1,8 @@
-var webpack = require('webpack'),
-    path = require('path');
+var webpack   = require('webpack'),
+    exec      = require('child_process').execSync,
+    path      = require('path'),
+    pwd       = exec('pwd').toString(),
+    adminPath = path.resolve(pwd + '/../admin/themes/grav/app');
 
 module.exports = {
     entry: './app/main.js',
@@ -7,6 +10,11 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, 'js'),
         filename: 'app.js'
+    },
+    resolve: {
+        alias: {
+            admin: adminPath
+        }
     },
     plugins: [
         new webpack.ProvidePlugin({
@@ -19,7 +27,8 @@ module.exports = {
     ],
     externals: {
         jquery: 'jQuery',
-        'git-sync': 'GitSync'
+        'git-sync': 'GitSync',
+        'grav-config': 'GravAdmin'
     },
     module: {
         preLoaders: [

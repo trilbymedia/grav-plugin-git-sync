@@ -1,4 +1,7 @@
 import Settings from 'git-sync';
+import request from 'admin/utils/request';
+import toastr from 'admin/utils/toastr';
+import { config } from 'grav-config';
 import $ from 'jquery';
 
 const WIZARD = $('[data-remodal-id="wizard"]');
@@ -28,7 +31,32 @@ $(document).on('click', '[data-gitsync-action]', (event) => {
     }
 
     if (action === 'test') {
-        alert('false');
+        const user = $('[name="gitsync[repo_user]"]').val();
+        const password = $('[name="gitsync[repo_password]"]').val();
+        const repository = $('[name="gitsync[repo_url]"]').val();
+
+        let error = [];
+
+        if (!user) { error.push('Username is missing.'); }
+        if (!password) { error.push('Password is missing.'); }
+        if (!repository) { error.push('Repository is missing.'); }
+
+        if (error.length) {
+            toastr.error(error.join('<br />'));
+
+            return false;
+        }
+
+        const URI = `${config.current_url}.json`;
+        const test = global.btoa(JSON.stringify({ user, password, repository }));
+
+        request(URI, {
+            method: 'post',
+            body: { test, task: 'testConnection' }
+        }, (response) => {
+            console.log(response);
+        });
+
         return false;
     }
 

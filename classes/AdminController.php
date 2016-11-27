@@ -62,6 +62,7 @@ class AdminController extends AdminBaseController
                 'message' => 'The connection to the repository has been successful.'
             ]);
         } else {
+            $invalid = str_replace($data->password, '{password}', $invalid);
             echo json_encode([
                 'status' => "error",
                 'message' => $invalid
