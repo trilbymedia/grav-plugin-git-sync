@@ -25,28 +25,36 @@ $(document).on('click', '[data-gitsync-action]', (event) => {
     const next = WIZARD.find('[data-gitsync-action="next"]');
     const save = WIZARD.find('[data-gitsync-action="save"]');
     const action = target.data('gitsyncAction');
+    const user = $('[name="gitsync[repo_user]"]').val();
+    const password = $('[name="gitsync[repo_password]"]').val();
+    const repository = $('[name="gitsync[repo_url]"]').val();
 
-    if (action === 'save') {
+    let error = [];
 
-    }
+    if (!user) { error.push('Username is missing.'); }
+    if (!password) { error.push('Password is missing.'); }
+    if (!repository) { error.push('Repository is missing.'); }
 
-    if (action === 'test') {
-        const user = $('[name="gitsync[repo_user]"]').val();
-        const password = $('[name="gitsync[repo_password]"]').val();
-        const repository = $('[name="gitsync[repo_url]"]').val();
-
-        let error = [];
-
-        if (!user) { error.push('Username is missing.'); }
-        if (!password) { error.push('Password is missing.'); }
-        if (!repository) { error.push('Repository is missing.'); }
-
+    if (['save', 'test'].includes(action)) {
         if (error.length) {
             toastr.error(error.join('<br />'));
 
             return false;
         }
+    }
 
+    if (action === 'save') {
+        const folders = $('[name="gitsync[folders]"]:checked').map((i, item) => item.value);
+        $('[name="data[repository]"]').val(repository);
+        $('[name="data[user]"]').val(user);
+        $('[name="data[password]"]').val(password);
+        $('[name="data[folders][]"]')[0].selectize.setValue(folders.toArray());
+        $('[name="task"][value="save"]').trigger('click');
+
+        return false;
+    }
+
+    if (action === 'test') {
         const URI = `${config.current_url}.json`;
         const test = global.btoa(JSON.stringify({ user, password, repository }));
 

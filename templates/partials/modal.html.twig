@@ -1,157 +1,156 @@
+{% set settings = config.plugins['git-sync'] %}
 <div class="remodal" data-remodal-id="wizard" data-remodal-options="hashTracking: false">
-    <form>
-        <div class="step-0">
-            <h1>Git Sync - Wizard</h1>
-            <div class="panel">
-                <p>
-                    This wizard will guide you through a few simple steps that will instruct you on how to set up the plugin and your <i class="fa fa-fw fa-git"></i> repository.
-                </p>
-                <p>
-                    A the end of these steps your will have a bi-directional synchronization link between your site and your <i class="fa fa-fw fa-git"></i> repository.
-                </p>
+    <div class="step-0">
+        <h1>Git Sync - Wizard</h1>
+        <div class="panel">
+            <p>
+                This wizard will guide you through a few simple steps that will instruct you on how to set up the plugin and your <i class="fa fa-fw fa-git"></i> repository.
+            </p>
+            <p>
+                A the end of these steps your will have a bi-directional synchronization link between your site and your <i class="fa fa-fw fa-git"></i> repository.
+            </p>
 
-                <p>
-                    Press <strong>Next</strong> to continue.
-                </p>
-            </div>
+            <p>
+                Press <strong>Next</strong> to continue.
+            </p>
         </div>
+    </div>
 
-        <div class="step-1">
-            <h1>Step 1 - Hosting Service</h1>
-            <div class="panel hidden disabled">
-                <p>
-                    Select one of the supported <i class="fa fa-fw fa-git"></i> repository hosting services you will be using for remotely store your data. Once you picked one, insert the username and password to access the service.
-                </p>
-                <div class="columns wizard-padding">
-                    <div class="column">
-                        <label>
-                            <input type="radio" value="github" name="gitsync[repository]" />
-                            <img src="{{ url('plugin://git-sync/images/repos/github.svg') }}" />
-                            <a href="https://github.com/join?source=header-home" target="_blank">(create account)</a>
-                        </label>
-                        <label>
-                            <input type="radio" value="bitbucket" name="gitsync[repository]" />
-                            <img src="{{ url('plugin://git-sync/images/repos/bitbucket.svg') }}" />
-                            <a href="https://bitbucket.org/account/signup/" target="_blank">(create account)</a>
-                        </label>
-                        <label>
-                            <input type="radio" value="gitlab" name="gitsync[repository]" />
-                            <img src="{{ url('plugin://git-sync/images/repos/gitlab.svg') }}" />
-                            <a href="https://gitlab.com/users/sign_in" target="_blank">(create account)</a>
-                        </label>
-                    </div>
-                    <div class="column">
-                        <label>
-                            Git User
-                            <input type="text" name="gitsync[repo_user]" placeholder="Username, not email" />
-                        </label>
-                        <label>
-                            Git Password
-                            <input type="password" name="gitsync[repo_password]" placeholder="Password"/>
-                        </label>
-                    </div>
-                </div>
-
-                <p>
-                    Press <strong>Next</strong> to continue.
-                </p>
-            </div>
-        </div>
-
-        <div class="step-2">
-            <h1>Step 2 - Setting up the repository</h1>
-            <div class="panel hidden disabled">
-                <p>
-                    If you already have a repository set up and ready to be used, you can skip this step. Otherwise please continue reading below and follow the instructions.
-                </p>
-
-                <div class="hidden-step-github wizard-padding hidden">
-                    <h4>GitHub</h4>
-                    <p>
-                        Follow the instructions on <a href="https://help.github.com/articles/creating-a-new-repository/" target="_blank">GitHub Help</a> to create a new GitHub repository.
-                    </p>
-                </div>
-                <div class="hidden-step-bitbucket wizard-padding hidden">
-                    <h4>Bitbucket</h4>
-                    <p>
-                        Follow the instructions on <a href="https://confluence.atlassian.com/bitbucket/create-a-git-repository-759857290.html" target="_blank">Atlassian Documentation</a> to create a new Bitbucket repository. Make sure you select <strong>Git</strong> as repository type.
-                    </p>
-                </div>
-                <div class="hidden-step-gitlab wizard-padding hidden">
-                    <h4>GitLab</h4>
-                    <p>
-                        Follow the instructions on <a href="https://docs.gitlab.com/ce/gitlab-basics/create-project.html" target="_blank">GitLab Documentation</a> to create a new GitLab repository.
-                    </p>
-                </div>
-
-                <p>
-                    Once you created your repository, insert below the full HTTPS URL for the repository you just created. This is the URL used to clone the repository. All services offer both SSH and HTTPS URLs but it is recommended to only use HTTPS.
-                </p>
-
-                <p>
+    <div class="step-1">
+        <h1>Step 1 - Hosting Service</h1>
+        <div class="panel hidden disabled">
+            <p>
+                Select one of the supported <i class="fa fa-fw fa-git"></i> repository hosting services you will be using for remotely store your data. Once you picked one, insert the username and password to access the service.
+            </p>
+            <div class="columns wizard-padding">
+                <div class="column">
                     <label>
-                        Git Repository
-                        <input type="text" name="gitsync[repo_url]" placeholder="https://github.com/getgrav/grav.git" />
+                        <input type="radio" value="github" name="gitsync[repository]" {{ 'github.com' in settings.repository ? 'checked' : '' }} />
+                        <img src="{{ url('plugin://git-sync/images/repos/github.svg') }}" />
+                        <a href="https://github.com/join?source=header-home" target="_blank">(create account)</a>
                     </label>
-                </p>
-
-                <p class="center">
-                    <a href="#" class="button" data-gitsync-action="test"><i class="fa fa-fw fa-plug"></i> Test Connection</a>
-                </p>
-
-                <p>
-                    Press <strong>Next</strong> to continue.
-                </p>
-            </div>
-        </div>
-
-        <div class="step-3">
-            <h1>Step 3 - Choose what to Synchronize</h1>
-            <div class="panel hidden disabled">
-                <p>
-                    You can choose to synchronize any portion of the <strong>user/</strong> folder independently. It is highly encouraged not to synchronize the <strong>config/</strong> and <strong>data/</strong> folders because they might contain sensitive data you might not realize gets shared publicly.
-                </p>
-
-                <div class="columns wizard-padding">
-                    <div class="column">
-                        <label>
-                            <input type="checkbox" value="config" name="gitsync[folders]" />
-                            Config
-                        </label>
-                        <label>
-                            <input type="checkbox" value="data" name="gitsync[folders]" />
-                            Data
-                        </label>
-                        <label>
-                            <input type="checkbox" value="pages" name="gitsync[folders]" checked />
-                            Pages
-                        </label>
-                        <label>
-                            <input type="checkbox" value="plugins" name="gitsync[folders]" />
-                            Plugins
-                        </label>
-                        <label>
-                            <input type="checkbox" value="themes" name="gitsync[folders]" />
-                            Themes
-                        </label>
-                    </div>
-                    <div class="column">
-                        <p>Description when hovering over one of the Items on left</p>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores aut cupiditate dolorem, exercitationem hic illo in modi nisi nobis nostrum nulla quae quaerat quas, quo repellendus sapiente sed suscipit vero?</p>
-                    </div>
+                    <label>
+                        <input type="radio" value="bitbucket" name="gitsync[repository]" {{ 'bitbucket.org' in settings.repository ? 'checked' : '' }} />
+                        <img src="{{ url('plugin://git-sync/images/repos/bitbucket.svg') }}" />
+                        <a href="https://bitbucket.org/account/signup/" target="_blank">(create account)</a>
+                    </label>
+                    <label>
+                        <input type="radio" value="gitlab" name="gitsync[repository]" {{ 'gitlab.com' in settings.repository ? 'checked' : '' }} />
+                        <img src="{{ url('plugin://git-sync/images/repos/gitlab.svg') }}" />
+                        <a href="https://gitlab.com/users/sign_in" target="_blank">(create account)</a>
+                    </label>
                 </div>
+                <div class="column">
+                    <label>
+                        Git User
+                        <input type="text" name="gitsync[repo_user]" placeholder="Username, not email" value="{{ settings.user|default('') }}" />
+                    </label>
+                    <label>
+                        Git Password
+                        <input type="password" name="gitsync[repo_password]" placeholder="Password" value="{{ settings.password|default('') }}" />
+                    </label>
+                </div>
+            </div>
 
+            <p>
+                Press <strong>Next</strong> to continue.
+            </p>
+        </div>
+    </div>
+
+    <div class="step-2">
+        <h1>Step 2 - Setting up the repository</h1>
+        <div class="panel hidden disabled">
+            <p>
+                If you already have a repository set up and ready to be used, you can skip this step. Otherwise please continue reading below and follow the instructions.
+            </p>
+
+            <div class="hidden-step-github wizard-padding hidden">
+                <h4>GitHub</h4>
                 <p>
-                    Press <strong>Next</strong> to continue.
+                    Follow the instructions on <a href="https://help.github.com/articles/creating-a-new-repository/" target="_blank">GitHub Help</a> to create a new GitHub repository.
                 </p>
             </div>
-        </div>
+            <div class="hidden-step-bitbucket wizard-padding hidden">
+                <h4>Bitbucket</h4>
+                <p>
+                    Follow the instructions on <a href="https://confluence.atlassian.com/bitbucket/create-a-git-repository-759857290.html" target="_blank">Atlassian Documentation</a> to create a new Bitbucket repository. Make sure you select <strong>Git</strong> as repository type.
+                </p>
+            </div>
+            <div class="hidden-step-gitlab wizard-padding hidden">
+                <h4>GitLab</h4>
+                <p>
+                    Follow the instructions on <a href="https://docs.gitlab.com/ce/gitlab-basics/create-project.html" target="_blank">GitLab Documentation</a> to create a new GitLab repository.
+                </p>
+            </div>
 
-        <div class="button-bar">
-            <a class="button secondary float-left" data-remodal-action="cancel" href="#">Cancel</a>
-            <a class="button hidden" data-gitsync-action="previous" href="#"><i class="fa fa-fw fa-chevron-left"></i> Previous</a>
-            <a class="button" data-gitsync-action="next" href="#">Next <i class="fa fa-fw fa-chevron-right"></i></a>
-            <a class="button hidden" data-gitsync-action="save" href="#"><i class="fa fa-fw fa-check"></i> Save</a>
+            <p>
+                Once you created your repository, insert below the full HTTPS URL for the repository you just created. This is the URL used to clone the repository. All services offer both SSH and HTTPS URLs but it is recommended to only use HTTPS.
+            </p>
+
+            <p>
+                <label>
+                    Git Repository
+                    <input type="text" name="gitsync[repo_url]" placeholder="https://github.com/getgrav/grav.git" value="{{ settings.repository|default('') }}" />
+                </label>
+            </p>
+
+            <p class="center">
+                <a href="#" class="button" data-gitsync-action="test"><i class="fa fa-fw fa-plug"></i> Test Connection</a>
+            </p>
+
+            <p>
+                Press <strong>Next</strong> to continue.
+            </p>
         </div>
-    </form>
+    </div>
+
+    <div class="step-3">
+        <h1>Step 3 - Choose what to Synchronize</h1>
+        <div class="panel hidden disabled">
+            <p>
+                You can choose to synchronize any portion of the <strong>user/</strong> folder independently. It is highly encouraged not to synchronize the <strong>config/</strong> and <strong>data/</strong> folders because they might contain sensitive data you might not realize gets shared publicly.
+            </p>
+
+            <div class="columns wizard-padding">
+                <div class="column">
+                    <label class="disabled">
+                        <input type="checkbox" value="user/config" name="gitsync[folders]" disabled />
+                        Config
+                    </label>
+                    <label class="disabled">
+                        <input type="checkbox" value="user/data" name="gitsync[folders]" disabled />
+                        Data
+                    </label>
+                    <label>
+                        <input type="checkbox" value="user/pages" name="gitsync[folders]" {{ not settings.folders or 'user/pages' in settings.folders ? 'checked' : '' }} />
+                        Pages
+                    </label>
+                    <label class="disabled">
+                        <input type="checkbox" value="user/plugins" name="gitsync[folders]" disabled />
+                        Plugins
+                    </label>
+                    <label>
+                        <input type="checkbox" value="user/themes" name="gitsync[folders]" {{ 'user/themes' in settings.folders ? 'checked' : '' }} />
+                        Themes
+                    </label>
+                </div>
+                <div class="column">
+                    <p>Description when hovering over one of the Items on left</p>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores aut cupiditate dolorem, exercitationem hic illo in modi nisi nobis nostrum nulla quae quaerat quas, quo repellendus sapiente sed suscipit vero?</p>
+                </div>
+            </div>
+
+            <p>
+                Press <strong>Next</strong> to continue.
+            </p>
+        </div>
+    </div>
+
+    <div class="button-bar">
+        <a class="button secondary float-left" data-remodal-action="cancel" href="#">Cancel</a>
+        <a class="button hidden" data-gitsync-action="previous" href="#"><i class="fa fa-fw fa-chevron-left"></i> Previous</a>
+        <a class="button" data-gitsync-action="next" href="#">Next <i class="fa fa-fw fa-chevron-right"></i></a>
+        <a class="button hidden" data-gitsync-action="save" href="#"><i class="fa fa-fw fa-check"></i> Save</a>
+    </div>
 </div>
