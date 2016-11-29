@@ -36,6 +36,7 @@ class GitSyncPlugin extends Plugin
             require_once __DIR__ . '/vendor/autoload.php';
 
             $this->enable([
+                'onAdminSave'         => ['onAdminSave', 0],
                 'onTwigTemplatePaths' => ['onTwigTemplatePaths', 0],
                 'onTwigSiteVariables' => ['onTwigSiteVariables', 0],
             ]);
@@ -60,7 +61,6 @@ class GitSyncPlugin extends Plugin
      */
     public function onTwigSiteVariables()
     {
-        // $paths = $this->config->get('plugins.git-sync.folders', ['user/pages']);
         $settings = [
             'first_time' => !Helper::isGitInitialized(),
         ];
@@ -79,5 +79,26 @@ class GitSyncPlugin extends Plugin
             $this->controller->execute();
             $this->controller->redirect();
         }
+    }
+
+    public function onAdminSave($obj)
+    {
+        $data = $obj['object'];
+        $git = $data['git'];
+        $remote = $data['remote'];
+        $this->controller->git->setConfig($data);
+
+        // initialize git if not done yet
+        $this->controller->git->initializeRepository();
+
+        // set committer and remote data
+        $this->controller->git->setUser($git['name'], $git['email']);
+        $this->controller->git->addRemote('gitsync', $data['repository']);
+
+        // commit any change
+        $this->controller->git->commit();
+
+        // synchronize with remote
+        $this->controller->git->sync('gitsync', $remote['branch']);
     }
 }

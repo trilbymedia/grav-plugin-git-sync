@@ -34,10 +34,10 @@ form:
       size: medium
       label: Sync Folders
       classes: fancy
-      default: ['user/pages']
+      default: ['pages']
       options:
-        'user/pages': Pages
-        'user/themes': Themes
+        pages: Pages
+        themes: Themes
       validate:
         type: commalist
     repository:

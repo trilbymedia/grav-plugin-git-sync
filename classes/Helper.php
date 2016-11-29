@@ -12,12 +12,17 @@ class Helper {
      * @return bool
      */
     public static function isGitInitialized() {
-        return file_exists('user/.git');
+        return file_exists(rtrim(USER_DIR, '/') . '/.git');
+    }
+
+    public static function prepareRepository($user, $password, $repository)
+    {
+        return str_replace('://', "://${user}:${password}@", $repository);
     }
 
     public static function testRepository($user, $password, $repository) {
         $git = new GitSync();
-        $repository = str_replace('://', "://${user}:${password}@", $repository);
+        $repository = self::prepareRepository($user, $password, $repository);
 
         try {
             return $git->testRepository($repository);

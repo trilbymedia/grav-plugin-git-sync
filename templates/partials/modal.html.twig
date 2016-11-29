@@ -115,23 +115,23 @@
             <div class="columns wizard-padding">
                 <div class="column">
                     <label class="disabled">
-                        <input type="checkbox" value="user/config" name="gitsync[folders]" disabled />
+                        <input type="checkbox" value="config" name="gitsync[folders]" disabled />
                         Config
                     </label>
                     <label class="disabled">
-                        <input type="checkbox" value="user/data" name="gitsync[folders]" disabled />
+                        <input type="checkbox" value="data" name="gitsync[folders]" disabled />
                         Data
                     </label>
                     <label>
-                        <input type="checkbox" value="user/pages" name="gitsync[folders]" {{ not settings.folders or 'user/pages' in settings.folders ? 'checked' : '' }} />
+                        <input type="checkbox" value="pages" name="gitsync[folders]" {{ not settings.folders or 'pages' in settings.folders ? 'checked' : '' }} />
                         Pages
                     </label>
                     <label class="disabled">
-                        <input type="checkbox" value="user/plugins" name="gitsync[folders]" disabled />
+                        <input type="checkbox" value="plugins" name="gitsync[folders]" disabled />
                         Plugins
                     </label>
                     <label>
-                        <input type="checkbox" value="user/themes" name="gitsync[folders]" {{ 'user/themes' in settings.folders ? 'checked' : '' }} />
+                        <input type="checkbox" value="themes" name="gitsync[folders]" {{ 'themes' in settings.folders ? 'checked' : '' }} />
                         Themes
                     </label>
                 </div>

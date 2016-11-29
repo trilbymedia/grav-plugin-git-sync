@@ -12,8 +12,8 @@ class AdminController extends AdminBaseController
     protected $action;
     protected $target;
     protected $active;
-    protected $git;
     protected $task_prefix = 'task';
+    public $git;
 
     /**
      * @param Plugin   $plugin
@@ -40,7 +40,7 @@ class AdminController extends AdminBaseController
             $this->target = $target;
             $this->active = true;
             $this->admin = Grav::instance()['admin'];
-            $this->git = new GitSync();
+            $this->git = new GitSync($plugin);
 
             $task = !empty($post['task']) ? $post['task'] : $uri->param('task');
             if ($task && ($this->target == $plugin->name || $uri->route() == '/lessons')) {
@@ -75,7 +75,7 @@ class AdminController extends AdminBaseController
     /**
      * Performs a task or action on a post or target.
      *
-     * @return bool|mixed|void
+     * @return bool|mixed
      */
     public function execute()
     {
@@ -91,15 +91,15 @@ class AdminController extends AdminBaseController
             $method = $this->task_prefix . ucfirst($this->task);
         } elseif ($this->target) {
             if (!$this->action) {
-                return;
+                return false;
             }
             $method = strtolower($this->action) . ucfirst($this->target);
         } else {
-            return;
+            return false;
         }
 
         if (!method_exists($this, $method)) {
-            return;
+            return false;
         }
 
         $success = call_user_func_array([$this, $method], $params);
