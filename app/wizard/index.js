@@ -123,7 +123,7 @@ $(document).ready(() => {
     WIZARD.wrapInner("<form></form>");
     WIZARD.find(`form > [class^=step-]:not(.step-${STEP}) > .panel`).hide().removeClass('hidden');
 
-    if (Settings.first_time) {
+    if (Settings.first_time || !Settings.git_installed) {
         const modal = WIZARD.remodal({ closeOnConfirm: false });
         modal.open();
     }

@@ -91,6 +91,7 @@ class GitSyncPlugin extends Plugin
     {
         $settings = [
             'first_time' => !Helper::isGitInitialized(),
+            'git_installed' => Helper::isGitInstalled()
         ];
 
         $this->grav['twig']->twig_vars['git_sync'] = $settings;
@@ -122,7 +123,7 @@ class GitSyncPlugin extends Plugin
         */
 
         if ($obj instanceof Data) {
-            if (!$isPluginRoute) {
+            if (!$isPluginRoute || !Helper::isGitInstalled()) {
                 return true;
             } else {
                 $this->controller->git->setConfig($obj);
@@ -143,6 +144,10 @@ class GitSyncPlugin extends Plugin
 
     public function synchronize()
     {
+        if (!Helper::isGitInstalled()) {
+            return true;
+        }
+
         if (!$this->controller->git->isWorkingCopyClean()) {
             // commit any change
             $this->controller->git->commit();

@@ -11,8 +11,24 @@ class Helper {
      *
      * @return bool
      */
-    public static function isGitInitialized() {
+    public static function isGitInitialized()
+    {
         return file_exists(rtrim(USER_DIR, '/') . '/.git');
+    }
+
+    public static function isGitInstalled()
+    {
+        static $cache;
+
+        if (!is_null($cache)) {
+            return $cache;
+        }
+
+        exec('git', $output, $returnValue);
+
+        $cache = $returnValue > 1 ? false : true;
+
+        return $cache;
     }
 
     public static function prepareRepository($user, $password, $repository)

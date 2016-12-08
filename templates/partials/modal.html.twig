@@ -1,8 +1,10 @@
 {% set settings = config.plugins['git-sync'] %}
 {% set frontend_url = uri.base ~ base_url_relative_frontend %}
 <div class="remodal" data-remodal-id="wizard" data-remodal-options="hashTracking: false">
+
+    <h1>Git Sync - Wizard</h1>
+    {% if git_installed %}
     <div class="step-0">
-        <h1>Git Sync - Wizard</h1>
         <div class="panel">
             <p>
                 This wizard will guide you through a few simple steps that will instruct you on how to set up the plugin and your <i class="fa fa-fw fa-git"></i> repository.
@@ -232,4 +234,23 @@
         <a class="button" data-gitsync-action="next" href="#">Next <i class="fa fa-fw fa-chevron-right"></i></a>
         <a class="button hidden" data-gitsync-action="save" href="#"><i class="fa fa-fw fa-check"></i> Save</a>
     </div>
+    {% else %}
+        <div class="step-0">
+            <div class="panel">
+                <p>
+                    The <strong>GitSync</strong> plugin requires the <i class="fa fa-fw fa-git"></i> binary to be installed and accessible in order to work. You can download <i class="fa fa-fw fa-git"></i> from the official site.
+                </p>
+                <p>
+                    <a href="https://git-scm.com/downloads" class="button center" target="_blank">Download Git</a>
+                </p>
+
+                <p>
+                    If <i class="fa fa-fw fa-git"></i> is missing from your hosting provider, you should open a ticket with them and request for it to be installed.
+                </p>
+            </div>
+        </div>
+        <div class="button-bar">
+            <a class="button secondary float-left" data-remodal-action="cancel" href="#">Close</a>
+        </div>
+    {% endif %}
 </div>
