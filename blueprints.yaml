@@ -29,7 +29,7 @@ form:
       validate:
         type: bool
     folders:
-      type: select
+      type: hidden
       multiple: true
       size: medium
       label: Sync Folders

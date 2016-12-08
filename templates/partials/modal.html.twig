@@ -1,4 +1,5 @@
 {% set settings = config.plugins['git-sync'] %}
+{% set frontend_url = uri.base ~ base_url_relative_frontend %}
 <div class="remodal" data-remodal-id="wizard" data-remodal-options="hashTracking: false">
     <div class="step-0">
         <h1>Git Sync - Wizard</h1>
@@ -106,7 +107,85 @@
     </div>
 
     <div class="step-3">
-        <h1>Step 3 - Choose what to Synchronize</h1>
+        <h1>Step 3 - Setting up the Webhook</h1>
+        <div class="panel hidden disabled" data-gitsync-uribase="{{ frontend_url }}">
+            <p>
+                The Webhook allows to synchronize the site every time a change happens in the repository. The Webhook is an URL that needs to be setup in the repository. By Default the Webhook is set to <code>/_git-sync</code> but you can change it to whatever name you'd like</p>
+
+            <p>
+                <label>
+                    Webhook
+                    <input type="text" name="gitsync[webhook]" placeholder="/_git-sync" value="{{ settings.webhook|default('/_git-sync') }}" />
+                </label>
+            </p>
+
+            <p>
+                In order to setup the Webhook in your repository, please follow the steps below. If you haven't already created a repository from the previous steps, now it's the time to do so.
+            </p>
+
+            <div class="hidden-step-github wizard-padding hidden">
+                <h4>GitHub</h4>
+                <ol>
+                    <li>Head to the repository on GitHub and click on <code>Settings</code></li>
+                    <li>Click on <code>Webhooks</code> in the left sidebar</li>
+                    <li>Click on the <code>Add webhook</code> button on the right</li>
+                    <li>
+                        Compile the form as follows
+                        <ul>
+                            <li><strong>Payload URL</strong>: <code>{{ frontend_url }}<span class="gitsync-webhook">{{ settings.webhook|default('/_git-sync') }}</span></code></li>
+                            <li><strong>Content type</strong>: <code>application/json</code></li>
+                            <li><strong>Secret</strong>: <em>leave empty</em></li>
+                            <li><strong>Which events would you like to trigger this webhook?</strong> <code>Just the push event.</code></li>
+                            <li><strong>Active</strong>: <i class="fa fa-check-square-o"></i></li>
+                        </ul>
+                    </li>
+                    <li>Click the <code>Add webhook</code> button</li>
+                </ol>
+            </div>
+
+            <div class="hidden-step-bitbucket wizard-padding hidden">
+                <h4>Bitbucket</h4>
+                <ol>
+                    <li>Head to the repository on Bitbucket and click on <code><i class="fa fa-cog"></i> Settings</code> in the sidebar (if the sidebar is collapsed, this is represented by just a <i class="fa fa-cog"></i>)</li>
+                    <li>Click on <code>Webhooks</code> on the left sidebar of the page that just loaded</li>
+                    <li>Click on the <code>Add webhook</code> button at the top</li>
+                    <li>
+                        Compile the form as follows
+                        <ul>
+                            <li><strong>Title</strong>: <em>any title you like, ie. GitSync</em></li>
+                            <li><strong>URL</strong>: <code>{{ frontend_url }}<span class="gitsync-webhook">{{ settings.webhook|default('/_git-sync') }}</span></code></li>
+                            <li><strong>Active</strong>: <i class="fa fa-check-square-o"></i></li>
+                            <li><strong>Repository push</strong>: <i class="fa fa-dot-circle-o"></i></li>
+                        </ul>
+                    </li>
+                    <li>Click the <code>Save</code> button</li>
+                </ol>
+            </div>
+            <div class="hidden-step-gitlab wizard-padding hidden">
+                <h4>GitLab</h4>
+                <ol>
+                    <li>Head to the repository on GitLab and click on <code><i class="fa fa-cog"></i></code> dropdown button at the top right of the page</li>
+                    <li>Select <code>Webhooks</code> from the list</li>
+                    <li>
+                        Compile the form as follows
+                        <ul>
+                            <li><strong>URL</strong>: <code>{{ frontend_url }}<span class="gitsync-webhook">{{ settings.webhook|default('/_git-sync') }}</span></code></li>
+                            <li><strong>Secret Token</strong>: <em>leave empty</em></li>
+                            <li><strong>Push events</strong>: <i class="fa fa-check-square-o"></i></li>
+                        </ul>
+                    </li>
+                    <li>Click the <code>Add Webhook</code> button</li>
+                </ol>
+            </div>
+
+            <p>
+                Press <strong>Next</strong> to continue.
+            </p>
+        </div>
+    </div>
+
+    {#<div class="step-4">
+        <h1>Step 4 - Choose what to Synchronize</h1>
         <div class="panel hidden disabled">
             <p>
                 You can choose to synchronize any portion of the <strong>user/</strong> folder independently. It is highly encouraged not to synchronize the <strong>config/</strong> and <strong>data/</strong> folders because they might contain sensitive data you might not realize gets shared publicly.
@@ -131,7 +210,7 @@
                         Plugins
                     </label>
                     <label>
-                        <input type="checkbox" value="themes" name="gitsync[folders]" {{ 'themes' in settings.folders ? 'checked' : '' }} />
+                        <input type="checkbox" value="themes" name="gitsync[folders]" disabled />
                         Themes
                     </label>
                 </div>
@@ -145,7 +224,7 @@
                 Press <strong>Next</strong> to continue.
             </p>
         </div>
-    </div>
+    </div>#}
 
     <div class="button-bar">
         <a class="button secondary float-left" data-remodal-action="cancel" href="#">Cancel</a>
