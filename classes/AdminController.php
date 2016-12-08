@@ -30,6 +30,7 @@ class AdminController extends AdminBaseController
         if (Utils::isAdminPlugin()) {
             $routeDetails = $this->grav['admin']->getRouteDetails();
             $target = array_pop($routeDetails);
+            $this->git = new GitSync($plugin);
 
             // return null if this is not running
             if ($target != $plugin->name)  {
@@ -40,7 +41,6 @@ class AdminController extends AdminBaseController
             $this->target = $target;
             $this->active = true;
             $this->admin = Grav::instance()['admin'];
-            $this->git = new GitSync($plugin);
 
             $task = !empty($post['task']) ? $post['task'] : $uri->param('task');
             if ($task && ($this->target == $plugin->name || $uri->route() == '/lessons')) {

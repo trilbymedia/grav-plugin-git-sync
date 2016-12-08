@@ -52,6 +52,11 @@ form:
       type: password
       label: Git Password
       placeholder: Your Git Password
+    webhook:
+      type: text
+      label: Repository Web Hook
+      placeholder: /_git-sync
+      default: /_git-sync
     Advanced:
       type: section
       title: Advanced

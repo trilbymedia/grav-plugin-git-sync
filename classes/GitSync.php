@@ -53,16 +53,21 @@ class GitSync extends Git
         return true;
     }
 
-    public function setUser($name, $email)
+    public function setUser($name = null, $email = null)
     {
+        $name = $this->getConfig('name', $name);
+        $email = $this->getConfig('email', $email);
+
         $this->execute("config user.name '{$name}'");
         $this->execute("config user.email '{$email}'");
 
         return true;
     }
 
-    public function hasRemote($name)
+    public function hasRemote($name = null)
     {
+        $name = $this->getRemote('name', $name);
+
         try {
             $this->execute("remote get-url '{$name}'");
         } catch (\Exception $e) {
@@ -79,7 +84,7 @@ class GitSync extends Git
 
         $sparse = [];
         foreach ($folders as $folder) {
-            $sparse[] = $folder;
+            $sparse[] = $folder . '/*';
         }
 
         $file = File::instance(rtrim(USER_DIR, '/') . '/.git/info/sparse-checkout');
@@ -96,8 +101,11 @@ class GitSync extends Git
         $file->free();
     }
 
-    public function addRemote($alias, $url)
+    public function addRemote($alias = null, $url = null)
     {
+        $alias = $this->getRemote('name', $alias);
+        $url = $this->getConfig('repository', $url);
+
         $command = $this->hasRemote($alias) ? 'set-url' : 'add';
         $url = Helper::prepareRepository($this->user, $this->password, $url);
 
@@ -122,28 +130,48 @@ class GitSync extends Git
         return $this->execute("commit -m " . escapeshellarg($message));
     }
 
-    public function fetch($name, $branch)
+    public function fetch($name = null, $branch = null)
     {
+        $name = $this->getRemote('name', $name);
+        $branch = $this->getRemote('branch', $branch);
+
         return $this->execute("fetch {$name} {$branch}");
     }
 
-    public function pull($name, $branch)
+    public function pull($name = null, $branch = null)
     {
-        return $this->execute("pull {$name} {$branch}");
+        $name = $this->getRemote('name', $name);
+        $branch = $this->getRemote('branch', $branch);
+
+        return $this->execute("pull --allow-unrelated-histories {$name} {$branch}");
     }
 
-    public function push($name, $branch)
+    public function push($name = null, $branch = null)
     {
+        $name = $this->getRemote('name', $name);
+        $branch = $this->getRemote('branch', $branch);
+
         return $this->execute("push {$name} {$branch}");
     }
 
-    public function sync($name, $branch)
+    public function sync($name = null, $branch = null)
     {
+        $name = $this->getRemote('name', $name);
+        $branch = $this->getRemote('branch', $branch);
+
         $this->fetch($name, $branch);
         $this->pull($name, $branch);
         $this->push($name, $branch);
 
         return true;
+    }
+
+    public function isWorkingCopyClean()
+    {
+        $message = 'nothing to commit';
+        $output = $this->execute('status');
+
+        return (substr($output[count($output)-1], 0, strlen($message)) === $message);
     }
 
     public function execute($command)
@@ -155,5 +183,15 @@ class GitSync extends Git
             $message = str_replace($this->password, '{password}', $message);
             throw new \RuntimeException($message);
         }
+    }
+
+    public function getRemote($type, $value)
+    {
+        return !$value ? $this->config['remote'][$type] : $value;
+    }
+
+    public function getConfig($type, $value)
+    {
+        return !$value ? $this->config[$type] : $value;
     }
 }

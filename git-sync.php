@@ -1,8 +1,10 @@
 <?php
 namespace Grav\Plugin;
 
+use Grav\Common\Data\Data;
 use Grav\Common\Plugin;
 use Grav\Plugin\GitSync\AdminController;
+use Grav\Plugin\GitSync\GitSync;
 use Grav\Plugin\GitSync\Helper;
 use RocketTheme\Toolbox\Event\Event;
 
@@ -31,20 +33,46 @@ class GitSyncPlugin extends Plugin
      */
     public function onPluginsInitialized()
     {
-        // Don't proceed if we are in the admin plugin
         if ($this->isAdmin()) {
             require_once __DIR__ . '/vendor/autoload.php';
 
             $this->enable([
-                'onAdminSave'         => ['onAdminSave', 0],
-                'onTwigTemplatePaths' => ['onTwigTemplatePaths', 0],
-                'onTwigSiteVariables' => ['onTwigSiteVariables', 0],
+                'onTwigTemplatePaths'  => ['onTwigTemplatePaths', 0],
+                'onTwigSiteVariables'  => ['onTwigSiteVariables', 0],
+                'onAdminAfterSave'     => ['onAdminAfterSave', 0],
+                'onAdminAfterSaveAs'   => ['synchronize', 0],
+                'onAdminAfterDelete'   => ['synchronize', 0],
+                'onAdminAfterAddMedia' => ['synchronize', 0],
+                'onAdminAfterDelMedia' => ['synchronize', 0],
             ]);
 
             /** @var AdminController controller */
             $this->controller = new AdminController($this);
 
             return;
+        } else {
+            require_once __DIR__ . '/vendor/autoload.php';
+            $config = $this->config->get('plugins.' . $this->name);
+            $route = $this->grav['uri']->route();
+
+            if ($route === $config['webhook']) {
+                try {
+                    $this->controller      = new \stdClass();
+                    $this->controller->git = new GitSync($this);
+                    $this->synchronize();
+
+                    echo json_encode([
+                        'status' => 'success',
+                        'message' => 'GitSync completed the synchronization'
+                    ]);
+                } catch (\Exception $e) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'GitSync failed to synchronize'
+                    ]);
+                }
+                exit;
+            }
         }
     }
 
@@ -75,30 +103,53 @@ class GitSyncPlugin extends Plugin
 
     public function onPageInitialized()
     {
-        if ($this->controller->isActive()) {
+        if ($this->isAdmin() && $this->controller->isActive()) {
             $this->controller->execute();
             $this->controller->redirect();
         }
     }
 
-    public function onAdminSave($obj)
+    public function onAdminAfterSave($event)
     {
-        $data = $obj['object'];
-        $git = $data['git'];
-        $remote = $data['remote'];
-        $this->controller->git->setConfig($data);
+        $obj = $event['object'];
+        $isPluginRoute = $this->grav['uri']->path() == '/admin/plugins/' . $this->name;
 
-        // initialize git if not done yet
-        $this->controller->git->initializeRepository();
+        /*
+        $folders = $this->controller->git->getConfig('folders', []);
+        if (!$isPluginRoute && !in_array('config', $folders)) {
+            return true;
+        }
+        */
 
-        // set committer and remote data
-        $this->controller->git->setUser($git['name'], $git['email']);
-        $this->controller->git->addRemote('gitsync', $data['repository']);
+        if ($obj instanceof Data) {
+            if (!$isPluginRoute) {
+                return true;
+            } else {
+                $this->controller->git->setConfig($obj);
 
-        // commit any change
-        $this->controller->git->commit();
+                // initialize git if not done yet
+                $this->controller->git->initializeRepository();
+
+                // set committer and remote data
+                $this->controller->git->setUser();
+                $this->controller->git->addRemote();
+            }
+        }
+
+        $this->synchronize();
+
+        return true;
+    }
+
+    public function synchronize()
+    {
+        if (!$this->controller->git->isWorkingCopyClean()) {
+            // commit any change
+            $this->controller->git->commit();
+        }
 
         // synchronize with remote
-        $this->controller->git->sync('gitsync', $remote['branch']);
+        $this->controller->git->sync();
+        $this->controller->git->push();
     }
 }

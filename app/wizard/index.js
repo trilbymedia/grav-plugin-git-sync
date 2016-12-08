@@ -48,7 +48,12 @@ $(document).on('click', '[data-gitsync-action]', (event) => {
         $('[name="data[repository]"]').val(repository);
         $('[name="data[user]"]').val(user);
         $('[name="data[password]"]').val(password);
-        $('[name="data[folders][]"]')[0].selectize.setValue(folders.toArray());
+
+        const dataFolders = $('[name="data[folders][]"]');
+        if (dataFolders && dataFolders[0] && dataFolders[0].selectize) {
+            dataFolders[0].selectize.setValue(folders.toArray());
+        }
+
         $('[name="task"][value="save"]').trigger('click');
 
         return false;
@@ -89,6 +94,13 @@ $(document).on('click', '[data-gitsync-action]', (event) => {
         previous.removeClass('hidden');
         save.removeClass('hidden');
     }
+});
+
+$(document).on('keyup', '[data-gitsync-uribase] [name="gitsync[webhook]"]', (event) => {
+   const target = $(event.currentTarget);
+   const value = target.val();
+
+   $('.gitsync-webhook').text(value);
 });
 
 $(document).on('change', '[name="gitsync[repository]"]', (event) => {
