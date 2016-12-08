@@ -84,6 +84,7 @@ class GitSync extends Git
 
         $sparse = [];
         foreach ($folders as $folder) {
+            $sparse[] = $folder;
             $sparse[] = $folder . '/*';
         }
 
