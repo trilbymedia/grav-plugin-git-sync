@@ -52,19 +52,19 @@ class AdminController extends AdminBaseController
 
     public function taskTestConnection()
     {
-        $post = $this->post;
-        $data = json_decode(base64_decode($post['test']));
-        $invalid = Helper::testRepository($data->user, $data->password, $data->repository);
+        $post    = $this->post;
+        $data    = json_decode(base64_decode($post['test']));
 
-        if (!$invalid) {
+        try {
+            Helper::testRepository($data->user, $data->password, $data->repository);
             echo json_encode([
-                'status' => "success",
+                'status'  => "success",
                 'message' => 'The connection to the repository has been successful.'
             ]);
-        } else {
-            $invalid = str_replace($data->password, '{password}', $invalid);
+        } catch (\Exception $e) {
+            $invalid = str_replace($data->password, '{password}', $e->getMessage());
             echo json_encode([
-                'status' => "error",
+                'status'  => "error",
                 'message' => $invalid
             ]);
         }
