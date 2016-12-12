@@ -54,8 +54,9 @@ class GitSyncPlugin extends Plugin
             require_once __DIR__ . '/vendor/autoload.php';
             $config = $this->config->get('plugins.' . $this->name);
             $route = $this->grav['uri']->route();
+            $webhook = isset($config['webhook']) ?  $config['webhook'] : false;
 
-            if ($route === $config['webhook']) {
+            if ($route === $webhook) {
                 try {
                     $this->controller      = new \stdClass();
                     $this->controller->git = new GitSync($this);

@@ -24,9 +24,9 @@ class Helper {
             return $cache;
         }
 
-        exec('git', $output, $returnValue);
+        exec('git --version', $output, $returnValue);
 
-        $cache = $returnValue > 1 ? false : true;
+        $cache = $returnValue !== 0 ? false : true;
 
         return $cache;
     }
