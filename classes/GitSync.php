@@ -21,8 +21,8 @@ class GitSync extends Git
         $this->grav = Grav::instance();
         $this->config = $this->grav['config']->get('plugins.git-sync');
 
-        $this->user = $this->config['user'];
-        $this->password = $this->config['password'];
+        $this->user = isset($this->config['user']) ? $this->config['user'] : null;
+        $this->password = isset($this->config['password']) ? $this->config['user'] : null;
 
         unset($this->config['user']);
         unset($this->config['password']);
