@@ -9,12 +9,31 @@ const SERVICES = { 'github': 'github.com', 'bitbucket': 'bitbucket.org', 'gitlab
 const TEMPLATES = {
     REPO_URL: 'https://{placeholder}/getgrav/grav.git'
 };
+
+const openWizard = () => {
+    const modal = WIZARD.remodal({ closeOnConfirm: false });
+    modal.open();
+};
+
 let STEP = 0;
 let STEPS = 0;
 let SERVICE = null;
 
 $(document).on('closed', WIZARD, function (e) {
     STEP = 0;
+});
+
+
+$(document).on('click', '[data-gitsync-useraction]', (event) => {
+    event.preventDefault();
+    const target = $(event.target).closest('[data-gitsync-useraction]');
+    const action = target.data('gitsyncUseraction');
+
+    switch (action) {
+        case 'wizard':
+            openWizard();
+            break;
+    }
 });
 
 $(document).on('click', '[data-gitsync-action]', (event) => {
@@ -124,8 +143,7 @@ $(document).ready(() => {
     WIZARD.find(`form > [class^=step-]:not(.step-${STEP}) > .panel`).hide().removeClass('hidden');
 
     if (Settings.first_time || !Settings.git_installed) {
-        const modal = WIZARD.remodal({ closeOnConfirm: false });
-        modal.open();
+        openWizard();
     }
 });
 
