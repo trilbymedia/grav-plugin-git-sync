@@ -144,7 +144,7 @@ class GitSync extends Git
         $name = $this->getRemote('name', $name);
         $branch = $this->getRemote('branch', $branch);
 
-        return $this->execute("pull --allow-unrelated-histories {$name} {$branch}");
+        return $this->execute("pull --allow-unrelated-histories -X theirs {$name} {$branch}");
     }
 
     public function push($name = null, $branch = null)
