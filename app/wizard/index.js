@@ -12,6 +12,19 @@ const TEMPLATES = {
 
 const openWizard = () => {
     const modal = WIZARD.remodal({ closeOnConfirm: false });
+    const previous = WIZARD.find('[data-gitsync-action="previous"]');
+    const next = WIZARD.find('[data-gitsync-action="next"]');
+    const save = WIZARD.find('[data-gitsync-action="save"]');
+
+    STEP = 0;
+
+    WIZARD.find(`form > [class^=step-]:not(.step-${STEP}) > .panel`).hide().removeClass('hidden');
+    WIZARD.find(`form > [class="step-${STEP}"] > .panel`).show();
+
+    next.removeClass('hidden');
+    previous.addClass('hidden');
+    save.addClass('hidden');
+
     modal.open();
 };
 
@@ -140,7 +153,6 @@ $(document).on('change', '[name="gitsync[repository]"]', (event) => {
 $(document).ready(() => {
     STEPS = WIZARD.find('[class^="step-"]').length - 1;
     WIZARD.wrapInner("<form></form>");
-    WIZARD.find(`form > [class^=step-]:not(.step-${STEP}) > .panel`).hide().removeClass('hidden');
 
     if (Settings.first_time || !Settings.git_installed) {
         openWizard();
