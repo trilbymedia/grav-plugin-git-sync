@@ -185,7 +185,7 @@ class GitSync extends Git
             $message = str_replace($this->password, '{password}', $message);
 
             // handle scary messages
-            if (Utils::startsWith($message, "remote: error: cannot lock ref 'refs/heads/")) {
+            if (Utils::contains($message, "remote: error: cannot lock ref")) {
                 $message = 'GitSync: An error occurred while trying to synchronize. This could mean GitSync is already running. Please try again.';
             }
 
