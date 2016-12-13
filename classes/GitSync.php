@@ -3,6 +3,7 @@ namespace Grav\Plugin\GitSync;
 
 use Grav\Common\Grav;
 use Grav\Common\Plugin;
+use Grav\Common\Utils;
 use RocketTheme\Toolbox\File\File;
 use SebastianBergmann\Git\Git;
 
@@ -182,6 +183,12 @@ class GitSync extends Git
         } catch (\RuntimeException $e) {
             $message = $e->getMessage();
             $message = str_replace($this->password, '{password}', $message);
+
+            // handle scary messages
+            if (Utils::startsWith("remote: error: cannot lock ref 'ref/heads/", $message)) {
+                $message = 'GitSync: An error occurred while trying to synchronize. This could mean GitSync is already running. Please try again.';
+            }
+
             throw new \RuntimeException($message);
         }
     }
