@@ -86,6 +86,10 @@ form:
       default: gitsync@getgrav.org
       label: Committer Email
       placeholder: gitsync@getgrav.org
+    Actions:
+      type: section
+      title: Actions
+      underline: true
     _wizard:
       type: git-wizard
       label: Text Variable

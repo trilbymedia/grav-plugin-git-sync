@@ -53,3 +53,16 @@
         }
     }
 }
+
+#admin-main [data-grav-field="git-wizard"] {
+    .danger.button-bar {
+        margin: 0;
+        padding: 0;
+        background: transparent;
+    }
+
+    .button {
+        top: 0 !important;
+        @include transform(translateY(0) !important);
+    }
+}

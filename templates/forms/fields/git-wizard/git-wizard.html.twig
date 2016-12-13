@@ -9,5 +9,8 @@
             'git_installed': {{ git_sync.git_installed|json_encode|raw }}
         };
     </script>
+    <a href="#" class="button button-primary"><i class="fa fa-fw fa-magic"></i> Wizard</a>
+    <a href="#" class="button button-primary"><i class="fa fa-fw fa-cloud"></i> Synchronize</a>
+    <span class="danger button-bar"><a href="#" class="button danger"><i class="fa fa-fw fa-history"></i> Reset Local Copy</a></span>
     {% include 'partials/modal.html.twig' %}
 {% endblock %}
