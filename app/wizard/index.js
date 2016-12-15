@@ -41,10 +41,29 @@ $(document).on('click', '[data-gitsync-useraction]', (event) => {
     event.preventDefault();
     const target = $(event.target).closest('[data-gitsync-useraction]');
     const action = target.data('gitsyncUseraction');
+    const URI = `${config.current_url}.json`;
 
     switch (action) {
         case 'wizard':
             openWizard();
+            break;
+        case 'sync':
+            target.find('i').removeClass('fa-cloud').addClass('fa-circle-o-notch fa-spin');
+            request(URI, {
+                method: 'post',
+                body: { task: 'synchronize' }
+            }, () => {
+                target.find('i').removeClass('fa-circle-o-notch fa-spin').addClass('fa-cloud');
+            });
+            break;
+        case 'reset':
+            target.find('i').removeClass('fa-history').addClass('fa-circle-o-notch fa-spin');
+            request(URI, {
+                method: 'post',
+                body: { task: 'resetlocal' }
+            }, () => {
+                target.find('i').removeClass('fa-circle-o-notch fa-spin').addClass('fa-history');
+            });
             break;
     }
 });

@@ -1,3 +1,1 @@
-import Settings from './wizard';
-
-console.log(Settings);
+import './wizard';

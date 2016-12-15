@@ -128,6 +128,8 @@ class GitSync extends Git
 
     public function commit($message = '(Grav GitSync) Automatic Commit')
     {
+        $author = '--author="' . $this->getConfig('name', null) . '<' . $this->getConfig('email', null) . '>"';
+        // commit $author -m ...
         $this->add();
         return $this->execute("commit -m " . escapeshellarg($message));
     }
@@ -166,6 +168,11 @@ class GitSync extends Git
         $this->push($name, $branch);
 
         return true;
+    }
+
+    public function reset()
+    {
+        return $this->execute("reset --hard HEAD");
     }
 
     public function isWorkingCopyClean()

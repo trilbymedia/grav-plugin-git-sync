@@ -90,7 +90,7 @@ class GitSyncPlugin extends Plugin
 
     public function synchronize()
     {
-        if (!Helper::isGitInstalled()) {
+        if (!Helper::isGitInstalled() || !Helper::isGitInitialized()) {
             return true;
         }
 
@@ -106,6 +106,21 @@ class GitSyncPlugin extends Plugin
         $this->git->push();
 
         $this->grav->fireEvent('onGitSyncAfterSynchronize');
+
+        return true;
+    }
+
+    public function reset()
+    {
+        if (!Helper::isGitInstalled() || !Helper::isGitInitialized()) {
+            return true;
+        }
+
+        $this->grav->fireEvent('onGitSyncBeforeReset');
+
+        $this->git->reset();
+
+        $this->grav->fireEvent('onGitSyncAfterReset');
 
         return true;
     }

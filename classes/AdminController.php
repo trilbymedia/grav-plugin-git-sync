@@ -12,6 +12,7 @@ class AdminController extends AdminBaseController
     protected $action;
     protected $target;
     protected $active;
+    protected $plugin;
     protected $task_prefix = 'task';
     public $git;
 
@@ -25,6 +26,7 @@ class AdminController extends AdminBaseController
         $this->active = false;
         $uri = $this->grav['uri'];
         $this->post = $this->getPost($post);
+        $this->plugin = $plugin;
 
         // Ensure the controller should be running
         if (Utils::isAdminPlugin()) {
@@ -63,6 +65,44 @@ class AdminController extends AdminBaseController
             ]);
         } catch (\Exception $e) {
             $invalid = str_replace($data->password, '{password}', $e->getMessage());
+            echo json_encode([
+                'status'  => "error",
+                'message' => $invalid
+            ]);
+        }
+
+        exit;
+    }
+
+    public function taskSynchronize()
+    {
+        try {
+            $this->plugin->synchronize();
+            echo json_encode([
+                'status'  => "success",
+                'message' => 'GitSync has successfully synchronized with the repository.'
+            ]);
+        } catch (\Exception $e) {
+            $invalid = str_replace($this->git->getConfig('password', null), '{password}', $e->getMessage());
+            echo json_encode([
+                'status'  => "error",
+                'message' => $invalid
+            ]);
+        }
+
+        exit;
+    }
+
+    public function taskResetLocal()
+    {
+        try {
+            $this->plugin->reset();
+            echo json_encode([
+                'status'  => "success",
+                'message' => 'GitSync has successfully reset your local changes and synchronized with the repository.'
+            ]);
+        } catch (\Exception $e) {
+            $invalid = str_replace($this->git->getConfig('password', null), '{password}', $e->getMessage());
             echo json_encode([
                 'status'  => "error",
                 'message' => $invalid
