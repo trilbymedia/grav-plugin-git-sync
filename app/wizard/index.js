@@ -5,6 +5,7 @@ import { config } from 'grav-config';
 import $ from 'jquery';
 
 const WIZARD = $('[data-remodal-id="wizard"]');
+const RESET_LOCAL = $('[data-remodal-id="reset-local"]');
 const SERVICES = { 'github': 'github.com', 'bitbucket': 'bitbucket.org', 'gitlab': 'gitlab.com' };
 const TEMPLATES = {
     REPO_URL: 'https://{placeholder}/getgrav/grav.git'
@@ -57,13 +58,23 @@ $(document).on('click', '[data-gitsync-useraction]', (event) => {
             });
             break;
         case 'reset':
-            target.find('i').removeClass('fa-history').addClass('fa-circle-o-notch fa-spin');
-            request(URI, {
-                method: 'post',
-                body: { task: 'resetlocal' }
-            }, () => {
-                target.find('i').removeClass('fa-circle-o-notch fa-spin').addClass('fa-history');
-            });
+            const modal = RESET_LOCAL.remodal({ closeOnConfirm: false });
+            modal.open();
+
+            if (!RESET_LOCAL.data('_reset_event_set_')) {
+                RESET_LOCAL.find('[data-gitsync-action="reset-local"]').one('click', () => {
+                    modal.close();
+                    RESET_LOCAL.data('_reset_event_set_', true);
+                    target.find('i').removeClass('fa-history').addClass('fa-circle-o-notch fa-spin');
+                    request(URI, {
+                        method: 'post',
+                        body: { task: 'resetlocal' }
+                    }, () => {
+                        RESET_LOCAL.data('_reset_event_set_', false);
+                        target.find('i').removeClass('fa-circle-o-notch fa-spin').addClass('fa-history');
+                    });
+                })
+            }
             break;
     }
 });
@@ -172,6 +183,7 @@ $(document).on('change', '[name="gitsync[repository]"]', (event) => {
 $(document).ready(() => {
     STEPS = WIZARD.find('[class^="step-"]').length - 1;
     WIZARD.wrapInner("<form></form>");
+    RESET_LOCAL.wrapInner("<form></form>");
 
     if (Settings.first_time || !Settings.git_installed) {
         openWizard();

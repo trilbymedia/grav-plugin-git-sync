@@ -56,8 +56,8 @@ class GitSync extends Git
 
     public function setUser($name = null, $email = null)
     {
-        $name = $this->getConfig('name', $name);
-        $email = $this->getConfig('email', $email);
+        $name = $this->getConfig('git', $name)['name'];
+        $email = $this->getConfig('git', $email)['email'];
 
         $this->execute("config user.name '{$name}'");
         $this->execute("config user.email '{$email}'");
@@ -128,10 +128,10 @@ class GitSync extends Git
 
     public function commit($message = '(Grav GitSync) Automatic Commit')
     {
-        $author = '--author="' . $this->getConfig('name', null) . '<' . $this->getConfig('email', null) . '>"';
-        // commit $author -m ...
+        $author = '--author="' . $this->user . '<' . $this->getConfig('git', null)['email'] . '>"';
+        $message .= ' from ' . $this->user;
         $this->add();
-        return $this->execute("commit -m " . escapeshellarg($message));
+        return $this->execute("commit " . $author . " -m " . escapeshellarg($message));
     }
 
     public function fetch($name = null, $branch = null)
