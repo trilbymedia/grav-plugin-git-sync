@@ -26,6 +26,8 @@ const openWizard = () => {
     previous.addClass('hidden');
     save.addClass('hidden');
 
+    $('[name="gitsync[repository]"]').trigger('change');
+
     modal.open();
 };
 
