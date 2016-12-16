@@ -13,6 +13,7 @@ class GitSync extends Git
     private $password;
     protected $grav;
     protected $config;
+    protected $repositoryPath;
     static public $instance = null;
 
     public function __construct(Plugin $plugin = null)
@@ -21,6 +22,7 @@ class GitSync extends Git
         static::$instance = $this;
         $this->grav = Grav::instance();
         $this->config = $this->grav['config']->get('plugins.git-sync');
+        $this->repositoryPath = USER_DIR;
 
         $this->user = isset($this->config['user']) ? $this->config['user'] : null;
         $this->password = isset($this->config['password']) ? $this->config['password'] : null;
@@ -146,8 +148,15 @@ class GitSync extends Git
     {
         $name = $this->getRemote('name', $name);
         $branch = $this->getRemote('branch', $branch);
+        $version = $version = Helper::isGitInstalled(true);
+        $unrelated_histories = '--allow-unrelated-histories';
 
-        return $this->execute("pull --allow-unrelated-histories -X theirs {$name} {$branch}");
+        // --allow-unrelated-histories starts at 2.9.0
+        if (version_compare($version, '2.9.0', '<')) {
+            $unrelated_histories = '';
+        }
+
+        return $this->execute("pull {$unrelated_histories} -X theirs {$name} {$branch}");
     }
 
     public function push($name = null, $branch = null)
@@ -186,7 +195,28 @@ class GitSync extends Git
     public function execute($command)
     {
         try {
-            return parent::execute($command . ' 2>&1');
+            $version = Helper::isGitInstalled(true);
+
+            // -C <path> supported from 1.8.5 and above
+            if (version_compare($version, '1.8.5', '>=')) {
+                $command = 'git -C ' . escapeshellarg($this->repositoryPath) . ' ' . $command;
+            } else {
+                $command = 'cd ' . $this->repositoryPath . ' && git ' . $command;
+            }
+
+            $command .= ' 2>&1';
+
+            if (DIRECTORY_SEPARATOR == '/') {
+                $command = 'LC_ALL=en_US.UTF-8 ' . $command;
+            }
+
+            exec($command, $output, $returnValue);
+
+            if ($returnValue !== 0) {
+                throw new \RuntimeException(implode("\r\n", $output));
+            }
+
+            return $output;
         } catch (\RuntimeException $e) {
             $message = $e->getMessage();
             $message = str_replace($this->password, '{password}', $message);

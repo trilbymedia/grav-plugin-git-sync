@@ -16,19 +16,18 @@ class Helper {
         return file_exists(rtrim(USER_DIR, '/') . '/.git');
     }
 
-    public static function isGitInstalled()
+    public static function isGitInstalled($version = false)
     {
-        static $cache;
-
-        if (!is_null($cache)) {
-            return $cache;
-        }
-
         exec('git --version', $output, $returnValue);
 
-        $cache = $returnValue !== 0 ? false : true;
+        $installed = $returnValue !== 0 ? false : true;
 
-        return $cache;
+        if ($version && $output) {
+            $output = explode(' ', array_shift($output));
+            $installed = array_pop($output);
+        }
+
+        return $installed;
     }
 
     public static function prepareRepository($user, $password, $repository)
