@@ -87,7 +87,7 @@ class GitSync extends Git
 
         $sparse = [];
         foreach ($folders as $folder) {
-            $sparse[] = $folder;
+            $sparse[] = $folder . '/';
             $sparse[] = $folder . '/*';
         }
 
@@ -130,7 +130,8 @@ class GitSync extends Git
 
     public function commit($message = '(Grav GitSync) Automatic Commit')
     {
-        $author = '--author="' . $this->user . '<' . $this->getConfig('git', null)['email'] . '>"';
+        $author = $this->user . ' <' . $this->getConfig('git', null)['email'] . '>';
+        $author = '--author="' . escapeshellarg($author) . '"';
         $message .= ' from ' . $this->user;
         $this->add();
         return $this->execute("commit " . $author . " -m " . escapeshellarg($message));
@@ -198,7 +199,7 @@ class GitSync extends Git
             $version = Helper::isGitInstalled(true);
 
             // -C <path> supported from 1.8.5 and above
-            if (version_compare($version, '1.8.5', '>=')) {
+            if (version_compare($version, '1.8.5', '<=')) {
                 $command = 'git -C ' . escapeshellarg($this->repositoryPath) . ' ' . $command;
             } else {
                 $command = 'cd ' . $this->repositoryPath . ' && git ' . $command;
@@ -232,11 +233,11 @@ class GitSync extends Git
 
     public function getRemote($type, $value)
     {
-        return !$value ? $this->config['remote'][$type] : $value;
+        return !$value && isset($this->config['remote']) ? $this->config['remote'][$type] : $value;
     }
 
     public function getConfig($type, $value)
     {
-        return !$value ? $this->config[$type] : $value;
+        return !$value && isset($this->config[$type]) ? $this->config[$type] : $value;
     }
 }
