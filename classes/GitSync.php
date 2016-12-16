@@ -199,7 +199,7 @@ class GitSync extends Git
             $version = Helper::isGitInstalled(true);
 
             // -C <path> supported from 1.8.5 and above
-            if (version_compare($version, '1.8.5', '<=')) {
+            if (version_compare($version, '1.8.5', '>=')) {
                 $command = 'git -C ' . escapeshellarg($this->repositoryPath) . ' ' . $command;
             } else {
                 $command = 'cd ' . $this->repositoryPath . ' && git ' . $command;
