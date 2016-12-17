@@ -72,7 +72,15 @@ class GitSync extends Git
         $name = $this->getRemote('name', $name);
 
         try {
-            $this->execute("remote get-url '{$name}'");
+            $version = Helper::isGitInstalled(true);
+            // remote get-url 'name' supported from 2.7.0 and above
+            if (version_compare($version, '2.7.0', '>=')) {
+                $command = "remote get-url '{$name}'";
+            } else {
+                $command = "config --get remote.{$name}.url";
+            }
+
+            $this->execute($command);
         } catch (\Exception $e) {
             return false;
         }

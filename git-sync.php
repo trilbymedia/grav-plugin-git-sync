@@ -103,7 +103,6 @@ class GitSyncPlugin extends Plugin
 
         // synchronize with remote
         $this->git->sync();
-        $this->git->push();
 
         $this->grav->fireEvent('onGitSyncAfterSynchronize');
 
