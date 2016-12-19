@@ -126,14 +126,20 @@ class GitSync extends Git
 
     public function add()
     {
+        $version = Helper::isGitInstalled(true);
         $folders = $this->config['folders'];
         $paths = [];
+        $add = 'add';
 
         foreach ($folders as $folder) {
             $paths[] = $folder;
         }
 
-        return $this->execute('add ' . implode(' ', $paths));
+        if (version_compare($version, '1.8.1.4', '<')) {
+            $add .= ' --all';
+        }
+
+        return $this->execute($add . ' ' . implode(' ', $paths));
     }
 
     public function commit($message = '(Grav GitSync) Automatic Commit')
