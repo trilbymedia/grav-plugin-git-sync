@@ -23,3 +23,7 @@ Thanks to this powerful bi-directional flow, Git Sync can now turn your site int
 # Requirements
 
 In order for the plugin to work, the server needs to run `git` 1.7.1 and above.
+
+# Sponsored by
+
+This plugin could not have been realized without the sponsorship of [Paul Hibbitts](http://www.hibbittsdesign.org/blog/) and the development of [Trilby Media](http://trilby.media).
