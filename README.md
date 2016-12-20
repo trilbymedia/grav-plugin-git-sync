@@ -8,7 +8,7 @@ Thanks to this powerful bi-directional flow, Git Sync can now turn your site int
 
 ## Features
 
-![](wizard.png)
+<img src="wizard.png" width="500" />
  
 * Easy step-by-step Wizard setup will guide you through a detailed process for setting things up
 * Supported hosting services: [GitHub](https://github.com), [BitBucket](https://bitbucket.org), [GitLab](https://gitlab.com)
