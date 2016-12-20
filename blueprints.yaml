@@ -5,11 +5,12 @@ description: Allows to synchronize portions of Grav with Git Repositories (GitHu
 icon: git
 author:
   name: Trilby Media, LLC
-  email: devs@trilbymedia.com
-homepage: http://trilby.media/plugins/git-sync
-keywords: grav, plugin, git, sync
-issues: https://github.com/trilbymedia/trilby-grav-plugin-gitsync/issues
-docs: http://trilby.media/plugins/git-sync
+  email: hello@trilby.media
+  url: http://trilby.media
+homepage: http://trilby.media
+keywords: grav, plugin, git, sync, github, bitbucket, gitlab
+issues: https://github.com/trilbymedia/grav-plugin-git-sync/issues
+docs: https://github.com/trilbymedia/grav-plugin-git-sync
 license: MIT
 
 form:
