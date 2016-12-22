@@ -1,4 +1,4 @@
-# Git Sync Plugin
+![](images/gitsync-logo.png)
 
 **Git Sync** is a Plugin for [Grav CMS](http://github.com/getgrav/grav) that allows to seamlessly synchronize a Git repository with your Grav site, and vice-versa. 
 
