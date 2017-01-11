@@ -35,10 +35,9 @@ let STEP = 0;
 let STEPS = 0;
 let SERVICE = null;
 
-$(document).on('closed', WIZARD, function (e) {
+$(document).on('closed', WIZARD, function(e) {
     STEP = 0;
 });
-
 
 $(document).on('click', '[data-gitsync-useraction]', (event) => {
     event.preventDefault();
@@ -75,7 +74,7 @@ $(document).on('click', '[data-gitsync-useraction]', (event) => {
                         RESET_LOCAL.data('_reset_event_set_', false);
                         target.find('i').removeClass('fa-circle-o-notch fa-spin').addClass('fa-history');
                     });
-                })
+                });
             }
             break;
     }
@@ -95,9 +94,15 @@ $(document).on('click', '[data-gitsync-action]', (event) => {
 
     let error = [];
 
-    if (!user) { error.push('Username is missing.'); }
-    if (!password) { error.push('Password is missing.'); }
-    if (!repository) { error.push('Repository is missing.'); }
+    if (!user) {
+        error.push('Username is missing.');
+    }
+    if (!password) {
+        error.push('Password is missing.');
+    }
+    if (!repository) {
+        error.push('Repository is missing.');
+    }
 
     if (['save', 'test'].includes(action)) {
         if (error.length) {
@@ -161,10 +166,9 @@ $(document).on('click', '[data-gitsync-action]', (event) => {
 });
 
 $(document).on('keyup', '[data-gitsync-uribase] [name="gitsync[webhook]"]', (event) => {
-   const target = $(event.currentTarget);
-   const value = target.val();
-
-   $('.gitsync-webhook').text(value);
+    const target = $(event.currentTarget);
+    const value = target.val();
+    $('.gitsync-webhook').text(value);
 });
 
 $(document).on('change', '[name="gitsync[repository]"]', (event) => {
@@ -184,8 +188,8 @@ $(document).on('change', '[name="gitsync[repository]"]', (event) => {
 
 $(document).ready(() => {
     STEPS = WIZARD.find('[class^="step-"]').length - 1;
-    WIZARD.wrapInner("<form></form>");
-    RESET_LOCAL.wrapInner("<form></form>");
+    WIZARD.wrapInner('<form></form>');
+    RESET_LOCAL.wrapInner('<form></form>');
 
     if (Settings.first_time || !Settings.git_installed) {
         openWizard();
