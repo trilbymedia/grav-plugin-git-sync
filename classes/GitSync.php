@@ -234,7 +234,7 @@ class GitSync extends Git
             return $output;
         } catch (\RuntimeException $e) {
             $message = $e->getMessage();
-            $message = str_replace($this->password, '{password}', $message);
+            $message = str_replace(urlencode($this->password), '{password}', $message);
 
             // handle scary messages
             if (Utils::contains($message, "remote: error: cannot lock ref")) {
