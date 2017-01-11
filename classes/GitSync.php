@@ -118,8 +118,11 @@ class GitSync extends Git
         $alias = $this->getRemote('name', $alias);
         $url = $this->getConfig('repository', $url);
 
+        $user = $this->user ?: $this->config->get('user');
+        $password = $this->password ?: $this->config->get('password');
+
         $command = $this->hasRemote($alias) ? 'set-url' : 'add';
-        $url = Helper::prepareRepository($this->user, $this->password, $url);
+        $url = Helper::prepareRepository($user, $password, $url);
 
         return $this->execute("remote ${command} ${alias} '${url}'");
     }
