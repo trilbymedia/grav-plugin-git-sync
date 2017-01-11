@@ -24,7 +24,10 @@ class Helper {
 
         if ($version && $output) {
             $output = explode(' ', array_shift($output));
-            $installed = array_pop($output);
+            $installed = array_filter($output, function($item) {
+                return version_compare($item, '0.0.1', '>=');
+            });
+            $installed = array_shift($installed);
         }
 
         return $installed;
