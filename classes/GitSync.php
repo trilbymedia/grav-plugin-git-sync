@@ -213,13 +213,14 @@ class GitSync extends Git
     public function execute($command)
     {
         try {
+            $bin = Helper::getGitBinary($this->config->get('git.bin'));
             $version = Helper::isGitInstalled(true);
 
             // -C <path> supported from 1.8.5 and above
             if (version_compare($version, '1.8.5', '>=')) {
-                $command = 'git -C ' . escapeshellarg($this->repositoryPath) . ' ' . $command;
+                $command = $bin . ' -C ' . escapeshellarg($this->repositoryPath) . ' ' . $command;
             } else {
-                $command = 'cd ' . $this->repositoryPath . ' && git ' . $command;
+                $command = 'cd ' . $this->repositoryPath . ' && ' . $bin . ' ' . $command;
             }
 
             $command .= ' 2>&1';

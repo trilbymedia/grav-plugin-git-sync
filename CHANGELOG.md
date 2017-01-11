@@ -1,6 +1,8 @@
 # v1.0.0-rc.2
 ##  XX/XX/2017
 
+1. [](#new)
+    * Allow to change the path for the `git` binary (#1)
 1. [](#improved)
     * Wizard: Improved Bitbucket explanation about stripping out `user@` from the copied HTTPS url (#3)
 1. [](#bugfix)

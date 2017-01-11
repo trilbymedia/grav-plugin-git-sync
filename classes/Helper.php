@@ -2,6 +2,7 @@
 
 namespace Grav\Plugin\GitSync;
 
+use Grav\Common\Grav;
 use SebastianBergmann\Git\RuntimeException;
 
 class Helper {
@@ -18,7 +19,9 @@ class Helper {
 
     public static function isGitInstalled($version = false)
     {
-        exec('git --version', $output, $returnValue);
+        $bin = Helper::getGitBinary();
+
+        exec($bin . ' --version', $output, $returnValue);
 
         $installed = $returnValue !== 0 ? false : true;
 
@@ -31,6 +34,13 @@ class Helper {
         }
 
         return $installed;
+    }
+
+    public static function getGitBinary($override = false)
+    {
+        $grav = Grav::instance()['config'];
+
+        return $override ?: $grav->get('plugins.git-sync.git.bin', 'git');
     }
 
     public static function prepareRepository($user, $password, $repository)
