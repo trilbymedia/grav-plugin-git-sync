@@ -151,7 +151,7 @@ class GitSyncPlugin extends Plugin
         $this->grav['twig']->twig_vars['git_sync'] = $settings;
 
         if ($this->grav['uri']->path() === '/admin/plugins/git-sync') {
-            $this->grav['assets']->addCss('plugin://git-sync/css/git-sync.css');
+            $this->grav['assets']->addCss('plugin://git-sync/css-compiled/git-sync.css');
             $this->grav['assets']->addJs('plugin://git-sync/js/app.js', ['loading' => 'defer']);
         }
     }
