@@ -139,7 +139,7 @@ class GitSyncPlugin extends Plugin
     {
         // workaround for admin plugin issue that doesn't properly unsubscribe
         // events upon plugin uninstall
-        if (!class_exists('Helper')) {
+        if (!class_exists('Grav\Plugin\GitSync\Helper')) {
             return false;
         }
 
