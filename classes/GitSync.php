@@ -213,7 +213,7 @@ class GitSync extends Git
     public function execute($command)
     {
         try {
-            $bin = Helper::getGitBinary($this->config->get('git.bin'));
+            $bin = Helper::getGitBinary($this->getGitConfig('bin', 'git'));
             $version = Helper::isGitInstalled(true);
 
             // -C <path> supported from 1.8.5 and above
@@ -247,6 +247,11 @@ class GitSync extends Git
 
             throw new \RuntimeException($message);
         }
+    }
+
+    public function getGitConfig($type, $value)
+    {
+        return !$value && isset($this->config['git']) ? $this->config['git'][$type] : $value;
     }
 
     public function getRemote($type, $value)
