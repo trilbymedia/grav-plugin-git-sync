@@ -137,6 +137,12 @@ class GitSyncPlugin extends Plugin
      */
     public function onTwigSiteVariables()
     {
+        // workaround for admin plugin issue that doesn't properly unsubscribe
+        // events upon plugin uninstall
+        if (!class_exists('Helper')) {
+            return false;
+        }
+
         $settings = [
             'first_time'    => !Helper::isGitInitialized(),
             'git_installed' => Helper::isGitInstalled()

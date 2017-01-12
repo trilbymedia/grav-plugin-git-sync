@@ -9,6 +9,7 @@
     * Fixed potential issue when retrieving the currently installed git version
     * Fixed issue that would not properly hide the password from error messages if the password contained special chars
     * Fixed issue preventing the plugin to properly get setup the very first time and causing 401 error (#4)
+    * Workaround for error thrown when removing the plugin
 
 # v1.0.0-rc.1
 ##  12/19/2016
