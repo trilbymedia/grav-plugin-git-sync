@@ -3,6 +3,7 @@
 
 1. [](#new)
     * Allow to change the path for the `git` binary (#1)
+    * Added CLI for synchronizing `bin/plugin git-sync sync` (#2)
 1. [](#improved)
     * Wizard: Improved Bitbucket explanation about stripping out `user@` from the copied HTTPS url (#3)
 1. [](#bugfix)

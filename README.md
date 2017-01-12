@@ -20,6 +20,16 @@ Thanks to this powerful bi-directional flow, Git Sync can now turn your site int
 * With the built-in Form Process action `gitsync`, you can trigger the synchronization anytime someone submits a post.
 * Any 3rd party plugin can integrate with Git Sync and trigger the synchronization through the `synchronize` event.
 
+# Command Line Interface
+
+Git Sync comes with a CLI that allows to run synchronizations right within your terminal. This feature is extremely useful in case you'd like to run an autonomous periodic crontab job to synchronize with your repository.
+
+To execute the command simply run:
+
+```bash
+bin/plugin git-sync sync
+```
+
 # Requirements
 
 In order for the plugin to work, the server needs to run `git` 1.7.1 and above.
