@@ -1,4 +1,5 @@
 <?php
+
 namespace Grav\Plugin;
 
 use Grav\Common\Data\Data;
@@ -43,6 +44,7 @@ class GitSyncPlugin extends Plugin
             $this->enable([
                 'onTwigTemplatePaths'  => ['onTwigTemplatePaths', 0],
                 'onTwigSiteVariables'  => ['onTwigSiteVariables', 0],
+                'onAdminSave'          => ['onAdminSave', 0],
                 'onAdminAfterSave'     => ['onAdminAfterSave', 0],
                 'onAdminAfterSaveAs'   => ['synchronize', 0],
                 'onAdminAfterDelete'   => ['synchronize', 0],
@@ -164,6 +166,35 @@ class GitSyncPlugin extends Plugin
         }
 
 
+    }
+
+    public function onAdminSave($event)
+    {
+        $obj           = $event['object'];
+        $isPluginRoute = $this->grav['uri']->path() == '/admin/plugins/' . $this->name;
+
+        if ($obj instanceof Data) {
+            if (!$isPluginRoute || !Helper::isGitInstalled()) {
+                return true;
+            } else {
+                // empty password, keep current one or encrypt if haven't already
+                $password = $obj->get('password', false);
+                if (!$password) { // set to !()
+                    $current_password = $this->controller->git->getPassword();
+                    // password exists but was never encrypted
+                    if (substr($current_password, 0, 8) !== 'gitsync-') {
+                        $current_password = Helper::encrypt($current_password);
+                    }
+                } else {
+                    // password is getting changed
+                    $current_password = Helper::encrypt($password);
+                }
+
+                $obj->set('password', $current_password);
+            }
+        }
+
+        return $obj;
     }
 
     public function onAdminAfterSave($event)

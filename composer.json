@@ -1,6 +1,7 @@
 {
     "require": {
-        "sebastian/git": "^2.1"
+        "sebastian/git": "^2.1",
+        "defuse/php-encryption": "^2.0"
     },
     "autoload": {
         "psr-4": {

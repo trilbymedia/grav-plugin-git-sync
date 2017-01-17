@@ -36,9 +36,21 @@ class GitSync extends Git
         return static::$instance = is_null(static::$instance) ? new static : static::$instance;
     }
 
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    public function getPassword()
+    {
+        return $this->password;
+    }
+
     public function setConfig($obj)
     {
         $this->config = $obj;
+        $this->user = $this->config['user'];
+        $this->password = $this->config['password'];
     }
 
     public function testRepository($url)
@@ -113,16 +125,18 @@ class GitSync extends Git
         $file->free();
     }
 
-    public function addRemote($alias = null, $url = null)
+    public function addRemote($alias = null, $url = null, $authenticated = false)
     {
         $alias = $this->getRemote('name', $alias);
         $url = $this->getConfig('repository', $url);
 
-        $user = $this->user ?: $this->config->get('user');
-        $password = $this->password ?: $this->config->get('password');
+        if ($authenticated) {
+            $user = $this->user ?: $this->config->get('user');
+            $password = Helper::decrypt($this->password ?: $this->config->get('password'));
+            $url = Helper::prepareRepository($user, $password, $url);
+        }
 
         $command = $this->hasRemote($alias) ? 'set-url' : 'add';
-        $url = Helper::prepareRepository($user, $password, $url);
 
         return $this->execute("remote ${command} ${alias} '${url}'");
     }
@@ -189,10 +203,13 @@ class GitSync extends Git
     {
         $name = $this->getRemote('name', $name);
         $branch = $this->getRemote('branch', $branch);
+        $this->addRemote(null, null, true);
 
         $this->fetch($name, $branch);
         $this->pull($name, $branch);
         $this->push($name, $branch);
+
+        $this->addRemote();
 
         return true;
     }
@@ -238,7 +255,7 @@ class GitSync extends Git
             return $output;
         } catch (\RuntimeException $e) {
             $message = $e->getMessage();
-            $message = str_replace(urlencode($this->password), '{password}', $message);
+            $message = str_replace(urlencode(Helper::decrypt($this->password)), '{password}', $message);
 
             // handle scary messages
             if (Utils::contains($message, "remote: error: cannot lock ref")) {

@@ -51,7 +51,7 @@ form:
       label: Git User
       placeholder: Username, not email
     password:
-      type: password
+      type: enc-password
       label: Git Password
       placeholder: Your Git Password
     webhook:

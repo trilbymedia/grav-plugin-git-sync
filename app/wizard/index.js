@@ -97,9 +97,9 @@ $(document).on('click', '[data-gitsync-action]', (event) => {
     if (!user) {
         error.push('Username is missing.');
     }
-    if (!password) {
+    /*if (!password) {
         error.push('Password is missing.');
-    }
+    }*/
     if (!repository) {
         error.push('Repository is missing.');
     }

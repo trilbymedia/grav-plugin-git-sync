@@ -2,10 +2,13 @@
 
 namespace Grav\Plugin\GitSync;
 
+use Defuse\Crypto\Crypto;
 use Grav\Common\Grav;
 use SebastianBergmann\Git\RuntimeException;
 
 class Helper {
+
+    private static $hash = '594ef69d-6c29-45f7-893a-f1b4342687d3';
 
     /**
      * Checks if the user/ folder is already initialized
@@ -57,6 +60,21 @@ class Helper {
             return $git->testRepository($repository);
         } catch (RuntimeException $e) {
             return $e->getMessage();
+        }
+    }
+
+    public static function encrypt($password)
+    {
+        return 'gitsync-' . Crypto::encryptWithPassword($password, self::$hash);
+    }
+
+    public static function decrypt($enc_password)
+    {
+        if (substr($enc_password, 0, 8) === 'gitsync-') {
+            $enc_password = substr($enc_password, 8);
+            return Crypto::decryptWithPassword($enc_password, self::$hash);
+        } else {
+            return $enc_password;
         }
     }
 }
