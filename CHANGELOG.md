@@ -1,5 +1,13 @@
+# v1.0.0-rc.3
+## 01/19/2016
+
+1. [](#new)
+    * Added logger setting to log Git command executions
+1. [](#improved)
+    * Improved Windows compatibility
+    
 # v1.0.0-rc.2
-##  01/16/2017
+## 01/16/2017
 
 1. [](#new)
     * Allow to change the path for the `git` binary (#1)

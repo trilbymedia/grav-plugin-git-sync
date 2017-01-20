@@ -6,6 +6,13 @@ Git Sync captures any change that you make on your site and instantly updates yo
 
 Thanks to this powerful bi-directional flow, Git Sync can now turn your site into a collaborative environment where the source of truth is always your git repository and unlimited collaborators and sites can share and contribute to the same content.
 
+## Videos: Setup and Demo
+
+| Up and Running in 2 mins | 2-way Sync Demonstration |
+| ------------ | ----------------- |
+| [![Up and Running in 2 mins](https://img.youtube.com/vi/avcGP0FAzB8/0.jpg)](https://www.youtube.com/watch?v=avcGP0FAzB8) | [![2-way Sync Demonstration](https://img.youtube.com/vi/3fy78afacyw/0.jpg)](https://www.youtube.com/watch?v=3fy78afacyw) |
+
+
 ## Features
 
 <img src="wizard.png" width="500" />
