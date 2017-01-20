@@ -94,6 +94,17 @@ form:
       label: Git Binary Path
       help: If the default `git` command doesn't work on your machine or if you want to specify a custom path, do it in here
       placeholder: /usr/bin/git
+    logging:
+      type: toggle
+      default: 0
+      label: Log Git Commands
+      help: Logs git commands. Useful to debug and troubleshoot git execution
+      highlight: 0
+      options:
+          1: PLUGIN_ADMIN.YES
+          0: PLUGIN_ADMIN.NO
+      validate:
+          type: bool
     Actions:
       type: section
       title: Actions

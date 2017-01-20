@@ -55,7 +55,7 @@ class GitSync extends Git
 
     public function testRepository($url)
     {
-        return $this->execute("ls-remote '${url}'");
+        return $this->execute("ls-remote \"${url}\"");
     }
 
     public function initializeRepository($force = false)
@@ -73,8 +73,8 @@ class GitSync extends Git
         $name = $this->getConfig('git', $name)['name'];
         $email = $this->getConfig('git', $email)['email'];
 
-        $this->execute("config user.name '{$name}'");
-        $this->execute("config user.email '{$email}'");
+        $this->execute("config user.name \"{$name}\"");
+        $this->execute("config user.email \"{$email}\"");
 
         return true;
     }
@@ -87,7 +87,7 @@ class GitSync extends Git
             $version = Helper::isGitInstalled(true);
             // remote get-url 'name' supported from 2.7.0 and above
             if (version_compare($version, '2.7.0', '>=')) {
-                $command = "remote get-url '{$name}'";
+                $command = "remote get-url \"{$name}\"";
             } else {
                 $command = "config --get remote.{$name}.url";
             }
@@ -138,7 +138,7 @@ class GitSync extends Git
 
         $command = $this->hasRemote($alias) ? 'set-url' : 'add';
 
-        return $this->execute("remote ${command} ${alias} '${url}'");
+        return $this->execute("remote ${command} ${alias} \"${url}\"");
     }
 
     public function add()
@@ -162,7 +162,7 @@ class GitSync extends Git
     public function commit($message = '(Grav GitSync) Automatic Commit')
     {
         $author = $this->user . ' <' . $this->getConfig('git', null)['email'] . '>';
-        $author = '--author="' . escapeshellarg($author) . '"';
+        $author = '--author="' . $author . '"';
         $message .= ' from ' . $this->user;
         $this->add();
         return $this->execute("commit " . $author . " -m " . escapeshellarg($message));
@@ -246,7 +246,17 @@ class GitSync extends Git
                 $command = 'LC_ALL=en_US.UTF-8 ' . $command;
             }
 
-            exec($command, $output, $returnValue);
+            if ($this->getConfig('logging', false)) {
+                $log_command = str_replace(urlencode(Helper::decrypt($this->password)), '{password}', $command);
+                $this->grav['log']->notice('gitsync[command]: ' . $log_command);
+
+                exec($command, $output, $returnValue);
+
+                $log_output = str_replace(urlencode(Helper::decrypt($this->password)), '{password}', implode("\n", $output));
+                $this->grav['log']->notice('gitsync[output]: ' . $log_output);
+            } else {
+                exec($command, $output, $returnValue);
+            }
 
             if ($returnValue !== 0) {
                 throw new \RuntimeException(implode("\r\n", $output));
