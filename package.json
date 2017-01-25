@@ -22,20 +22,20 @@
     "vex-js": "^3.0.0"
   },
   "devDependencies": {
-    "babel-core": "^6.18.2",
+    "babel-core": "^6.22.1",
     "babel-eslint": "^7.1.1",
-    "babel-loader": "^6.2.9",
-    "babel-polyfill": "^6.16.0",
-    "babel-preset-es2015": "^6.18.0",
-    "babel-preset-stage-3": "^6.17.0",
+    "babel-loader": "^6.2.10",
+    "babel-polyfill": "^6.22.0",
+    "babel-preset-es2015": "^6.22.0",
+    "babel-preset-stage-3": "^6.22.0",
     "css-loader": "^0.26.1",
-    "eslint": "^3.11.1",
+    "eslint": "^3.14.0",
     "eslint-loader": "^1.6.1",
     "exports-loader": "^0.6.3",
     "imports-loader": "^0.7.0",
     "json-loader": "^0.5.4",
     "style-loader": "^0.13.1",
     "webpack": "^1.14.0",
-    "whatwg-fetch": "^2.0.1"
+    "whatwg-fetch": "^2.0.2"
   }
 }
