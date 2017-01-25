@@ -1,11 +1,17 @@
+# v1.0.0
+## 01/25/2017
+
+1. [](#new)
+    * Released plugin to stable GPM channel
+
 # v1.0.0-rc.3
-## 01/19/2016
+## 01/19/2017
 
 1. [](#new)
     * Added logger setting to log Git command executions
 1. [](#improved)
     * Improved Windows compatibility
-    
+
 # v1.0.0-rc.2
 ## 01/16/2017
 
