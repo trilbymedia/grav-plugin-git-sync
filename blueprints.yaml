@@ -1,6 +1,5 @@
 name: Git Sync
-version: 1.0.0-rc.3
-testing: true
+version: 1.0.0
 description: Allows to synchronize portions of Grav with Git Repositories (GitHub, BitBucket, GitLab)
 icon: git
 author:
@@ -113,4 +112,3 @@ form:
       type: git-wizard
       label: Text Variable
       help: Text to add to the top of a page
-
