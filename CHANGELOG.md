@@ -1,3 +1,9 @@
+# v1.0.1
+## 01/29/2017
+
+1. [](#bugfix)
+    * Changed default GitSync email for commits
+    
 # v1.0.0
 ## 01/25/2017
 
