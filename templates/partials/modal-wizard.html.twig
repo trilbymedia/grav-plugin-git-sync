@@ -95,9 +95,7 @@
             </div>
             <div class="hidden-step-allothers wizard-padding hidden">
               <h4>Other Git Repositories</h4>
-              <p>
-                    Other Git Repositorys: Please note this is an advanced option. Locate the area where you add the webhook in the repository. This will likely be in the settings for the repository you are adding. 
-              </p>
+
             </div>
 
             <p>
@@ -106,7 +104,7 @@
 
             <p class="hidden-step-bitbucket hidden">
                 When you copy the HTTPS URL from Bitbucket, it also adds <code>your-user@</code> at the beginning of the URL which is not needed and should be removed. The URL should start with <code>https://bitbucket.org/your-user/...</code>
-            </p>        
+            </p>
 
             <p>
                 <label>
@@ -115,7 +113,6 @@
                 </label>
             </p>
 
-            
             <p class="center">
                 <a href="#" class="button" data-gitsync-action="test"><i class="fa fa-fw fa-plug"></i> Test Connection</a>
             </p>
@@ -186,6 +183,27 @@
                 <ol>
                     <li>Head to the repository on GitLab and click on <code><i class="fa fa-cog"></i></code> dropdown button at the top right of the page</li>
                     <li>Select <code>Integrations</code> (or <code>Webhooks</code> if < v8.16) from the list</li>
+                    <li>
+                        Compile the form as follows
+                        <ul>
+                            <li><strong>URL</strong>: <code>{{ frontend_url }}<span class="gitsync-webhook">{{ settings.webhook|default('/_git-sync') }}</span></code></li>
+                            <li><strong>Secret Token</strong>: <em>leave empty</em></li>
+                            <li><strong>Push events</strong>: <i class="fa fa-check-square-o"></i></li>
+                        </ul>
+                    </li>
+                    <li>Click the <code>Add Webhook</code> button</li>
+                </ol>
+            </div>
+
+            <div class="hidden-step-allothers wizard-padding hidden">
+                <h4>Other git systems (Generic)</h4>
+                <ol>
+                 <li>
+                  Locate the area where you add the webhook in the repository. This will likely be in the settings for the repository you are adding. 
+                  </li>
+                  <li>
+                  Please note this is an advanced option and dependent on the choice of git solution in use.
+                  </li>
                     <li>
                         Compile the form as follows
                         <ul>
