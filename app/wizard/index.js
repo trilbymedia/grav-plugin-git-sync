@@ -6,7 +6,7 @@ import $ from 'jquery';
 
 const WIZARD = $('[data-remodal-id="wizard"]');
 const RESET_LOCAL = $('[data-remodal-id="reset-local"]');
-const SERVICES = { 'github': 'github.com', 'bitbucket': 'bitbucket.org', 'gitlab': 'gitlab.com' };
+const SERVICES = { 'github': 'github.com', 'bitbucket': 'bitbucket.org', 'gitlab': 'gitlab.com', 'allothers': 'allothers' };
 const TEMPLATES = {
     REPO_URL: 'https://{placeholder}/getgrav/grav.git'
 };
