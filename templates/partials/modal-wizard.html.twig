@@ -43,9 +43,9 @@
                         <a href="https://gitlab.com/users/sign_in" target="_blank">(create account)</a>
                     </label>
                      <label>
-                        <input type="radio" value="allothers" name="gitsync[repository]" {{ 'allothers' in settings.repository ? 'checked' : '' }} />
+                        <input type="radio" value="allothers" name="gitsync[repository]" {{ 'allothers.repo' in settings.repository ? 'checked' : '' }} />
                         <img src="{{ url('plugin://git-sync/images/repos/gitlogo.svg') }}" />
-                        (Advanced setting)  <p>Any other git repository with webhook capablity.</p>
+                        (Generic solution)  <p>Any other git solution with webhook capablity.</p>
                     </label>
                 </div>
                 <div class="column">
