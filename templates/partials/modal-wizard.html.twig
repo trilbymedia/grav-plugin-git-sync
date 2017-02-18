@@ -1,5 +1,5 @@
 {% set settings = config.plugins['git-sync'] %}
-{% set frontend_url = uri.base ~ base_url_relative_frontend %}
+{% set frontend_url = (uri.base ~ base_url_relative_frontend)|trim('/') %}
 <div class="remodal" data-remodal-id="wizard" data-remodal-options="hashTracking: false">
 
     <h1>Git Sync - Wizard</h1>

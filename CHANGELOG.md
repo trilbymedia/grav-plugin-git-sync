@@ -3,6 +3,7 @@
 
 1. [](#bugfix)
     * Fixed issue preventing the custom Git Binary Path from getting used (#15)
+    * Fixed issue with Webhook auto-generated URL where it would display double slashes in case of root domain (#15)
 
 # v1.0.1
 ## 01/29/2017
