@@ -39,6 +39,11 @@
                         <img src="{{ url('plugin://git-sync/images/repos/gitlab.svg') }}" />
                         <a href="https://gitlab.com/users/sign_in" target="_blank">(create account)</a>
                     </label>
+                     <label>
+                        <input type="radio" value="allothers" name="gitsync[repository]" {{ 'allothers.repo' in settings.repository ? 'checked' : '' }} />
+                        <img src="{{ url('plugin://git-sync/images/repos/gitlogo.svg') }}" />
+                         <small>(any Git service with webhooks)</small>
+                    </label>
                 </div>
                 <div class="column">
                     <label>
@@ -97,6 +102,10 @@
                 <p>
                     Follow the instructions on <a href="https://docs.gitlab.com/ce/gitlab-basics/create-project.html" target="_blank">GitLab Documentation</a> to create a new GitLab repository.
                 </p>
+            </div>
+            <div class="hidden-step-allothers wizard-padding hidden">
+              <h4>Other Git Repositories</h4>
+
             </div>
 
             <p>
@@ -193,6 +202,27 @@
                         </ul>
                     </li>
                     <li>Click the <code>Add Webhook</code>-button</li>
+                </ol>
+            </div>
+
+            <div class="hidden-step-allothers wizard-padding hidden">
+                <h4>Other git systems (Generic)</h4>
+                <ol>
+                 <li>
+                  Locate the area where you add the webhook in the repository. This will likely be in the settings for the repository you are adding. 
+                  </li>
+                  <li>
+                  Please note this is an advanced option and dependent on the choice of git solution in use.
+                  </li>
+                    <li>
+                        Compile the form as follows
+                        <ul>
+                            <li><strong>URL</strong>: <code>{{ frontend_url }}<span class="gitsync-webhook">{{ settings.webhook|default('/_git-sync') }}</span></code></li>
+                            <li><strong>Secret Token</strong>: <em>leave empty</em></li>
+                            <li><strong>Push events</strong>: <i class="fa fa-check-square-o"></i></li>
+                        </ul>
+                    </li>
+                    <li>Click the <code>Add Webhook</code> button</li>
                 </ol>
             </div>
 
