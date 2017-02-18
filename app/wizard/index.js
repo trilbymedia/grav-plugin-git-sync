@@ -173,6 +173,10 @@ $(document).on('keyup', '[data-gitsync-uribase] [name="gitsync[webhook]"]', (eve
 
 $(document).on('change', '[name="gitsync[repository]"]', (event) => {
     const target = $(event.target);
+    if (!target.is(':checked')) {
+        return;
+    }
+
     SERVICE = target.val();
 
     Object.keys(SERVICES).forEach((service) => {
