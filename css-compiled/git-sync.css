@@ -36,6 +36,15 @@
   [data-remodal-id="wizard"] .columns .column, [data-remodal-id="reset-local"] .columns .column {
     flex: 1; }
 
+[data-remodal-id="wizard"] .step-1 div.column:nth-child(1) > label:nth-child(4), [data-remodal-id="reset-local"] .step-1 div.column:nth-child(1) > label:nth-child(4) {
+  width: 110%; }
+
+[data-remodal-id="wizard"] .step-1 div.column:nth-child(2), [data-remodal-id="reset-local"] .step-1 div.column:nth-child(2) {
+  margin-left: 25px; }
+
+[data-remodal-id="wizard"] .step-1 div.column:nth-child(2) > label:nth-child(1) > input:nth-child(1), [data-remodal-id="wizard"] .step-1 div.column:nth-child(2) > label:nth-child(2) > input:nth-child(1), [data-remodal-id="reset-local"] .step-1 div.column:nth-child(2) > label:nth-child(1) > input:nth-child(1), [data-remodal-id="reset-local"] .step-1 div.column:nth-child(2) > label:nth-child(2) > input:nth-child(1) {
+  width: 85%; }
+
 #admin-main [data-grav-field="git-wizard"] .danger.button-bar {
   margin: 0;
   padding: 0;
