@@ -23,7 +23,7 @@
         <h1>Step 1 - Hosting Service</h1>
         <div class="panel hidden disabled">
             <p>
-                Select one of the supported <i class="fa fa-fw fa-git"></i> repository hosting services you will be using for remotely store your data. Once you picked one, insert the username and password to access the service.
+                Select one of the following <i class="fa fa-fw fa-git"></i> repository hosting services you will be using for remotely store your data, or choose other and add your details manually. Once you picked one, insert the username and password to access the service.
             </p>
             <div class="columns wizard-padding">
                 <div class="column">
@@ -41,6 +41,11 @@
                         <input type="radio" value="gitlab" name="gitsync[repository]" {{ 'gitlab.com' in settings.repository ? 'checked' : '' }} />
                         <img src="{{ url('plugin://git-sync/images/repos/gitlab.svg') }}" />
                         <a href="https://gitlab.com/users/sign_in" target="_blank">(create account)</a>
+                    </label>
+                     <label>
+                        <input type="radio" value="allothers" name="gitsync[repository]" {{ 'allothers.repo' in settings.repository ? 'checked' : '' }} />
+                        <img src="{{ url('plugin://git-sync/images/repos/gitlogo.svg') }}" />
+                         <small>(any Git service with webhooks)</small>
                     </label>
                 </div>
                 <div class="column">
@@ -87,6 +92,10 @@
                 <p>
                     Follow the instructions on <a href="https://docs.gitlab.com/ce/gitlab-basics/create-project.html" target="_blank">GitLab Documentation</a> to create a new GitLab repository.
                 </p>
+            </div>
+            <div class="hidden-step-allothers wizard-padding hidden">
+              <h4>Other Git Repositories</h4>
+
             </div>
 
             <p>
@@ -174,6 +183,27 @@
                 <ol>
                     <li>Head to the repository on GitLab and click on <code><i class="fa fa-cog"></i></code> dropdown button at the top right of the page</li>
                     <li>Select <code>Integrations</code> (or <code>Webhooks</code> if < v8.16) from the list</li>
+                    <li>
+                        Compile the form as follows
+                        <ul>
+                            <li><strong>URL</strong>: <code>{{ frontend_url }}<span class="gitsync-webhook">{{ settings.webhook|default('/_git-sync') }}</span></code></li>
+                            <li><strong>Secret Token</strong>: <em>leave empty</em></li>
+                            <li><strong>Push events</strong>: <i class="fa fa-check-square-o"></i></li>
+                        </ul>
+                    </li>
+                    <li>Click the <code>Add Webhook</code> button</li>
+                </ol>
+            </div>
+
+            <div class="hidden-step-allothers wizard-padding hidden">
+                <h4>Other git systems (Generic)</h4>
+                <ol>
+                 <li>
+                  Locate the area where you add the webhook in the repository. This will likely be in the settings for the repository you are adding. 
+                  </li>
+                  <li>
+                  Please note this is an advanced option and dependent on the choice of git solution in use.
+                  </li>
                     <li>
                         Compile the form as follows
                         <ul>
