@@ -51,8 +51,9 @@ form:
       placeholder: Username, not email
     password:
       type: enc-password
-      label: Git Password
-      placeholder: Your Git Password
+      label: Git Password or Token
+      placeholder: Your Git Password or Token
+      description: Enter your password or token to encrypt and securely store it, then save the settings. It will not show up here for security reasons.
     webhook:
       type: text
       label: Repository Web Hook

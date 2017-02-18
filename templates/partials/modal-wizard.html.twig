@@ -7,10 +7,7 @@
     <div class="step-0">
         <div class="panel">
             <p>
-                This wizard will guide you through a few simple steps that will instruct you on how to set up the plugin and your <i class="fa fa-fw fa-git"></i> repository.
-            </p>
-            <p>
-                A the end of these steps your will have a bi-directional synchronization link between your site and your <i class="fa fa-fw fa-git"></i> repository.
+                This wizard will guide you through a few simple steps that will help you set up the plugin and your <i class="fa fa-fw fa-git"></i> repository. When done you will have a bi-directional synchronization link between your site and the <i class="fa fa-fw fa-git"></i> repository.
             </p>
 
             <p>
@@ -23,7 +20,7 @@
         <h1>Step 1 - Hosting Service</h1>
         <div class="panel hidden disabled">
             <p>
-                Select one of the following <i class="fa fa-fw fa-git"></i> repository hosting services you will be using for remotely store your data, or choose other and add your details manually. Once you picked one, insert the username and password to access the service.
+                Select the <i class="fa fa-fw fa-git"></i> repository-hosting service that you will be using to remotely store your data. Once you picked one, insert the username and password or token to access the service. Passwords are saved securely.
             </p>
             <div class="columns wizard-padding">
                 <div class="column">
@@ -54,11 +51,24 @@
                         <input type="text" name="gitsync[repo_user]" placeholder="Username, not email" value="{{ settings.user|default('') }}" />
                     </label>
                     <label>
-                        Git Password
+                        Git Password or Token
                         <input type="password" name="gitsync[repo_password]" placeholder="Password" value="" />
                     </label>
                 </div>
             </div>
+            
+            <p>
+                You can use an Access Token instead of your password. Using a token is more secure than using your password, because you can limit what can be done using it. As we are just syncing, we only need to give it read-and-write access to repositories and webhooks. Instructions:
+            </p>
+            <p>
+                For <a href="https://help.github.com/articles/creating-an-access-token-for-command-line-use/" target="_blank">GitHub's Personal Access Tokens</a> select the following Scopes: Check <code>repo</code> for "Full control of private repositories" and <code>admin:repo_hook</code> for "Full control of repository hooks".
+            </p>
+            <p>
+                For <a href="https://confluence.atlassian.com/bitbucket/app-passwords-828781300.html" target="_blank">BitBucket's App Passwords</a> select the following Permissions: In <code>Repositories</code>, check <code>Read</code>, <code>Write</code>, and in <code>Webhooks</code> check <code>Read and write</code>.
+            </p>
+            <p>
+                For <a href="https://docs.gitlab.com/ee/api/README.html#personal-access-tokens" target="_blank">GitLab's Personal Access Tokens</a> select the following Scopes: Check <code>API</code> for "Access your API".
+            </p>
 
             <p>
                 Press <strong>Next</strong> to continue.
@@ -70,10 +80,10 @@
         <h1>Step 2 - Setting up the repository</h1>
         <div class="panel hidden disabled">
             <p>
-                If you already have a repository set up and ready to be used, you can skip this step. Otherwise please continue reading below and follow the instructions.
+                If you already have a repository set up and ready to use, you can skip this step. Otherwise please continue reading.
             </p>
 
-            <p>If you are going to set up the repository now, please ensure you also make a commit as the service provider offers to do (whether it's the README or .gitignore). GitSync won't work unless the repository has at least one commit.</p>
+            <p>If you are going to set up the repository now, please ensure you also make a commit as the service provider offers to do when it is created (whether it's the README or .gitignore). GitSync won't work unless the repository has at least one commit.</p>
 
             <div class="hidden-step-github wizard-padding hidden">
                 <h4>GitHub</h4>
@@ -103,7 +113,7 @@
             </p>
 
             <p class="hidden-step-bitbucket hidden">
-                When you copy the HTTPS URL from Bitbucket, it also adds <code>your-user@</code> at the beginning of the URL which is not needed and should be removed. The URL should start with <code>https://bitbucket.org/your-user/...</code>
+                When you copy the HTTPS URL from Bitbucket, it also adds <code>your-user@</code> at the beginning of the URL which is not needed and should be removed. The URL be something like <code>https://bitbucket.org/your-user/your-repository.git</code>
             </p>
 
             <p>
@@ -127,7 +137,7 @@
         <h1>Step 3 - Setting up the Webhook</h1>
         <div class="panel hidden disabled" data-gitsync-uribase="{{ frontend_url }}">
             <p>
-                The Webhook allows to synchronize the site every time a change happens in the repository. The Webhook is an URL that needs to be setup in the repository. By Default the Webhook is set to <code>/_git-sync</code> but you can change it to whatever name you'd like</p>
+                The Webhook allows to synchronize the site every time a change happens in the repository. The Webhook is an URL that needs to be setup in the repository. By Default the Webhook is set to <code>/_git-sync</code> but you can change it to whatever name you'd like.</p>
 
             <p>
                 <label>
@@ -137,7 +147,7 @@
             </p>
 
             <p>
-                In order to setup the Webhook in your repository, please follow the steps below. If you haven't already created a repository from the previous steps, now it's the time to do so.
+                In order to setup the Webhook in your repository, please follow the steps below. If you haven't already created a repository from the previous steps, now is the time to do so.
             </p>
 
             <div class="hidden-step-github wizard-padding hidden">
@@ -145,9 +155,9 @@
                 <ol>
                     <li>Head to the repository on GitHub and click on <code>Settings</code></li>
                     <li>Click on <code>Webhooks</code> in the left sidebar</li>
-                    <li>Click on the <code>Add webhook</code> button on the right</li>
+                    <li>Click on the <code>Add webhook</code>-button on the right</li>
                     <li>
-                        Compile the form as follows
+                        Fill out the form as follows
                         <ul>
                             <li><strong>Payload URL</strong>: <code>{{ frontend_url }}<span class="gitsync-webhook">{{ settings.webhook|default('/_git-sync') }}</span></code></li>
                             <li><strong>Content type</strong>: <code>application/json</code></li>
@@ -156,7 +166,7 @@
                             <li><strong>Active</strong>: <i class="fa fa-check-square-o"></i></li>
                         </ul>
                     </li>
-                    <li>Click the <code>Add webhook</code> button</li>
+                    <li>Click the <code>Add webhook</code>-button</li>
                 </ol>
             </div>
 
@@ -165,33 +175,33 @@
                 <ol>
                     <li>Head to the repository on Bitbucket and click on <code><i class="fa fa-cog"></i> Settings</code> in the sidebar (if the sidebar is collapsed, this is represented by just a <i class="fa fa-cog"></i>)</li>
                     <li>Click on <code>Webhooks</code> on the left sidebar of the page that just loaded</li>
-                    <li>Click on the <code>Add webhook</code> button at the top</li>
+                    <li>Click on the <code>Add webhook</code>-button at the top</li>
                     <li>
-                        Compile the form as follows
+                        Fill out the form as follows
                         <ul>
-                            <li><strong>Title</strong>: <em>any title you like, ie. GitSync</em></li>
+                            <li><strong>Title</strong>: <em>any title you like, eg. GitSync</em></li>
                             <li><strong>URL</strong>: <code>{{ frontend_url }}<span class="gitsync-webhook">{{ settings.webhook|default('/_git-sync') }}</span></code></li>
                             <li><strong>Active</strong>: <i class="fa fa-check-square-o"></i></li>
                             <li><strong>Repository push</strong>: <i class="fa fa-dot-circle-o"></i></li>
                         </ul>
                     </li>
-                    <li>Click the <code>Save</code> button</li>
+                    <li>Click the <code>Save</code>-button</li>
                 </ol>
             </div>
             <div class="hidden-step-gitlab wizard-padding hidden">
                 <h4>GitLab</h4>
                 <ol>
-                    <li>Head to the repository on GitLab and click on <code><i class="fa fa-cog"></i></code> dropdown button at the top right of the page</li>
+                    <li>Head to the repository on GitLab and click on <code><i class="fa fa-cog"></i></code> dropdown-button at the top right of the page</li>
                     <li>Select <code>Integrations</code> (or <code>Webhooks</code> if < v8.16) from the list</li>
                     <li>
-                        Compile the form as follows
+                        Fill out the form as follows
                         <ul>
                             <li><strong>URL</strong>: <code>{{ frontend_url }}<span class="gitsync-webhook">{{ settings.webhook|default('/_git-sync') }}</span></code></li>
                             <li><strong>Secret Token</strong>: <em>leave empty</em></li>
                             <li><strong>Push events</strong>: <i class="fa fa-check-square-o"></i></li>
                         </ul>
                     </li>
-                    <li>Click the <code>Add Webhook</code> button</li>
+                    <li>Click the <code>Add Webhook</code>-button</li>
                 </ol>
             </div>
 
@@ -226,7 +236,7 @@
         <h1>Step 4 - Choose what to Synchronize</h1>
         <div class="panel hidden disabled">
             <p>
-                You can choose to synchronize any portion of the <strong>user/</strong> folder independently. It is highly encouraged not to synchronize the <strong>config/</strong> and <strong>data/</strong> folders because they might contain sensitive data you might not realize gets shared publicly.
+                You can choose to synchronize any portion of the <strong>user/</strong> folder independently. It is highly encouraged not to synchronize the <strong>config/</strong>- and <strong>data/</strong>-folders because they might contain sensitive data you might not realize gets shared publicly.
             </p>
 
             <div class="columns wizard-padding">
@@ -277,7 +287,7 @@
                     The <strong>GitSync</strong> plugin requires the <i class="fa fa-fw fa-git"></i> binary to be installed and accessible in order to work.</p>
 
                 <p>
-                    If <i class="fa fa-fw fa-git"></i> is missing from your hosting provider, you should open a ticket with them and request for it to be installed.
+                    If <i class="fa fa-fw fa-git"></i> is missing from your hosting provider, you should open a ticket with them and request it to be installed.
                 </p>
             </div>
         </div>
