@@ -278,7 +278,7 @@ class GitSync extends Git
 
     public function getGitConfig($type, $value)
     {
-        return !$value && isset($this->config['git']) ? $this->config['git'][$type] : $value;
+        return isset($this->config['git']) && isset($this->config['git'][$type]) ? $this->config['git'][$type] : $value;
     }
 
     public function getRemote($type, $value)

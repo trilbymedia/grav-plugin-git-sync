@@ -1,3 +1,9 @@
+# v1.1.0
+## XX/XX/2017
+
+1. [](#bugfix)
+    * Fixed issue preventing the custom Git Binary Path from getting used (#15)
+
 # v1.0.1
 ## 01/29/2017
 
