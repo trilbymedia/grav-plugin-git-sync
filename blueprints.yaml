@@ -1,5 +1,5 @@
 name: Git Sync
-version: 1.0.1
+version: 1.0.2
 description: Allows to synchronize portions of Grav with Git Repositories (GitHub, BitBucket, GitLab)
 icon: git
 author:
@@ -51,8 +51,9 @@ form:
       placeholder: Username, not email
     password:
       type: enc-password
-      label: Git Password
-      placeholder: Your Git Password
+      label: Git Password or Token
+      placeholder: Your Git Password or Token
+      description: Enter your password or token to encrypt and securely store it, then save the settings. It will not show up here for security reasons.
     webhook:
       type: text
       label: Repository Web Hook
@@ -77,6 +78,15 @@ form:
       default: master
       label: Remote Branch
       placeholder: master
+    git.author:
+      type: select
+      default: gituser
+      label: Commits Author
+      options:
+        gituser: Use Git User Name
+        gitsync: Use GitSync Committer Name
+        gravuser: Use Grav User Name
+        gravfull: Use Grav User Full Name
     git.name:
       type: text
       default: GitSync

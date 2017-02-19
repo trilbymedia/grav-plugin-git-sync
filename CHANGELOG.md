@@ -1,3 +1,16 @@
+# v1.0.2
+## 02/18/2017
+
+1. [](#new)
+    * It is now possible to change the committer name. You can choose between Git User, GitSync Committer Name, Grav User Name, Grav User Fullname (#14).
+2. [](#improved)
+    * Added more documentation and description about the support of 2FA and Access Tokens (#16, #19, thanks @OleVik)
+    * Added 4th Generic Git choice in the wizard for self-hosted and custom git services (Gogs/Gitea) (#7 - #22 - thanks @erlepereira)
+1. [](#bugfix)
+    * Fixed issue preventing the custom Git Binary Path from getting used (#15)
+    * Fixed issue with Webhook auto-generated URL where it would display double slashes in case of root domain (#15)
+    * Fixed issue with the modal not properly restoring the tutorial steps of the active selected service
+    
 # v1.0.1
 ## 01/29/2017
 

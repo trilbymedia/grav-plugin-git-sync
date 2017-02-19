@@ -6,7 +6,7 @@ import $ from 'jquery';
 
 const WIZARD = $('[data-remodal-id="wizard"]');
 const RESET_LOCAL = $('[data-remodal-id="reset-local"]');
-const SERVICES = { 'github': 'github.com', 'bitbucket': 'bitbucket.org', 'gitlab': 'gitlab.com' };
+const SERVICES = { 'github': 'github.com', 'bitbucket': 'bitbucket.org', 'gitlab': 'gitlab.com', 'allothers': 'allothers.repo' };
 const TEMPLATES = {
     REPO_URL: 'https://{placeholder}/getgrav/grav.git'
 };
@@ -173,6 +173,10 @@ $(document).on('keyup', '[data-gitsync-uribase] [name="gitsync[webhook]"]', (eve
 
 $(document).on('change', '[name="gitsync[repository]"]', (event) => {
     const target = $(event.target);
+    if (!target.is(':checked')) {
+        return;
+    }
+
     SERVICE = target.val();
 
     Object.keys(SERVICES).forEach((service) => {
@@ -184,6 +188,18 @@ $(document).on('change', '[name="gitsync[repository]"]', (event) => {
         }
     });
 
+});
+
+$(document).on('click', '[data-access-tokens-details]', (event) => {
+    const button = $(event.currentTarget);
+    const panel = button.closest('.access-tokens').find('.access-tokens-details');
+    
+    panel.slideToggle(250, () => {
+        const isVisible = panel.is(':visible');
+        const icon = button.find('.fa');
+
+        icon.removeClass('fa-chevron-down fa-chevron-up').addClass(`fa-chevron-${isVisible ? 'up' : 'down'}`);
+    });
 });
 
 $(document).ready(() => {
