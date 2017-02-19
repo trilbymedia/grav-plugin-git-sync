@@ -1,5 +1,5 @@
-# v1.1.0
-## XX/XX/2017
+# v1.0.2
+## 02/18/2017
 
 1. [](#new)
     * It is now possible to change the committer name. You can choose between Git User, GitSync Committer Name, Grav User Name, Grav User Fullname (#14).
