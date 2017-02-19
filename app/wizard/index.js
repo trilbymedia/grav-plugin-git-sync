@@ -190,6 +190,18 @@ $(document).on('change', '[name="gitsync[repository]"]', (event) => {
 
 });
 
+$(document).on('click', '[data-access-tokens-details]', (event) => {
+    const button = $(event.currentTarget);
+    const panel = button.closest('.access-tokens').find('.access-tokens-details');
+    
+    panel.slideToggle(250, () => {
+        const isVisible = panel.is(':visible');
+        const icon = button.find('.fa');
+
+        icon.removeClass('fa-chevron-down fa-chevron-up').addClass(`fa-chevron-${isVisible ? 'up' : 'down'}`);
+    });
+});
+
 $(document).ready(() => {
     STEPS = WIZARD.find('[class^="step-"]').length - 1;
     WIZARD.wrapInner('<form></form>');

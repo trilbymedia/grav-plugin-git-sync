@@ -17,6 +17,11 @@
     </div>
 
     <div class="step-1">
+        {% set selectedRepo = 'allothers' %}
+        {% set selectedRepo = 'github.com' in settings.repository ? 'github' : selectedRepo %}
+        {% set selectedRepo = 'bitbucket.com' in settings.repository ? 'bitbucket' : selectedRepo %}
+        {% set selectedRepo = 'gitlab.com' in settings.repository ? 'gitlab' : selectedRepo %}
+
         <h1>Step 1 - Hosting Service</h1>
         <div class="panel hidden disabled">
             <p>
@@ -25,22 +30,22 @@
             <div class="columns wizard-padding">
                 <div class="column">
                     <label>
-                        <input type="radio" value="github" name="gitsync[repository]" {{ 'github.com' in settings.repository ? 'checked' : '' }} />
+                        <input type="radio" value="github" name="gitsync[repository]" {{ selectedRepo == 'github' ? 'checked' : '' }} />
                         <img src="{{ url('plugin://git-sync/images/repos/github.svg') }}" />
                         <a href="https://github.com/join?source=header-home" target="_blank">(create account)</a>
                     </label>
                     <label>
-                        <input type="radio" value="bitbucket" name="gitsync[repository]" {{ 'bitbucket.org' in settings.repository ? 'checked' : '' }} />
+                        <input type="radio" value="bitbucket" name="gitsync[repository]" {{ selectedRepo == 'bitbucket' ? 'checked' : '' }} />
                         <img src="{{ url('plugin://git-sync/images/repos/bitbucket.svg') }}" />
                         <a href="https://bitbucket.org/account/signup/" target="_blank">(create account)</a>
                     </label>
                     <label>
-                        <input type="radio" value="gitlab" name="gitsync[repository]" {{ 'gitlab.com' in settings.repository ? 'checked' : '' }} />
+                        <input type="radio" value="gitlab" name="gitsync[repository]" {{ selectedRepo == 'gitlab' ? 'checked' : '' }} />
                         <img src="{{ url('plugin://git-sync/images/repos/gitlab.svg') }}" />
                         <a href="https://gitlab.com/users/sign_in" target="_blank">(create account)</a>
                     </label>
                      <label>
-                        <input type="radio" value="allothers" name="gitsync[repository]" {{ 'allothers.repo' in settings.repository ? 'checked' : '' }} />
+                        <input type="radio" value="allothers" name="gitsync[repository]" {{ selectedRepo == 'allothers' ? 'checked' : '' }} />
                         <img src="{{ url('plugin://git-sync/images/repos/gitlogo.svg') }}" />
                          <small>(any Git service with webhooks)</small>
                     </label>
@@ -56,19 +61,70 @@
                     </label>
                 </div>
             </div>
-            
-            <p>
-                You can use an Access Token instead of your password. Using a token is more secure than using your password, because you can limit what can be done using it. As we are just syncing, we only need to give it read-and-write access to repositories and webhooks. Instructions:
-            </p>
-            <p>
-                For <a href="https://help.github.com/articles/creating-an-access-token-for-command-line-use/" target="_blank">GitHub's Personal Access Tokens</a> select the following Scopes: Check <code>repo</code> for "Full control of private repositories" and <code>admin:repo_hook</code> for "Full control of repository hooks".
-            </p>
-            <p>
-                For <a href="https://confluence.atlassian.com/bitbucket/app-passwords-828781300.html" target="_blank">BitBucket's App Passwords</a> select the following Permissions: In <code>Repositories</code>, check <code>Read</code>, <code>Write</code>, and in <code>Webhooks</code> check <code>Read and write</code>.
-            </p>
-            <p>
-                For <a href="https://docs.gitlab.com/ee/api/README.html#personal-access-tokens" target="_blank">GitLab's Personal Access Tokens</a> select the following Scopes: Check <code>API</code> for "Access your API".
-            </p>
+
+            <div class="access-tokens wizard-padding">
+                <h3>Access Tokens and 2FA (Two-factor Authentication)</h3>
+                <p>If you never used Access Tokens or don't know what 2FA is, you most likely only need your <strong>regular password</strong> for the field above. You can then skip this step and press <strong>Next</strong> to continue.</p>
+
+                <p><a href="#" class="button" data-access-tokens-details>More Details <i class="fa fa-fw fa-chevron-down"></i></a></p>
+
+                <div class="access-tokens-details" style="display: none;">
+                    <p>With GitSync you have the option to use an Access Token instead of your password, however If you have <strong>2FA (Two-factor authentication)</strong> enabled for your git service, you are allowed to only use Access Tokens.</p>
+
+                    <p>Using a token is more secure than using your password, because you can limit what can be done using it and it can be revoked without worrying about changing the password. As we are just syncing, we only need to give it read-and-write access to repositories and webhooks.
+                    </p>
+
+                    <div class="hidden-step-github hidden">
+                        <h4>GitHub</h4>
+                        <p>
+                            With <a href="https://help.github.com/articles/creating-an-access-token-for-command-line-use/" target="_blank">GitHub's Personal Access Tokens</a>, select the following Scopes:
+                        </p>
+
+                        <ul>
+                            <li><i class="fa fa-check-square-o"></i> <code>repo</code> (Full control of private repositories)</li>
+                            <li><i class="fa fa-check-square-o"></i> <code>admin:repo_hook</code> (Full control of repository hooks)</li>
+                        </ul>
+                    </div>
+
+                    <div class="hidden-step-bitbucket hidden">
+                        <h4>Bitbucket</h4>
+                        <p>
+                            With <a href="https://confluence.atlassian.com/bitbucket/app-passwords-828781300.html" target="_blank">BitBucket's App Passwords</a>, select the following Permissions:
+                        </p>
+
+                        <ul>
+                            <li>Repositories:
+                                <ul>
+                                    <li><i class="fa fa-check-square-o"></i> <code>Read</code></li>
+                                    <li><i class="fa fa-check-square-o"></i> <code>Write</code></li>
+                                </ul>
+                            </li>
+                            <li>Webhooks
+                                <ul>
+                                    <li><i class="fa fa-check-square-o"></i> <code>Read and write</code></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="hidden-step-gitlab hidden">
+                        <h4>GitLab</h4>
+                        <p>
+                            For <a href="https://docs.gitlab.com/ee/api/README.html#personal-access-tokens" target="_blank">GitLab's Personal Access Tokens</a> select the following Scopes:
+                        </p>
+
+                        <ul>
+                            <li><i class="fa fa-check-square-o"></i> <code>API</code> (Access your API)</li>
+                        </ul>
+                    </div>
+
+                    <div class="hidden-step-allothers hidden">
+                        <h4>Other Git Repositories</h4>
+
+                        <p>Usually under your profile settings is where you can generate a new Access Token. You want to ensure that you have enough read/write access for the repository as well as <code>webhook</code> access</p>
+                    </div>
+                </div>
+            </div>
 
             <p>
                 Press <strong>Next</strong> to continue.
@@ -209,7 +265,7 @@
                 <h4>Other git systems (Generic)</h4>
                 <ol>
                  <li>
-                  Locate the area where you add the webhook in the repository. This will likely be in the settings for the repository you are adding. 
+                  Locate the area where you add the webhook in the repository. This will likely be in the settings for the repository you are adding.
                   </li>
                   <li>
                   Please note this is an advanced option and dependent on the choice of git solution in use.

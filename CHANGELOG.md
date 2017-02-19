@@ -4,8 +4,10 @@
 1. [](#bugfix)
     * Fixed issue preventing the custom Git Binary Path from getting used (#15)
     * Fixed issue with Webhook auto-generated URL where it would display double slashes in case of root domain (#15)
-    * Added 4th Generic Git choice in the wizard for self-hosted or custom services (Gogs/Gitea) (#7 - #22 - thanks @erlepereira)
     * Fixed issue with the modal not properly restoring the tutorial steps of the active selected service
+2. [](#improved)
+    * Added more documentation and description about the support of 2FA and Access Tokens (#16, #19, thanks @OleVik)
+    * Added 4th Generic Git choice in the wizard for self-hosted and custom git services (Gogs/Gitea) (#7 - #22 - thanks @erlepereira)
 
 # v1.0.1
 ## 01/29/2017
