@@ -78,6 +78,15 @@ form:
       default: master
       label: Remote Branch
       placeholder: master
+    git.author:
+      type: select
+      default: gituser
+      label: Commits Author
+      options:
+        gituser: Use Git User Name
+        gitsync: Use GitSync Committer Name
+        gravuser: Use Grav User Name
+        gravfull: Use Grav User Full Name
     git.name:
       type: text
       default: GitSync
