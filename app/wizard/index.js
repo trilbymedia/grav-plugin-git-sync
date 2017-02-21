@@ -191,6 +191,8 @@ $(document).on('change', '[name="gitsync[repository]"]', (event) => {
 });
 
 $(document).on('click', '[data-access-tokens-details]', (event) => {
+    event.preventDefault();
+
     const button = $(event.currentTarget);
     const panel = button.closest('.access-tokens').find('.access-tokens-details');
     
