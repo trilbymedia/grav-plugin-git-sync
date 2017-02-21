@@ -1,3 +1,9 @@
+# v1.0.3
+## XX/XX/2017
+
+1. [](#bugfix)
+    * Fixed issue with new 'author' option that could trigger errors when settings were not saved. (#23)
+    
 # v1.0.2
 ## 02/18/2017
 

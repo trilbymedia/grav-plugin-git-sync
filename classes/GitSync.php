@@ -161,7 +161,7 @@ class GitSync extends Git
 
     public function commit($message = '(Grav GitSync) Automatic Commit')
     {
-        $authorType = $this->getConfig('git', null)['author'];
+        $authorType = $this->getGitConfig('author', 'gituser');
         if (defined('GRAV_CLI') && in_array($authorType, ['gravuser', 'gravfull'])) {
             $authorType = 'gituser';
         }
