@@ -1,3 +1,10 @@
+# v1.0.3
+## 02/21/2017
+
+1. [](#bugfix)
+    * Fixed issue with new 'author' option that could trigger errors when settings were not saved. (#23)
+    * Fixed the 'More Details' button triggering the Modal to close instead of just expanding the details
+    
 # v1.0.2
 ## 02/18/2017
 
