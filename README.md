@@ -27,7 +27,7 @@ Thanks to this powerful bi-directional flow, Git Sync can now turn your site int
 * Easy one-click button to manually synchronize
 * Customize the Committer Name, choose between Git User, GitSync Commiter Name, Grav User Name and Grav user Fullname 
 * With the built-in Form Process action `gitsync`, you can trigger the synchronization anytime someone submits a post.
-* Any 3rd party plugin can integrate with Git Sync and trigger the synchronization through the `synchronize` event.
+* Any 3rd party plugin can integrate with Git Sync and trigger the synchronization through the `gitsync` event.
 * Built-in CLI command to automate synchronizations.
 
 # Command Line Interface
