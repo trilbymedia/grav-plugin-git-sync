@@ -20,7 +20,7 @@ Thanks to this powerful bi-directional flow, Git Sync can now turn your site int
 * Easy step-by-step Wizard setup will guide you through a detailed process for setting things up
 * Supported hosting services: [GitHub](https://github.com), [BitBucket](https://bitbucket.org), [GitLab](https://gitlab.com) as well as any self-hosted and git service with webhooks support.
 * Private repository
-* 2FA (Two-Factory Authentication) and Access Token support
+* 2FA (Two-Factor Authentication) and Access Token support
 * Webhooks support allow for automatic synchronization from the Git Repository
 * Automatically handles simple merges behind the scenes
 * Easy one-click button to reset your local changes and restores it to the actual state of the git repository
