@@ -17,7 +17,7 @@
     </div>
 
     <div class="step-1">
-        {% set selectedRepo = 'allothers' %}
+        {% set selectedRepo = 'allothers' in settings.repository ? 'allothers' : selectedRepo %}
         {% set selectedRepo = 'github.com' in settings.repository ? 'github' : selectedRepo %}
         {% set selectedRepo = 'bitbucket.com' in settings.repository ? 'bitbucket' : selectedRepo %}
         {% set selectedRepo = 'gitlab.com' in settings.repository ? 'gitlab' : selectedRepo %}
