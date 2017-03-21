@@ -161,9 +161,30 @@ class GitSync extends Git
 
     public function commit($message = '(Grav GitSync) Automatic Commit')
     {
-        $author = $this->user . ' <' . $this->getConfig('git', null)['email'] . '>';
+        $authorType = $this->getGitConfig('author', 'gituser');
+        if (defined('GRAV_CLI') && in_array($authorType, ['gravuser', 'gravfull'])) {
+            $authorType = 'gituser';
+        }
+
+        switch ($authorType) {
+            case 'gitsync':
+                $user = $this->getConfig('git', null)['name'];
+                break;
+            case 'gravuser':
+                $user = $this->grav['session']->user->username;
+                break;
+            case 'gravfull':
+                $user = $this->grav['session']->user->fullname;
+                break;
+            case 'gituser':
+            default:
+                $user = $this->user;
+                break;
+        }
+
+        $author = $user . ' <' . $this->getConfig('git', null)['email'] . '>';
         $author = '--author="' . $author . '"';
-        $message .= ' from ' . $this->user;
+        $message .= ' from ' . $user;
         $this->add();
         return $this->execute("commit " . $author . " -m " . escapeshellarg($message));
     }
@@ -278,7 +299,7 @@ class GitSync extends Git
 
     public function getGitConfig($type, $value)
     {
-        return !$value && isset($this->config['git']) ? $this->config['git'][$type] : $value;
+        return isset($this->config['git']) && isset($this->config['git'][$type]) ? $this->config['git'][$type] : $value;
     }
 
     public function getRemote($type, $value)

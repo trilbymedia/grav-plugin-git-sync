@@ -7,6 +7,26 @@
             color: #366188;
         }
     }
+    
+    .access-tokens {
+        h3 {
+            margin-top: 1rem;
+        }
+        
+        a {
+            vertical-align: inherit !important;
+        }
+    }
+
+    .access-tokens-details {
+        > p {
+            margin-top: 0;
+        }
+
+        > div > ul {
+            margin-bottom: 0;
+        }
+    }
 
     .center {
         text-align: center;
@@ -54,8 +74,12 @@
     }
 
     .step-1 {
-      div.column:nth-child(1) > label:nth-child(4) {
-        width: 110%;
+      div.column:nth-child(1) {
+          flex-grow: 1.5;
+
+          > label:nth-child(4) {
+              width: 110%;
+          }
       }
       
       div.column:nth-child(2) {
