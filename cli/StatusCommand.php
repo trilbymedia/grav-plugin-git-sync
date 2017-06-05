@@ -66,7 +66,7 @@ EOF
         $this->console_header('detect git workspace root:');
         $git_root = $plugin->execute('rev-parse --show-toplevel');
         $this->console_log($git_root, '');
-        if (rtrim($info['repositoryPath']) !== $git_root[0]) {
+        if (rtrim($info['repositoryPath'], '/') !== rtrim($git_root[0], '/')) {
             throw new RuntimeException('git root and repositoryPath do not match', 50);
         }
 
