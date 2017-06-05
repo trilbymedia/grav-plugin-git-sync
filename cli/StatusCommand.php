@@ -116,14 +116,13 @@ EOF
 
 
         if ($fetched) {
-          throw new RuntimeException('test');
           $uptodate = strpos($git_status[1], 'branch is up-to-date with') > 0;
           if ($uptodate) {
             $this->console_header(
               'Congrats: You should be able to run the <info>sync</info> command without problems!'
             );
           } else {
-            $this->output->writeln('<red>You are not in sync!</red>');
+            $this->output->writeln('<yellow>You are not in sync!</yellow>');
             $this->output->writeln('Take a look at the output of git status to see more details.');
             $this->output->writeln('In most cases the <info>sync</info> command is able to fix this.');
           }
@@ -135,7 +134,7 @@ EOF
     private function console_header($readable, $cmd = '', $remote_action = false)
     {
         $this->output->writeln(
-            "<yellow>$readable</yellow>" . ($cmd ? "(<blue>$cmd</blue>)" : ''). ($remote_action ? '...' : '')
+            "<yellow>$readable</yellow>" . ($cmd ? "(<info>$cmd</info>)" : ''). ($remote_action ? '...' : '')
         );
     }
 
