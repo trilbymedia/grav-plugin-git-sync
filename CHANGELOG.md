@@ -2,8 +2,10 @@
 ## XX/XX/2017
 
 1. [](#new)
-      * CLI: Added `status` command to check config and git (#52, thanks @karfau)
-      * Allow local branches to be named differently than the remote branches (#48, thanks @denniswebb)
+    * CLI: Added `status` command to check config and git (#52, thanks @karfau)
+    * Allow local branches to be named differently than the remote branches (#48, thanks @denniswebb)
+1. [](#bugfix)
+    * Fixed minimum Git required version to support `--all` (#32,#49, thanks @redrohX)
 
 # v1.0.3
 ## 02/21/2017
