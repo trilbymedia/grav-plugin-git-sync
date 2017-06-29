@@ -176,7 +176,7 @@ class GitSync extends Git
             $paths[] = $folder;
         }
 
-        if (version_compare($version, '1.8.1.4', '<')) {
+        if (version_compare($version, '2.0', '<')) {
             $add .= ' --all';
         }
 
