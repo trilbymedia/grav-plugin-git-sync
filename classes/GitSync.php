@@ -240,8 +240,9 @@ class GitSync extends Git
     {
         $name = $this->getRemote('name', $name);
         $branch = $this->getRemote('branch', $branch);
+        $local_branch = $this->getConfig('branch', $branch);
 
-        return $this->execute("push {$name} {$branch}");
+        return $this->execute("push {$name} {$local_branch}:{$branch}");
     }
 
     public function sync($name = null, $branch = null)
