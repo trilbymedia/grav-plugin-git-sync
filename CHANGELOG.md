@@ -3,6 +3,7 @@
 
 1. [](#new)
       * CLI: Added `status` command to check config and git (#52, thanks @karfau)
+      * Allow local branches to be named differently than the remote branches (#48, thanks @denniswebb)
 
 # v1.0.3
 ## 02/21/2017
