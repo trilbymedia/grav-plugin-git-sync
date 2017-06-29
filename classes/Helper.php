@@ -77,4 +77,8 @@ class Helper {
             return $enc_password;
         }
     }
+
+    public static function preventReadablePassword($str, $password) {
+      return str_replace(urlencode(self::decrypt($password)), '{password}', $str);
+    }
 }

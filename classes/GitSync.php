@@ -53,6 +53,30 @@ class GitSync extends Git
         $this->password = $this->config['password'];
     }
 
+    public function getRuntimeInformation()
+    {
+        $result = array(
+            'repositoryPath' => $this->repositoryPath,
+            'username' => $this->user,
+            'password' => $this->password
+        );
+        foreach ($this->config as $key => $item) {
+            if (is_array($item)) {
+                $count = count($item);
+                $arr = $item;
+                if ($count == 0) {// empty array, could still be associative
+                    $arr = '[]';
+                } else if (isset($item[0])) {// fast check for plain array with numeric keys
+                    $arr = '[\'' . join('\', \'', $item) . '\']';
+                }
+                $result[$key] = $arr;
+            } else {
+                $result[$key] = $item;
+            }
+        }
+        return $result;
+    }
+
     public function testRepository($url)
     {
         return $this->execute("ls-remote \"${url}\"");
@@ -268,12 +292,12 @@ class GitSync extends Git
             }
 
             if ($this->getConfig('logging', false)) {
-                $log_command = str_replace(urlencode(Helper::decrypt($this->password)), '{password}', $command);
+                $log_command = Helper::preventReadablePassword($command, $this->password);
                 $this->grav['log']->notice('gitsync[command]: ' . $log_command);
 
                 exec($command, $output, $returnValue);
 
-                $log_output = str_replace(urlencode(Helper::decrypt($this->password)), '{password}', implode("\n", $output));
+                $log_output = Helper::preventReadablePassword(implode("\n", $output), $this->password);
                 $this->grav['log']->notice('gitsync[output]: ' . $log_output);
             } else {
                 exec($command, $output, $returnValue);
@@ -286,7 +310,7 @@ class GitSync extends Git
             return $output;
         } catch (\RuntimeException $e) {
             $message = $e->getMessage();
-            $message = str_replace(urlencode(Helper::decrypt($this->password)), '{password}', $message);
+            $message = Helper::preventReadablePassword($message, $this->password);
 
             // handle scary messages
             if (Utils::contains($message, "remote: error: cannot lock ref")) {

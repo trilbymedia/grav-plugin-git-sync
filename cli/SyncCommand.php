@@ -16,7 +16,7 @@ class SyncCommand extends ConsoleCommand
         $this
             ->setName('sync')
             ->setDescription('Performs a synchronization of your site')
-            ->setHelp('The <info>git-sync</info> command performs a synchronization of your site. Useful if you want to run a periodic crontab job to automate it.')
+            ->setHelp('The <info>sync</info> command performs a synchronization of your site. Useful if you want to run a periodic crontab job to automate it.')
         ;
     }
 
@@ -36,9 +36,9 @@ class SyncCommand extends ConsoleCommand
         $this->output->writeln('Synchronizing with <cyan>' . $repository . '</cyan>');
 
         if (!$plugin->isWorkingCopyClean()) {
+            $this->output->writeln('Changes detected, adding and committing...');
             $plugin->add();
             $plugin->commit();
-            $this->output->writeln('Changes detected, committing...');
         }
 
         $this->output->write('Starting Synchronization...');

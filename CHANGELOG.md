@@ -1,3 +1,9 @@
+# v1.0.4
+## XX/XX/2017
+
+1. [](#new)
+      * CLI: Added `status` command to check config and git (#52, thanks @karfau)
+
 # v1.0.3
 ## 02/21/2017
 
