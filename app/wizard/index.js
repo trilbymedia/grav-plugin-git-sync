@@ -50,12 +50,14 @@ $(document).on('click', '[data-gitsync-useraction]', (event) => {
             openWizard();
             break;
         case 'sync':
-            target.find('i').removeClass('fa-cloud').addClass('fa-circle-o-notch fa-spin');
-            request(URI, {
+            const relativeURI = target.data('gitsync-uri');
+            target.find('i').removeClass('fa-cloud fa-git').addClass('fa-circle-o-notch fa-spin');
+
+            request(relativeURI || URI, {
                 method: 'post',
                 body: { task: 'synchronize' }
             }, () => {
-                target.find('i').removeClass('fa-circle-o-notch fa-spin').addClass('fa-cloud');
+                target.find('i').removeClass('fa-circle-o-notch fa-spin').addClass(relativeURI ? 'fa-git' : 'fa-cloud');
             });
             break;
         case 'reset':
