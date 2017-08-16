@@ -44,6 +44,7 @@ class GitSyncPlugin extends Plugin
             $this->enable([
                 'onTwigTemplatePaths'  => ['onTwigTemplatePaths', 0],
                 'onTwigSiteVariables'  => ['onTwigSiteVariables', 0],
+                'onAdminMenu'          => ['onAdminMenu', 0],
                 'onAdminSave'          => ['onAdminSave', 0],
                 'onAdminAfterSave'     => ['onAdminAfterSave', 0],
                 'onAdminAfterSaveAs'   => ['synchronize', 0],
@@ -75,6 +76,22 @@ class GitSyncPlugin extends Plugin
                 exit;
             }
         }
+    }
+
+    public function onAdminMenu()
+    {
+        $base = rtrim($this->grav['base_url'], '/') . '/' . trim($this->grav['admin']->base, '/');
+        $options = [
+            //            'route' => $this->admin_route . '/plugins/tntsearch',
+            'hint' => 'Synchronize GitSync',
+            'class' => 'gitsync-sync',
+            'data'  => [
+                'gitsync-useraction' => 'sync',
+                'gitsync-uri' => $base . '/plugins/git-sync'
+            ],
+            'icon' => 'fa-' . $this->grav['plugins']->get('git-sync')->blueprints()->get('icon')
+        ];
+        $this->grav['twig']->plugins_quick_tray['GitSync'] = $options;
     }
 
     public function init()
@@ -154,8 +171,11 @@ class GitSyncPlugin extends Plugin
 
         if ($this->grav['uri']->path() === '/admin/plugins/git-sync') {
             $this->grav['assets']->addCss('plugin://git-sync/css-compiled/git-sync.css');
-            $this->grav['assets']->addJs('plugin://git-sync/js/app.js', ['loading' => 'defer']);
+        } else {
+            $this->grav['assets']->addInlineJs('var GitSync = ' . json_encode($settings) . ';');
         }
+
+        $this->grav['assets']->addJs('plugin://git-sync/js/app.js', ['loading' => 'defer', 'priority' => 0]);
         
         return true;
     }

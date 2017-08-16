@@ -17,7 +17,7 @@
     </div>
 
     <div class="step-1">
-        {% set selectedRepo = 'allothers' %}
+        {% set selectedRepo = 'allothers' in settings.repository ? 'allothers' : selectedRepo %}
         {% set selectedRepo = 'github.com' in settings.repository ? 'github' : selectedRepo %}
         {% set selectedRepo = 'bitbucket.com' in settings.repository ? 'bitbucket' : selectedRepo %}
         {% set selectedRepo = 'gitlab.com' in settings.repository ? 'gitlab' : selectedRepo %}
@@ -64,12 +64,12 @@
 
             <div class="access-tokens wizard-padding">
                 <h3>Access Tokens and 2FA (Two-factor Authentication)</h3>
-                <p>If you never used Access Tokens or don't know what 2FA is, you most likely only need your <strong>regular password</strong> for the field above. You can then skip this step and press <strong>Next</strong> to continue.</p>
+                <p>If you have never used Access Tokens or don't know what 2FA is, you most likely only need your <strong>regular password</strong> for the field above. You can then skip this step and press <strong>Next</strong> to continue.</p>
 
                 <p><a href="#" class="button" data-access-tokens-details>More Details <i class="fa fa-fw fa-chevron-down"></i></a></p>
 
                 <div class="access-tokens-details" style="display: none;">
-                    <p>With GitSync you have the option to use an Access Token instead of your password, however If you have <strong>2FA (Two-factor authentication)</strong> enabled for your git service, you are allowed to only use Access Tokens.</p>
+                    <p>With GitSync you have the option to use an Access Token instead of your password, however if you have <strong>2FA (Two-factor authentication)</strong> enabled for your git service, you can use Access Tokens.</p>
 
                     <p>Using a token is more secure than using your password, because you can limit what can be done using it and it can be revoked without worrying about changing the password. As we are just syncing, we only need to give it read-and-write access to repositories and webhooks.
                     </p>

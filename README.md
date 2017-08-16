@@ -20,14 +20,14 @@ Thanks to this powerful bi-directional flow, Git Sync can now turn your site int
 * Easy step-by-step Wizard setup will guide you through a detailed process for setting things up
 * Supported hosting services: [GitHub](https://github.com), [BitBucket](https://bitbucket.org), [GitLab](https://gitlab.com) as well as any self-hosted and git service with webhooks support.
 * Private repository
-* 2FA (Two-Factory Authentication) and Access Token support
+* 2FA (Two-Factor Authentication) and Access Token support
 * Webhooks support allow for automatic synchronization from the Git Repository
 * Automatically handles simple merges behind the scenes
 * Easy one-click button to reset your local changes and restores it to the actual state of the git repository
 * Easy one-click button to manually synchronize
 * Customize the Committer Name, choose between Git User, GitSync Commiter Name, Grav User Name and Grav user Fullname 
 * With the built-in Form Process action `gitsync`, you can trigger the synchronization anytime someone submits a post.
-* Any 3rd party plugin can integrate with Git Sync and trigger the synchronization through the `synchronize` event.
+* Any 3rd party plugin can integrate with Git Sync and trigger the synchronization through the `gitsync` event.
 * Built-in CLI command to automate synchronizations.
 
 # Command Line Interface

@@ -1,5 +1,5 @@
 name: Git Sync
-version: 1.0.3
+version: 1.0.4
 description: Allows to synchronize portions of Grav with Git Repositories (GitHub, BitBucket, GitLab)
 icon: git
 author:
@@ -90,7 +90,7 @@ form:
     git.name:
       type: text
       default: GitSync
-      label: Commiter Name
+      label: Committer Name
       placeholder: GitSync
     git.email:
       type: text
