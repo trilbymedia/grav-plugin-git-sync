@@ -42,7 +42,7 @@ bin/plugin git-sync sync
 
 # Requirements
 
-In order for the plugin to work, the server needs to run `git` 1.7.1 and above.
+In order for the plugin to work, the server needs to run `git` 1.7.1 and above. The PHP exec() function also has to be enabled.
 
 # Sponsored by
 
