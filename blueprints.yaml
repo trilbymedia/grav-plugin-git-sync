@@ -56,9 +56,24 @@ form:
       description: Enter your password or token to encrypt and securely store it, then save the settings. It will not show up here for security reasons.
     webhook:
       type: text
-      label: Repository Web Hook
+      label: Repository Web Hook URL
       placeholder: /_git-sync
       default: /_git-sync
+    webhook_secret:
+      type: text
+      label: Repository Web Hook Secret
+      placeholder: Your Web Hook Secret
+      data-default@: '\Grav\Plugin\GitSyncPlugin::generateWebhookSecret'
+      description: You can either use this randomly generated string or enter your own secret
+    webhook_enabled:
+      type: toggle
+      label: Use Web Hook Secret
+      highlight: 1
+      default: 0
+      options:
+        1: Enabled
+        0: Disabled
+      description: With this setting enabled, only authorized webhook calls will be able to trigger a synchronization (recommended)
     Advanced:
       type: section
       title: Advanced
