@@ -32,6 +32,14 @@ class GitSyncPlugin extends Plugin
     }
 
     /**
+     * @return string
+     */
+    public static function generateWebhookSecret()
+    {
+        return bin2hex(openssl_random_pseudo_bytes(24));
+    }
+
+    /**
      * Initialize the plugin
      */
     public function onPluginsInitialized()
@@ -58,24 +66,52 @@ class GitSyncPlugin extends Plugin
             $config  = $this->config->get('plugins.' . $this->name);
             $route   = $this->grav['uri']->route();
             $webhook = isset($config['webhook']) ? $config['webhook'] : false;
+            $secret  = isset($config['webhook_secret']) ? $config['webhook_secret'] : false;
+            $enabled = isset($config['webhook_enabled']) ? $config['webhook_enabled'] : false;
 
-            if ($route === $webhook) {
-                try {
-                    $this->synchronize();
+            if ($route === $webhook && $_SERVER['REQUEST_METHOD'] === 'POST' && $secret && $enabled) {
 
-                    echo json_encode([
-                        'status'  => 'success',
-                        'message' => 'GitSync completed the synchronization'
-                    ]);
-                } catch (\Exception $e) {
-                    echo json_encode([
-                        'status'  => 'error',
-                        'message' => 'GitSync failed to synchronize'
-                    ]);
+                if (isset($_SERVER['HTTP_X_HUB_SIGNATURE'])) {
+                    $payload = file_get_contents('php://input');
+
+                    if ($this->validateSignature($secret, $_SERVER['HTTP_X_HUB_SIGNATURE'], $payload)) {
+                        try {
+                            $this->synchronize();
+
+                            echo json_encode([
+                                'status'  => 'success',
+                                'message' => 'GitSync completed the synchronization'
+                            ]);
+                        } catch (\Exception $e) {
+                            echo json_encode([
+                                'status'  => 'error',
+                                'message' => 'GitSync failed to synchronize'
+                            ]);
+                        }
+                        exit;
+                    } 
                 }
-                exit;
             }
         }
+    }
+
+    /**
+     * Hashes the webhook request body with the client secret and
+     * checks if it matches the webhook signature header
+     * @param  string $secret          The webhook secret
+     * @param  string $signatureHeader The signature of the webhook request
+     * @param  string $payload         The webhook request body
+     * @return boolean                 Whether the signature is valid or not
+     */
+    public function validateSignature($secret, $signatureHeader, $payload) 
+    {
+        list($algorigthm, $signature) = explode('=', $signatureHeader);
+
+        if($signature === hash_hmac($algorigthm, $payload, $secret)) {
+            return true;
+        }
+
+        return false;
     }
 
     public function onAdminMenu()
