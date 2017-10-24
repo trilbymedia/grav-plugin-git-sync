@@ -69,23 +69,29 @@ class GitSyncPlugin extends Plugin
             $secret = isset($config['webhook_secret']) ? $config['webhook_secret'] : false;
             $enabled = isset($config['webhook_enabled']) ? $config['webhook_enabled'] : false;
 
-            if ($route === $webhook && $_SERVER['REQUEST_METHOD'] === 'POST' && $secret && $enabled) {
-                if ($this->isRequestAuthorzied($secret)) {
-                    try {
-                        $this->synchronize();
-
-                        echo json_encode([
-                            'status' => 'success',
-                            'message' => 'GitSync completed the synchronization'
-                        ]);
-                    } catch (\Exception $e) {
+            if ($route === $webhook && $_SERVER['REQUEST_METHOD'] === 'POST') {
+                if ($secret && $enabled) {
+                    if (!$this->isRequestAuthorzied($secret)) {
                         echo json_encode([
                             'status' => 'error',
-                            'message' => 'GitSync failed to synchronize'
+                            'message' => 'Unauthorized request'
                         ]);
+                        exit;
                     }
-                    exit;
                 }
+                try {
+                    $this->synchronize();
+                    echo json_encode([
+                        'status' => 'success',
+                        'message' => 'GitSync completed the synchronization'
+                    ]);
+                } catch (\Exception $e) {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'GitSync failed to synchronize'
+                    ]);
+                }
+                exit;                
             }
         }
     }
