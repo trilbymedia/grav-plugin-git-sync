@@ -12,6 +12,11 @@ Thanks to this powerful bi-directional flow, Git Sync can now turn your site int
 | ------------ | ----------------- |
 | [![Up and Running in 2 mins](https://img.youtube.com/vi/avcGP0FAzB8/0.jpg)](https://www.youtube.com/watch?v=avcGP0FAzB8) | [![2-way Sync Demonstration](https://img.youtube.com/vi/3fy78afacyw/0.jpg)](https://www.youtube.com/watch?v=3fy78afacyw) |
 
+## Installation using the GPM (Grav Package Manager)
+
+```
+bin/gpm install git-sync
+```
 
 ## Features
 
