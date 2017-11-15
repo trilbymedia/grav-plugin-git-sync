@@ -234,7 +234,8 @@ class GitSyncPlugin extends Plugin
 
         $this->grav['twig']->twig_vars['git_sync'] = $settings;
 
-        if ($this->grav['uri']->path() === '/admin/plugins/git-sync') {
+        $adminPath = trim($this->grav['admin']->base, '/');
+        if ($this->grav['uri']->path() === "/$adminPath/plugins/git-sync") {
             $this->grav['assets']->addCss('plugin://git-sync/css-compiled/git-sync.css');
         } else {
             $this->grav['assets']->addInlineJs('var GitSync = ' . json_encode($settings) . ';');
@@ -258,7 +259,8 @@ class GitSyncPlugin extends Plugin
     public function onAdminSave($event)
     {
         $obj           = $event['object'];
-        $isPluginRoute = $this->grav['uri']->path() == '/admin/plugins/' . $this->name;
+        $adminPath 	   = trim($this->grav['admin']->base, '/');
+        $isPluginRoute = $this->grav['uri']->path() == "/$adminPath/plugins/" . $this->name;
 
         if ($obj instanceof Data) {
             if (!$isPluginRoute || !Helper::isGitInstalled()) {
@@ -287,7 +289,8 @@ class GitSyncPlugin extends Plugin
     public function onAdminAfterSave($event)
     {
         $obj           = $event['object'];
-        $isPluginRoute = $this->grav['uri']->path() == '/admin/plugins/' . $this->name;
+        $adminPath	   = trim($this->grav['admin']->base, '/');
+        $isPluginRoute = $this->grav['uri']->path() == "/$adminPath/plugins/" . $this->name;
 
         /*
         $folders = $this->controller->git->getConfig('folders', []);
