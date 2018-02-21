@@ -30,7 +30,7 @@ form:
       validate:
         type: bool
     folders:
-      type: hidden
+      type: selectize
       multiple: true
       size: medium
       label: Sync Folders
@@ -108,6 +108,17 @@ form:
       default: 0
       label: Log Git Commands
       help: Logs git commands. Useful to debug and troubleshoot git execution
+      highlight: 0
+      options:
+          1: PLUGIN_ADMIN.YES
+          0: PLUGIN_ADMIN.NO
+      validate:
+          type: bool
+    sync_on_all_admin_save_events:
+      type: toggle
+      default: 0
+      label: Sync on all admin save events
+      help: If No, synchronization will be fired only on page/folder/media save events.
       highlight: 0
       options:
           1: PLUGIN_ADMIN.YES
