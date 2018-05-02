@@ -18,11 +18,11 @@ class GitSync extends Git
 
     public function __construct(Plugin $plugin = null)
     {
-        parent::__construct(USER_DIR);
-        static::$instance = $this;
         $this->grav = Grav::instance();
         $this->config = $this->grav['config']->get('plugins.git-sync');
-        $this->repositoryPath = USER_DIR;
+        $this->repositoryPath = $this->config['repository_path'];
+        parent::__construct($this->repositoryPath);
+        static::$instance = $this;
 
         $this->user = isset($this->config['user']) ? $this->config['user'] : null;
         $this->password = isset($this->config['password']) ? $this->config['password'] : null;
@@ -135,7 +135,7 @@ class GitSync extends Git
             $sparse[] = $folder . '/*';
         }
 
-        $file = File::instance(rtrim(USER_DIR, '/') . '/.git/info/sparse-checkout');
+        $file = File::instance(rtrim($this->repositoryPath, '/') . '/.git/info/sparse-checkout');
         $file->save(implode("\r\n", $sparse));
         $file->free();
 
@@ -144,7 +144,7 @@ class GitSync extends Git
             $ignore[] = '!/' . $folder;
         }
 
-        $file = File::instance(rtrim(USER_DIR, '/') . '/.gitignore');
+        $file = File::instance(rtrim($this->repositoryPath, '/') . '/.gitignore');
         $file->save(implode("\r\n", $ignore));
         $file->free();
     }
