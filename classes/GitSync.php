@@ -273,6 +273,21 @@ class GitSync extends Git
         return (substr($output[count($output)-1], 0, strlen($message)) === $message);
     }
 
+    public function hasChangesToCommit()
+    {
+        $folders = $this->config['folders'];
+        $paths = [];
+
+        foreach ($folders as $folder) {
+            $paths[] = $folder;
+        }
+
+        $message = 'nothing to commit';
+        $output = $this->execute('status ' . implode(' ', $paths));
+
+        return (substr($output[count($output)-1], 0, strlen($message)) !== $message);
+    }
+
     public function execute($command)
     {
         try {
