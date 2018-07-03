@@ -35,7 +35,7 @@ class SyncCommand extends ConsoleCommand
 
         $this->output->writeln('Synchronizing with <cyan>' . $repository . '</cyan>');
 
-        if (!$plugin->hasChangesToCommit()) {
+        if ($plugin->hasChangesToCommit()) {
             $this->output->writeln('Changes detected, adding and committing...');
             $plugin->add();
             $plugin->commit();
