@@ -52,11 +52,11 @@ To install git-sync simply run these command from grav root:
 bin/gpm install git-sync
 ```
 
+After having installed the plugin, make sure to go in the plugin settings in order to get the Wizard configuration started.
+
 # Requirements
 
 In order for the plugin to work, the server needs to run `git` 1.7.1 and above. The PHP exec() function also has to be enabled.
-
-Dont change Admin-Webinterface-url before you run git-sync install-wizard, otherwise the wizard will fail.
 
 # Sponsored by
 
