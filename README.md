@@ -14,9 +14,13 @@ Thanks to this powerful bi-directional flow, Git Sync can now turn your site int
 
 ## Installation using the GPM (Grav Package Manager)
 
+To install git-sync simply run this command from the Grav root folder
 ```
 bin/gpm install git-sync
 ```
+
+After having installed the plugin, make sure to go in the plugin settings in order to get the Wizard configuration started.
+
 
 ## Features
 
@@ -44,15 +48,6 @@ To execute the command simply run:
 ```bash
 bin/plugin git-sync sync
 ```
-# Installation
-
-To install git-sync simply run these command from grav root:
-
-```bash
-bin/gpm install git-sync
-```
-
-After having installed the plugin, make sure to go in the plugin settings in order to get the Wizard configuration started.
 
 # Requirements
 
