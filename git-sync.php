@@ -194,10 +194,13 @@ class GitSyncPlugin extends Plugin
     {
         $obj           = $event['object'];
         $isPluginRoute = $this->grav['uri']->path() == '/admin/plugins/' . $this->name;
+        $config        = $this->config->get('plugins.' . $this->name);
 
         if ($obj instanceof Data) {
             if (!$isPluginRoute || !Helper::isGitInstalled()) {
-                return true;
+                if (!isset($config['sync_on_all_admin_save_events']) || !$config['sync_on_all_admin_save_events']) {
+                    return true;
+                }
             } else {
                 // empty password, keep current one or encrypt if haven't already
                 $password = $obj->get('password', false);
@@ -223,6 +226,7 @@ class GitSyncPlugin extends Plugin
     {
         $obj           = $event['object'];
         $isPluginRoute = $this->grav['uri']->path() == '/admin/plugins/' . $this->name;
+        $config        = $this->config->get('plugins.' . $this->name);
 
         /*
         $folders = $this->controller->git->getConfig('folders', []);
@@ -233,7 +237,9 @@ class GitSyncPlugin extends Plugin
 
         if ($obj instanceof Data) {
             if (!$isPluginRoute || !Helper::isGitInstalled()) {
-                return true;
+                if (!isset($config['sync_on_all_admin_save_events']) || !$config['sync_on_all_admin_save_events']) {
+                    return true;
+                }
             } else {
                 $this->controller->git->setConfig($obj);
 
