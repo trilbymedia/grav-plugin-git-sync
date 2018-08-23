@@ -44,6 +44,15 @@ To execute the command simply run:
 ```bash
 bin/plugin git-sync sync
 ```
+# Installation
+
+To install git-sync simply run these command from grav root:
+
+```bash
+bin/gpm install git-sync
+```
+
+After having installed the plugin, make sure to go in the plugin settings in order to get the Wizard configuration started.
 
 # Requirements
 
