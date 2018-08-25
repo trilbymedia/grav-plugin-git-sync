@@ -162,6 +162,12 @@ class GitSyncPlugin extends Plugin
             return false;
         }
 
+        $user = $this->grav['user'];
+
+        if (!$user->authenticated) {
+            return false;
+        }
+
         $settings = [
             'first_time'    => !Helper::isGitInitialized(),
             'git_installed' => Helper::isGitInstalled()
