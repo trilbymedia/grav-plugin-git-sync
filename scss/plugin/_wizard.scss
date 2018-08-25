@@ -1,5 +1,5 @@
 [data-remodal-id="wizard"], [data-remodal-id="reset-local"] {
-    form [class^="step-"] a:not(.button) {
+    form [class^="step-"] a:not(.button):not([target]) {
         vertical-align: middle;
         color: #5591c7;
 
@@ -7,12 +7,16 @@
             color: #366188;
         }
     }
-    
+
+    .step-1 a {
+        vertical-align: middle;
+    }
+
     .access-tokens {
         h3 {
             margin-top: 1rem;
         }
-        
+
         a {
             vertical-align: inherit !important;
         }
