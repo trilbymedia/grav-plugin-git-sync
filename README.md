@@ -51,7 +51,9 @@ bin/plugin git-sync sync
 
 # Requirements
 
-In order for the plugin to work, the server needs to run `git` 1.7.1 and above. The PHP exec() function also has to be enabled.
+In order for the plugin to work, the server needs to run `git` 1.7.1 and above. 
+
+The PHP `exec()` and `escapeshellarg()` functions are required to be enabled.
 
 # Sponsored by
 
