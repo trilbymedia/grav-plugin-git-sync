@@ -85,6 +85,8 @@ class GitSyncPlugin extends Plugin
             //            'route' => $this->admin_route . '/plugins/tntsearch',
             'hint' => 'Synchronize GitSync',
             'class' => 'gitsync-sync',
+            'location' => 'pages',
+            'route' => 'admin',
             'data'  => [
                 'gitsync-useraction' => 'sync',
                 'gitsync-uri' => $base . '/plugins/git-sync'
