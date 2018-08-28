@@ -18,11 +18,11 @@ class GitSync extends Git
 
     public function __construct(Plugin $plugin = null)
     {
-        parent::__construct(USER_DIR);
-        static::$instance = $this;
         $this->grav = Grav::instance();
         $this->config = $this->grav['config']->get('plugins.git-sync');
-        $this->repositoryPath = USER_DIR;
+        $this->repositoryPath = $this->config['repository_path'];
+        parent::__construct($this->repositoryPath);
+        static::$instance = $this;
 
         $this->user = isset($this->config['user']) ? $this->config['user'] : null;
         $this->password = isset($this->config['password']) ? $this->config['password'] : null;
@@ -135,7 +135,7 @@ class GitSync extends Git
             $sparse[] = $folder . '/*';
         }
 
-        $file = File::instance(rtrim(USER_DIR, '/') . '/.git/info/sparse-checkout');
+        $file = File::instance(rtrim($this->repositoryPath, '/') . '/.git/info/sparse-checkout');
         $file->save(implode("\r\n", $sparse));
         $file->free();
 
@@ -144,7 +144,7 @@ class GitSync extends Git
             $ignore[] = '!/' . $folder;
         }
 
-        $file = File::instance(rtrim(USER_DIR, '/') . '/.gitignore');
+        $file = File::instance(rtrim($this->repositoryPath, '/') . '/.gitignore');
         $file->save(implode("\r\n", $ignore));
         $file->free();
     }
@@ -193,20 +193,24 @@ class GitSync extends Git
         switch ($authorType) {
             case 'gitsync':
                 $user = $this->getConfig('git', null)['name'];
+                $email = $this->getConfig('git', null)['email'];
                 break;
             case 'gravuser':
                 $user = $this->grav['session']->user->username;
+                $email = $this->grav['session']->user->email;
                 break;
             case 'gravfull':
                 $user = $this->grav['session']->user->fullname;
+                $email = $this->grav['session']->user->email;
                 break;
             case 'gituser':
             default:
                 $user = $this->user;
+                $email = $this->getConfig('git', null)['email'];
                 break;
         }
 
-        $author = $user . ' <' . $this->getConfig('git', null)['email'] . '>';
+        $author = $user . ' <' . $email . '>';
         $author = '--author="' . $author . '"';
         $message .= ' from ' . $user;
         $this->add();
@@ -249,9 +253,11 @@ class GitSync extends Git
     {
         $name = $this->getRemote('name', $name);
         $branch = $this->getRemote('branch', $branch);
+        $local_branch = $this->getConfig('branch', $branch);
         $this->addRemote(null, null, true);
 
         $this->fetch($name, $branch);
+        $this->execute("checkout {$local_branch}");
         $this->pull($name, $branch);
         $this->push($name, $branch);
 
@@ -271,6 +277,21 @@ class GitSync extends Git
         $output = $this->execute('status');
 
         return (substr($output[count($output)-1], 0, strlen($message)) === $message);
+    }
+
+    public function hasChangesToCommit()
+    {
+        $folders = $this->config['folders'];
+        $paths = [];
+
+        foreach ($folders as $folder) {
+            $paths[] = $folder;
+        }
+
+        $message = 'nothing to commit';
+        $output = $this->execute('status ' . implode(' ', $paths));
+
+        return (substr($output[count($output)-1], 0, strlen($message)) !== $message);
     }
 
     public function execute($command)

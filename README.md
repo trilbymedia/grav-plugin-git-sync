@@ -12,6 +12,15 @@ Thanks to this powerful bi-directional flow, Git Sync can now turn your site int
 | ------------ | ----------------- |
 | [![Up and Running in 2 mins](https://img.youtube.com/vi/avcGP0FAzB8/0.jpg)](https://www.youtube.com/watch?v=avcGP0FAzB8) | [![2-way Sync Demonstration](https://img.youtube.com/vi/3fy78afacyw/0.jpg)](https://www.youtube.com/watch?v=3fy78afacyw) |
 
+## Installation using the GPM (Grav Package Manager)
+
+To install git-sync simply run this command from the Grav root folder
+```
+bin/gpm install git-sync
+```
+
+After having installed the plugin, make sure to go in the plugin settings in order to get the Wizard configuration started.
+
 
 ## Features
 
@@ -42,7 +51,9 @@ bin/plugin git-sync sync
 
 # Requirements
 
-In order for the plugin to work, the server needs to run `git` 1.7.1 and above. The PHP exec() function also has to be enabled.
+In order for the plugin to work, the server needs to run `git` 1.7.1 and above. 
+
+The PHP `exec()` and `escapeshellarg()` functions are required to be enabled.
 
 # Sponsored by
 

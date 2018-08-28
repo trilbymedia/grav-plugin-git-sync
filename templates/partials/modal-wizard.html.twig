@@ -1,5 +1,6 @@
 {% set settings = config.plugins['git-sync'] %}
-{% set frontend_url = (uri.base ~ base_url_relative_frontend)|trim('/') %}
+{% set frontend_url = (uri.base ~ uri.rootUrl)|trim('/') %}
+
 <div class="remodal" data-remodal-id="wizard" data-remodal-options="hashTracking: false">
 
     <h1>Git Sync - Wizard</h1>
@@ -247,7 +248,7 @@
             <div class="hidden-step-gitlab wizard-padding hidden">
                 <h4>GitLab</h4>
                 <ol>
-                    <li>Head to the repository on GitLab and click on <code><i class="fa fa-cog"></i></code> dropdown-button at the top right of the page</li>
+                    <li>Head to the repository on GitLab and click on <code><i class="fa fa-cog"></i> <strong>Settings</strong></code> dropdown-button from the page sidebar</li>
                     <li>Select <code>Integrations</code> (or <code>Webhooks</code> if < v8.16) from the list</li>
                     <li>
                         Fill out the form as follows
@@ -340,10 +341,10 @@
         <div class="step-0">
             <div class="panel">
                 <p>
-                    The <strong>GitSync</strong> plugin requires the <i class="fa fa-fw fa-git"></i> binary to be installed and accessible in order to work.</p>
+                    The <strong>GitSync</strong> plugin requires the <i class="fa fa-fw fa-git"></i> (Git) binary to be installed and accessible in order to work.</p>
 
                 <p>
-                    If <i class="fa fa-fw fa-git"></i> is missing from your hosting provider, you should open a ticket with them and request it to be installed.
+                    If <i class="fa fa-fw fa-git"></i> (Git) is missing from your hosting provider, you should open a ticket with them and request it to be installed.
                 </p>
             </div>
         </div>

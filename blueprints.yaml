@@ -42,6 +42,12 @@ form:
       validate:
         type: commalist
     repository:
+      type: hidden
+      multiple: false
+      size: medium
+      label: Local reposetory path
+      default: user
+    repository:
       type: text
       label: Git Repository
       placeholder: https://github.com/user/repository.git
@@ -74,6 +80,48 @@ form:
         1: Enabled
         0: Disabled
       description: With this setting enabled, only authorized webhook calls will be able to trigger a synchronization (recommended)
+    Sync:
+      type: section
+      title: Synchronization
+      underline: true
+    SyncWarning:
+      type: spacer
+      text: |
+        Warning: if these options are disabled, automatic sync will not occurs at all when a page is saved, or others triggers, according to what you disabled. But it may improve performances if saving pages is too slow.<br />
+        Without any further action, nothing will be comitted to git. We recommand you to either sync manually using the <i class="fa fa-git"></i> Sync button in the top left of the administration panel, or setup a periodic task to sync with the remote repository every few hours in the background.
+    sync.on_save:
+      type: toggle
+      label: Sync On Save
+      help: Sync with the remote directory when a page is saved through the admin
+      default: 1
+      highlight: 1
+      options:
+        1: PLUGIN_ADMIN.YES
+        0: PLUGIN_ADMIN.NO
+      validate:
+        type: bool
+    sync.on_delete:
+      type: toggle
+      label: Sync On Delete
+      help: Sync with the remote directory when a page is deleted through the admin
+      default: 1
+      highlight: 1
+      options:
+        1: PLUGIN_ADMIN.YES
+        0: PLUGIN_ADMIN.NO
+      validate:
+        type: bool
+    sync.on_media:
+      type: toggle
+      label: Sync When Media are Uploaded or Deleted
+      help: Sync with the remote directory when a media is uploaded or deleted through the admin immediatly (instead of only syncing when the page is saved)
+      default: 1
+      highlight: 1
+      options:
+        1: PLUGIN_ADMIN.YES
+        0: PLUGIN_ADMIN.NO
+      validate:
+        type: bool
     Advanced:
       type: section
       title: Advanced

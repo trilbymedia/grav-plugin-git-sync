@@ -55,10 +55,10 @@ class GitSyncPlugin extends Plugin
                 'onAdminMenu'          => ['onAdminMenu', 0],
                 'onAdminSave'          => ['onAdminSave', 0],
                 'onAdminAfterSave'     => ['onAdminAfterSave', 0],
-                'onAdminAfterSaveAs'   => ['synchronize', 0],
-                'onAdminAfterDelete'   => ['synchronize', 0],
-                'onAdminAfterAddMedia' => ['synchronize', 0],
-                'onAdminAfterDelMedia' => ['synchronize', 0],
+                'onAdminAfterSaveAs'   => ['onAdminAfterSaveAs', 0],
+                'onAdminAfterDelete'   => ['onAdminAfterDelete', 0],
+                'onAdminAfterAddMedia' => ['onAdminAfterMedia', 0],
+                'onAdminAfterDelMedia' => ['onAdminAfterMedia', 0],
             ]);
 
             return;
@@ -150,6 +150,8 @@ class GitSyncPlugin extends Plugin
             //            'route' => $this->admin_route . '/plugins/tntsearch',
             'hint' => 'Synchronize GitSync',
             'class' => 'gitsync-sync',
+            'location' => 'pages',
+            'route' => 'admin',
             'data'  => [
                 'gitsync-useraction' => 'sync',
                 'gitsync-uri' => $base . '/plugins/git-sync'
@@ -180,8 +182,7 @@ class GitSyncPlugin extends Plugin
 
         $this->grav->fireEvent('onGitSyncBeforeSynchronize');
 
-        if (!$this->git->isWorkingCopyClean()) {
-            // commit any change
+        if ($this->git->hasChangesToCommit()) {
             $this->git->commit();
         }
 
@@ -227,6 +228,12 @@ class GitSyncPlugin extends Plugin
             return false;
         }
 
+        $user = $this->grav['user'];
+
+        if (!$user->authenticated) {
+            return false;
+        }
+
         $settings = [
             'first_time'    => !Helper::isGitInitialized(),
             'git_installed' => Helper::isGitInstalled()
@@ -252,8 +259,6 @@ class GitSyncPlugin extends Plugin
             $this->controller->execute();
             $this->controller->redirect();
         }
-
-
     }
 
     public function onAdminSave($event)
@@ -288,6 +293,10 @@ class GitSyncPlugin extends Plugin
 
     public function onAdminAfterSave($event)
     {
+        if (!$this->grav['config']->get('plugins.git-sync.sync.on_save', true)) {
+            return true;
+        }
+
         $obj           = $event['object'];
         $adminPath	   = trim($this->grav['admin']->base, '/');
         $isPluginRoute = $this->grav['uri']->path() == "/$adminPath/plugins/" . $this->name;
@@ -315,6 +324,33 @@ class GitSyncPlugin extends Plugin
         }
 
         $this->synchronize();
+
+        return true;
+    }
+
+    public function onAdminAfterSaveAs()
+    {
+        if ($this->grav['config']->get('plugins.git-sync.sync.on_save', true)) {
+            $this->synchronize();
+        }
+
+        return true;
+    }
+
+    public function onAdminAfterDelete()
+    {
+        if ($this->grav['config']->get('plugins.git-sync.sync.on_delete', true)) {
+            $this->synchronize();
+        }
+
+        return true;
+    }
+
+    public function onAdminAfterMedia()
+    {
+        if ($this->grav['config']->get('plugins.git-sync.sync.on_media', true)) {
+            $this->synchronize();
+        }
 
         return true;
     }
