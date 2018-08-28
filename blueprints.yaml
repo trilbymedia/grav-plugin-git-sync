@@ -42,6 +42,12 @@ form:
       validate:
         type: commalist
     repository:
+      type: hidden
+      multiple: false
+      size: medium
+      label: Local reposetory path
+      default: user
+    repository:
       type: text
       label: Git Repository
       placeholder: https://github.com/user/repository.git
