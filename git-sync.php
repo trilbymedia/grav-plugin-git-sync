@@ -117,8 +117,7 @@ class GitSyncPlugin extends Plugin
 
         $this->grav->fireEvent('onGitSyncBeforeSynchronize');
 
-        if (!$this->git->isWorkingCopyClean()) {
-            // commit any change
+        if ($this->git->hasChangesToCommit()) {
             $this->git->commit();
         }
 
