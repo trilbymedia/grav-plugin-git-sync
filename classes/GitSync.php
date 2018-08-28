@@ -193,20 +193,24 @@ class GitSync extends Git
         switch ($authorType) {
             case 'gitsync':
                 $user = $this->getConfig('git', null)['name'];
+                $email = $this->getConfig('git', null)['email'];
                 break;
             case 'gravuser':
                 $user = $this->grav['session']->user->username;
+                $email = $this->grav['session']->user->email;
                 break;
             case 'gravfull':
                 $user = $this->grav['session']->user->fullname;
+                $email = $this->grav['session']->user->email;
                 break;
             case 'gituser':
             default:
                 $user = $this->user;
+                $email = $this->getConfig('git', null)['email'];
                 break;
         }
 
-        $author = $user . ' <' . $this->getConfig('git', null)['email'] . '>';
+        $author = $user . ' <' . $email . '>';
         $author = '--author="' . $author . '"';
         $message .= ' from ' . $user;
         $this->add();
