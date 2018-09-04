@@ -310,6 +310,10 @@ class GitSync extends Git
             $command .= ' 2>&1';
 
             if (DIRECTORY_SEPARATOR == '/') {
+                if ($prefix = $this->getGitConfig('scl', null)) {
+                    $command = $prefix . ' \'' . addcslashes($command, '\'') . '\'';
+                }
+
                 $command = 'LC_ALL=en_US.UTF-8 ' . $command;
             }
 
