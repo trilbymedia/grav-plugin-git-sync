@@ -151,6 +151,11 @@ form:
       label: Git Binary Path
       help: If the default `git` command doesn't work on your machine or if you want to specify a custom path, do it in here
       placeholder: /usr/bin/git
+    git.scl:
+      type: text
+      label: Prefix For Command
+      help: If running in an environment that using software collections, enable git here
+      placeholder: scl enable rh-git29
     logging:
       type: toggle
       default: 0
