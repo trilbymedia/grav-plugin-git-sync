@@ -1,8 +1,11 @@
-[data-remodal-id="wizard"] form [class^="step-"] a:not(.button), [data-remodal-id="reset-local"] form [class^="step-"] a:not(.button) {
+[data-remodal-id="wizard"] form [class^="step-"] a:not(.button):not([target]), [data-remodal-id="reset-local"] form [class^="step-"] a:not(.button):not([target]) {
   vertical-align: middle;
   color: #5591c7; }
-  [data-remodal-id="wizard"] form [class^="step-"] a:not(.button):hover, [data-remodal-id="reset-local"] form [class^="step-"] a:not(.button):hover {
+  [data-remodal-id="wizard"] form [class^="step-"] a:not(.button):not([target]):hover, [data-remodal-id="reset-local"] form [class^="step-"] a:not(.button):not([target]):hover {
     color: #366188; }
+
+[data-remodal-id="wizard"] .step-1 a, [data-remodal-id="reset-local"] .step-1 a {
+  vertical-align: middle; }
 
 [data-remodal-id="wizard"] .access-tokens h3, [data-remodal-id="reset-local"] .access-tokens h3 {
   margin-top: 1rem; }
@@ -59,17 +62,32 @@
 [data-remodal-id="wizard"] .step-1 div.column:nth-child(2) > label:nth-child(1) > input:nth-child(1), [data-remodal-id="wizard"] .step-1 div.column:nth-child(2) > label:nth-child(2) > input:nth-child(1), [data-remodal-id="reset-local"] .step-1 div.column:nth-child(2) > label:nth-child(1) > input:nth-child(1), [data-remodal-id="reset-local"] .step-1 div.column:nth-child(2) > label:nth-child(2) > input:nth-child(1) {
   width: 85%; }
 
-#admin-main [data-grav-field="git-wizard"] .danger.button-bar {
-  margin: 0;
-  padding: 0;
-  background: transparent; }
+[data-remodal-id="wizard"] .step-4 .info, [data-remodal-id="reset-local"] .step-4 .info {
+  font-size: 100%;
+  margin: 0.2rem 0; }
 
-#admin-main [data-grav-field="git-wizard"] .button {
-  top: 0 !important;
-  -webkit-transform: translateY(0) !important;
-  -moz-transform: translateY(0) !important;
-  -ms-transform: translateY(0) !important;
-  -o-transform: translateY(0) !important;
-  transform: translateY(0) !important; }
+[data-remodal-id="wizard"] .step-4 .alert, [data-remodal-id="wizard"] .step-4 .warning, [data-remodal-id="reset-local"] .step-4 .alert, [data-remodal-id="reset-local"] .step-4 .warning {
+  padding: 0.5rem 1.5rem; }
+
+[data-remodal-id="wizard"] .step-4 .fa.fa-warning, [data-remodal-id="reset-local"] .step-4 .fa.fa-warning {
+  color: #ff7d3b;
+  font-size: 1.2rem; }
+
+[data-remodal-id="wizard"] .step-4 .wizard-padding label > *, [data-remodal-id="reset-local"] .step-4 .wizard-padding label > * {
+  vertical-align: middle; }
+
+#admin-main [data-grav-field="git-wizard"] {
+  margin: 0 1rem; }
+  #admin-main [data-grav-field="git-wizard"] .danger.button-bar {
+    margin: 0;
+    padding: 0;
+    background: transparent; }
+  #admin-main [data-grav-field="git-wizard"] .button {
+    top: 0 !important;
+    -webkit-transform: translateY(0) !important;
+    -moz-transform: translateY(0) !important;
+    -ms-transform: translateY(0) !important;
+    -o-transform: translateY(0) !important;
+    transform: translateY(0) !important; }
 
 /*# sourceMappingURL=../css-compiled/git-sync.css.map */

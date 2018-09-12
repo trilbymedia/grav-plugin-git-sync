@@ -20,7 +20,7 @@ class GitSync extends Git
     {
         $this->grav = Grav::instance();
         $this->config = $this->grav['config']->get('plugins.git-sync');
-        $this->repositoryPath = $this->config['repository_path'];
+        $this->repositoryPath = isset($this->config['local_repository']) && $this->config['local_repository'] ? $this->config['local_repository'] : USER_DIR;
         parent::__construct($this->repositoryPath);
         static::$instance = $this;
 
@@ -86,8 +86,9 @@ class GitSync extends Git
     {
         if ($force || !Helper::isGitInitialized()) {
             $this->execute('init');
-            return $this->enableSparseCheckout();
         }
+
+        $this->enableSparseCheckout();
 
         return true;
     }
@@ -168,13 +169,22 @@ class GitSync extends Git
     public function add()
     {
         $version = Helper::isGitInstalled(true);
-        $folders = $this->config['folders'];
-        $paths = [];
         $add = 'add';
 
+        // With the introduction of customizable paths,
+        // it appears that the add command should always
+        // add everything that is not committed to ensure
+        // there are no orphan changes left behind
+
+        /*
+        $folders = $this->config['folders'];
+        $paths = [];
         foreach ($folders as $folder) {
             $paths[] = $folder;
         }
+        */
+
+        $paths = ['.'];
 
         if (version_compare($version, '2.0', '<')) {
             $add .= ' --all';
@@ -257,7 +267,7 @@ class GitSync extends Git
         $this->addRemote(null, null, true);
 
         $this->fetch($name, $branch);
-        $this->execute("checkout {$local_branch}");
+        $this->execute('checkout ' . $local_branch);
         $this->pull($name, $branch);
         $this->push($name, $branch);
 

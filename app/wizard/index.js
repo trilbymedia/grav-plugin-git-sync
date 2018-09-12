@@ -99,9 +99,11 @@ $(document).on('click', '[data-gitsync-action]', (event) => {
     if (!user) {
         error.push('Username is missing.');
     }
-    /*if (!password) {
+    /*
+    if (!password) {
         error.push('Password is missing.');
-    }*/
+    }
+    */
     if (!repository) {
         error.push('Repository is missing.');
     }
@@ -197,13 +199,22 @@ $(document).on('click', '[data-access-tokens-details]', (event) => {
 
     const button = $(event.currentTarget);
     const panel = button.closest('.access-tokens').find('.access-tokens-details');
-    
+
     panel.slideToggle(250, () => {
         const isVisible = panel.is(':visible');
         const icon = button.find('.fa');
 
         icon.removeClass('fa-chevron-down fa-chevron-up').addClass(`fa-chevron-${isVisible ? 'up' : 'down'}`);
     });
+});
+
+$(document).on('mouseenter', '[data-remodal-id="wizard"] .step-4 label', (event) => {
+    const target = $(event.currentTarget);
+    const selection = target.find('input').val();
+    const column = target.closest('.columns').find('.column:last');
+
+    column.find('[class*="description-"]').addClass('hidden');
+    column.find(`.description-${selection}`).removeClass('hidden');
 });
 
 $(document).ready(() => {

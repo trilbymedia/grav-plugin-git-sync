@@ -1,28 +1,54 @@
-var webpack   = require('webpack'),
-    exec      = require('child_process').execSync,
-    path      = require('path'),
-    pwd       = exec('pwd').toString(),
+var webpack = require('webpack'),
+    path = require('path'),
+    exec = require('child_process').execSync,
+    UglifyJsPlugin = require('uglifyjs-webpack-plugin'),
+    isProd = process.env.NODE_ENV === 'production',
+    pwd = exec('pwd').toString(),
     adminPath = path.resolve(pwd + '/../admin/themes/grav/app');
 
 module.exports = {
-    entry: './app/main.js',
-    devtool: 'source-map',
-    output: {
-        path: path.resolve(__dirname, 'js'),
-        filename: 'app.js'
+    entry: {
+        app: './app/main.js'
     },
+    devtool: isProd ? false : 'eval-source-map',
+    target: 'web',
     resolve: {
         alias: {
             admin: adminPath
         }
     },
+    output: {
+        path: path.resolve(__dirname, 'js'),
+        filename: '[name].js',
+        chunkFilename: 'vendor.js'
+    },
+    optimization: {
+        minimize: isProd,
+        minimizer: [
+            new UglifyJsPlugin({
+                uglifyOptions: {
+                    compress: {
+                        drop_console: true
+                    },
+                    dead_code: true
+                }
+            })
+        ],
+        splitChunks: {
+            cacheGroups: {
+                vendors: {
+                    test: /[\\/]node_modules[\\/]/,
+                    priority: 1,
+                    name: 'vendor',
+                    enforce: true,
+                    chunks: 'all'
+                }
+            }
+        }
+    },
     plugins: [
         new webpack.ProvidePlugin({
-            'fetch': 'imports?this=>global!exports?global.fetch!whatwg-fetch'
-        }),
-        new webpack.optimize.UglifyJsPlugin({
-            compress: { warnings: false },
-            output: { comments: false, semicolons: true }
+            'fetch': 'imports-loader?this=>global!exports-loader?global.fetch!whatwg-fetch'
         })
     ],
     externals: {
@@ -31,16 +57,14 @@ module.exports = {
         'grav-config': 'GravAdmin'
     },
     module: {
-        preLoaders: [
-            { test: /\.json$/, loader: 'json' },
-            { test: /\.js$/, loader: 'eslint', exclude: [/node_modules/, /js/] }
-        ],
-        loaders: [
-            { test: /\.css$/, loader: 'style-loader!css-loader' },
+        rules: [
+            {enforce: 'pre', test: /\.json$/, loader: 'json-loader'},
+            {enforce: 'pre', test: /\.js$/, loader: 'eslint-loader', exclude: /node_modules/},
+            {test: /\.css$/, loader: 'style-loader!css-loader'},
             {
                 test: /\.js$/,
                 loader: 'babel-loader',
-                exclude: [/node_modules/, /vex-js/],
+                exclude: /node_modules/,
                 query: {
                     presets: ['es2015', 'stage-3']
                 }

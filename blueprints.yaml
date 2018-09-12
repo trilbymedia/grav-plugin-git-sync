@@ -1,5 +1,5 @@
 name: Git Sync
-version: 1.0.4
+version: 2.0.0
 description: Allows to synchronize portions of Grav with Git Repositories (GitHub, BitBucket, GitLab)
 icon: git
 author:
@@ -11,6 +11,10 @@ keywords: grav, plugin, git, sync, github, bitbucket, gitlab
 issues: https://github.com/trilbymedia/grav-plugin-git-sync/issues
 docs: https://github.com/trilbymedia/grav-plugin-git-sync
 license: MIT
+
+dependencies:
+- { name: grav, version: '>=1.5.0' }
+- { name: form, version: '>=2.16.3' }
 
 form:
   validation: strict
@@ -30,23 +34,28 @@ form:
       validate:
         type: bool
     folders:
-      type: hidden
+      type: select
       multiple: true
-      size: medium
       label: Sync Folders
       classes: fancy
-      default: ['pages']
+      description: Warning: Removing folders after they have been added and synced may cause undersired results
+      default:
+        - pages
       options:
-        pages: Pages
-        themes: Themes
+        - pages
+        - themes
+        - plugins
+        - config
+        - data
+      selectize:
+        create: true
       validate:
         type: commalist
-    repository:
+    local_repository:
       type: hidden
       multiple: false
       size: medium
-      label: Local reposetory path
-      default: user
+      label: Local Repository Path
     repository:
       type: text
       label: Git Repository
@@ -55,11 +64,13 @@ form:
       type: text
       label: Git User
       placeholder: Username, not email
+      autocomplete: off
     password:
       type: enc-password
       label: Git Password or Token
       placeholder: Your Git Password or Token
       description: Enter your password or token to encrypt and securely store it, then save the settings. It will not show up here for security reasons.
+      autocomplete: off
     webhook:
       type: text
       label: Repository Web Hook
@@ -67,16 +78,16 @@ form:
       default: /_git-sync
     Sync:
       type: section
-      title: Synchronization
+      title: Automatic Synchronization
       underline: true
-    SyncWarning:
+    SyncNotice:
       type: spacer
+      markdown: true
       text: |
-        Warning: if these options are disabled, automatic sync will not occurs at all when a page is saved, or others triggers, according to what you disabled. But it may improve performances if saving pages is too slow.<br />
-        Without any further action, nothing will be comitted to git. We recommand you to either sync manually using the <i class="fa fa-git"></i> Sync button in the top left of the administration panel, or setup a periodic task to sync with the remote repository every few hours in the background.
+        ! Note, to improve the speed of saving pages you can disable automatic sync. Then, changes to the page will not be sent to the remote repository on every save. To sync your changes to the repository tap the GitSync button (<i class="fa fa-git"></i>) in the top left of the Administration Panel, or automate the process with the GitSync command on the server.
     sync.on_save:
       type: toggle
-      label: Sync On Save
+      label: Sync on Page Save
       help: Sync with the remote directory when a page is saved through the admin
       default: 1
       highlight: 1
@@ -87,7 +98,7 @@ form:
         type: bool
     sync.on_delete:
       type: toggle
-      label: Sync On Delete
+      label: Sync on Page Delete
       help: Sync with the remote directory when a page is deleted through the admin
       default: 1
       highlight: 1
@@ -98,8 +109,8 @@ form:
         type: bool
     sync.on_media:
       type: toggle
-      label: Sync When Media are Uploaded or Deleted
-      help: Sync with the remote directory when a media is uploaded or deleted through the admin immediatly (instead of only syncing when the page is saved)
+      label: Sync on Media Changes
+      help: Sync with the remote directory when a media is uploaded or deleted through the admin immediately (instead of only syncing when the page is saved)
       default: 1
       highlight: 1
       options:
@@ -158,10 +169,10 @@ form:
       help: Logs git commands. Useful to debug and troubleshoot git execution
       highlight: 0
       options:
-          1: PLUGIN_ADMIN.YES
-          0: PLUGIN_ADMIN.NO
+        1: PLUGIN_ADMIN.YES
+        0: PLUGIN_ADMIN.NO
       validate:
-          type: bool
+        type: bool
     Actions:
       type: section
       title: Actions

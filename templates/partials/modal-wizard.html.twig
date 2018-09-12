@@ -166,7 +166,7 @@
             </div>
 
             <p>
-                Once you created your repository, insert below the full HTTPS URL for the repository you just created. This is the URL used to clone the repository. All services offer both SSH and HTTPS URLs but it is recommended to only use HTTPS.
+                Once you created your repository, insert below the full HTTPS URL for the repository you just created. This is the URL used to clone the repository. All services offer both SSH and HTTPS URLs but <strong>ONLY</strong> HTTPS is supported at this time.
             </p>
 
             <p class="hidden-step-bitbucket hidden">
@@ -175,7 +175,7 @@
 
             <p>
                 <label>
-                    Git Repository
+                    Git Repository (<strong>HTTPS only</strong>)
                     <input type="text" name="gitsync[repo_url]" placeholder="https://github.com/getgrav/grav.git" value="{{ settings.repository|default('') }}" />
                 </label>
             </p>
@@ -289,39 +289,69 @@
         </div>
     </div>
 
-    {#<div class="step-4">
+    <div class="step-4">
         <h1>Step 4 - Choose what to Synchronize</h1>
         <div class="panel hidden disabled">
             <p>
-                You can choose to synchronize any portion of the <strong>user/</strong> folder independently. It is highly encouraged not to synchronize the <strong>config/</strong>- and <strong>data/</strong>-folders because they might contain sensitive data you might not realize gets shared publicly.
+                Select which <strong>user/</strong> folders you would like to independently synchronize (default: Pages).
             </p>
-
             <div class="columns wizard-padding">
                 <div class="column">
-                    <label class="disabled">
-                        <input type="checkbox" value="config" name="gitsync[folders]" disabled />
-                        Config
-                    </label>
-                    <label class="disabled">
-                        <input type="checkbox" value="data" name="gitsync[folders]" disabled />
-                        Data
-                    </label>
                     <label>
                         <input type="checkbox" value="pages" name="gitsync[folders]" {{ not settings.folders or 'pages' in settings.folders ? 'checked' : '' }} />
                         Pages
                     </label>
-                    <label class="disabled">
-                        <input type="checkbox" value="plugins" name="gitsync[folders]" disabled />
+                    <label>
+                        <input type="checkbox" value="themes" name="gitsync[folders]" {{ 'themes' in settings.folders ? 'checked' : '' }} />
+                        Themes
+                    </label>
+                    <label>
+                        <input type="checkbox" value="plugins" name="gitsync[folders]" {{ 'plugins' in settings.folders ? 'checked' : '' }} />
                         Plugins
                     </label>
                     <label>
-                        <input type="checkbox" value="themes" name="gitsync[folders]" disabled />
-                        Themes
+                        <input type="checkbox" value="config" name="gitsync[folders]" {{ 'config' in settings.folders ? 'checked' : '' }} />
+                        Config
+                        <span class="hint--right" data-hint="This folder might contain sensitive data"><i class="fa fa-warning"></i></span>
                     </label>
+                    <label>
+                        <input type="checkbox" value="data" name="gitsync[folders]"{{ 'data' in settings.folders ? 'checked' : '' }} />
+                        Data
+                        <span class="hint--right" data-hint="This folder might contain sensitive data"><i class="fa fa-warning"></i></span>
+                    </label>
+                    {% if 'accounts' in settings.folders %}
+                        <label>
+                            <input type="checkbox" value="accounts" name="gitsync[folders]" {{ 'accounts' in settings.folders ? 'checked' : '' }} />
+                            Accounts
+                            <span class="hint--right" data-hint="This folder contains sensitive data"><i class="fa fa-warning"></i></span>
+                        </label>
+                    {% endif %}
                 </div>
                 <div class="column">
-                    <p>Description when hovering over one of the Items on left</p>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores aut cupiditate dolorem, exercitationem hic illo in modi nisi nobis nostrum nulla quae quaerat quas, quo repellendus sapiente sed suscipit vero?</p>
+                    <div class="description">
+                        <p class="description-accounts hidden">
+                            This folder contains all the user accounts of the site.
+                        </p>
+                        <p class="description-config hidden">
+                            This folder contains all the configurations of the site, plugins and themes.
+                        </p>
+                        <p class="description-data hidden">
+                            This folder contains all the stored data from plugins.
+                        </p>
+                        <p class="description-pages hidden">
+                            This folders contains all the pages of your site.
+                        </p>
+                        <p class="description-plugins hidden">
+                            This folders contains all the plugins installed in your site.
+                        </p>
+                        <p class="description-themes hidden">
+                            This folders contains all the themes installed in your site.
+                        </p>
+
+                        <p class="info warning description-accounts description-config description-data hidden">Careful! This folder can contain sensitive data and synchronizing it will potentially expose the data publicly. Private repository recommended.</p>
+
+                        <p class="info alert description-themes hidden">Note that changes happening in this folder can't be detected automatically by GitSync, therefore a manual synchronization will be required.</p>
+                    </div>
                 </div>
             </div>
 
@@ -329,7 +359,7 @@
                 Press <strong>Next</strong> to continue.
             </p>
         </div>
-    </div>#}
+    </div>
 
     <div class="button-bar">
         <a class="button secondary float-left" data-remodal-action="cancel" href="#">Cancel</a>

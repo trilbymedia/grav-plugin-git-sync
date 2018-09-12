@@ -78,24 +78,46 @@
     }
 
     .step-1 {
-      div.column:nth-child(1) {
-          flex-grow: 1.5;
+        div.column:nth-child(1) {
+            flex-grow: 1.5;
 
-          > label:nth-child(4) {
-              width: 110%;
-          }
-      }
-      
-      div.column:nth-child(2) {
-          margin-left: 25px;
-      }    
-      div.column:nth-child(2) > label:nth-child(1) > input:nth-child(1), div.column:nth-child(2) > label:nth-child(2) > input:nth-child(1) {
-          width: 85%;
+            > label:nth-child(4) {
+                width: 110%;
+            }
         }
-      }
+
+        div.column:nth-child(2) {
+            margin-left: 25px;
+        }
+        div.column:nth-child(2) > label:nth-child(1) > input:nth-child(1), div.column:nth-child(2) > label:nth-child(2) > input:nth-child(1) {
+            width: 85%;
+        }
+    }
+
+    .step-4 {
+        .info {
+            font-size: 100%;
+            margin: 0.2rem 0;
+        }
+
+        .alert, .warning {
+            padding: 0.5rem 1.5rem;
+        }
+
+        .fa.fa-warning {
+            color: #ff7d3b;
+            font-size: 1.2rem;
+        }
+
+        .wizard-padding label > * {
+            vertical-align: middle;
+        }
+
+    }
 }
 
 #admin-main [data-grav-field="git-wizard"] {
+    margin: 0 1rem;
     .danger.button-bar {
         margin: 0;
         padding: 0;

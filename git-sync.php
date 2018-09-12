@@ -82,7 +82,6 @@ class GitSyncPlugin extends Plugin
     {
         $base = rtrim($this->grav['base_url'], '/') . '/' . trim($this->grav['admin']->base, '/');
         $options = [
-            //            'route' => $this->admin_route . '/plugins/tntsearch',
             'hint' => 'Synchronize GitSync',
             'class' => 'gitsync-sync',
             'location' => 'pages',
@@ -183,8 +182,9 @@ class GitSyncPlugin extends Plugin
             $this->grav['assets']->addInlineJs('var GitSync = ' . json_encode($settings) . ';');
         }
 
+        $this->grav['assets']->addJs('plugin://git-sync/js/vendor.js', ['loading' => 'defer', 'priority' => 0]);
         $this->grav['assets']->addJs('plugin://git-sync/js/app.js', ['loading' => 'defer', 'priority' => 0]);
-        
+
         return true;
     }
 
@@ -234,19 +234,20 @@ class GitSyncPlugin extends Plugin
 
         $obj           = $event['object'];
         $adminPath	   = trim($this->grav['admin']->base, '/');
-        $isPluginRoute = $this->grav['uri']->path() == "/$adminPath/plugins/" . $this->name;
-
-        /*
+        $uriPath       = $this->grav['uri']->path();
+        $isPluginRoute = $uriPath == "/$adminPath/plugins/" . $this->name;
         $folders = $this->controller->git->getConfig('folders', []);
-        if (!$isPluginRoute && !in_array('config', $folders)) {
-            return true;
-        }
-        */
 
         if ($obj instanceof Data) {
-            if (!$isPluginRoute || !Helper::isGitInstalled()) {
+            $data_type = preg_replace('#^/' . preg_quote($adminPath, '#') . '/#', '', $uriPath);
+            $data_type = explode('/', $data_type);
+            $data_type = array_shift($data_type);
+
+            if (!Helper::isGitInstalled() || (!$isPluginRoute && !in_array($this->getFolderMapping($data_type), $folders))) {
                 return true;
-            } else {
+            }
+
+            if ($isPluginRoute) {
                 $this->controller->git->setConfig($obj);
 
                 // initialize git if not done yet
@@ -296,6 +297,20 @@ class GitSyncPlugin extends Plugin
 
         if ($action == 'gitsync') {
             $this->synchronize();
+        }
+    }
+
+    public function getFolderMapping($data_type) {
+        switch ($data_type) {
+            case 'user':
+                return 'accounts';
+            case 'themes':
+                return 'config';
+            case 'config':
+            case 'data':
+            case 'plugins':
+            case 'pages':
+                return $data_type;
         }
     }
 }
