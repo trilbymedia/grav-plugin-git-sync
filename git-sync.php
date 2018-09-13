@@ -80,6 +80,8 @@ class GitSyncPlugin extends Plugin
             if ($route === $webhook && $_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($secret && $enabled) {
                     if (!$this->isRequestAuthorized($secret)) {
+                        http_response_code(401);
+                        header('Content-Type: application/json');
                         echo json_encode([
                             'status' => 'error',
                             'message' => 'Unauthorized request'
@@ -89,11 +91,14 @@ class GitSyncPlugin extends Plugin
                 }
                 try {
                     $this->synchronize();
+                    header('Content-Type: application/json');
                     echo json_encode([
                         'status' => 'success',
                         'message' => 'GitSync completed the synchronization'
                     ]);
                 } catch (\Exception $e) {
+                    http_response_code(500);
+                    header('Content-Type: application/json');
                     echo json_encode([
                         'status' => 'error',
                         'message' => 'GitSync failed to synchronize'
