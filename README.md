@@ -28,16 +28,20 @@ After having installed the plugin, make sure to go in the plugin settings in ord
  
 * Easy step-by-step Wizard setup will guide you through a detailed process for setting things up
 * Supported hosting services: [GitHub](https://github.com), [BitBucket](https://bitbucket.org), [GitLab](https://gitlab.com) as well as any self-hosted and git service with webhooks support.
-* Private repository
+* Private repositories
+* Synchronize any folder under `user` (pages, themes, config) 
 * 2FA (Two-Factor Authentication) and Access Token support
-* Webhooks support allow for automatic synchronization from the Git Repository
+* Webhooks support allow for automatic synchronization from the Git Repository with secure Webhook URL auto-generated and support for Webhook Secret (when available)
 * Automatically handles simple merges behind the scenes
 * Easy one-click button to reset your local changes and restores it to the actual state of the git repository
 * Easy one-click button to manually synchronize
+* Support for Admin Quick Tray so you can synchronize from anywhere in Admin
+* Ability to customize whether GitSync should synchronize upon save or just manually
 * Customize the Committer Name, choose between Git User, GitSync Commiter Name, Grav User Name and Grav user Fullname 
 * With the built-in Form Process action `gitsync`, you can trigger the synchronization anytime someone submits a post.
 * Any 3rd party plugin can integrate with Git Sync and trigger the synchronization through the `gitsync` event.
-* Built-in CLI command to automate synchronizations.
+* Built-in CLI command to automate synchronizations
+* Log any command performed by GitSync to ensure everything runs smoothly or debug potential issues
 
 # Command Line Interface
 
