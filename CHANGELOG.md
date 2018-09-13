@@ -1,5 +1,5 @@
-# v2.0.0
-## mm/dd/2018
+# v2.0.0-rc.1
+## 09/12/2018
 
 1. [](#new)
     * Other than `pages`, it is now possible to enable `config`, `data`, `plugins` and `themes` for synchronization. You can also add any custom folder you have in your `user` (#4, #21, #34, #58, #63, #83)
