@@ -6,6 +6,7 @@
     * Allow users with `admin.pages` permissions to synchronize through quick tray (#79, thanks @apfrod)
     * When using Grav as committer, the user email will be now used for the commit (#81, thanks @apfrod)
     * Added support for Webhook Secret (Bitbucket does not yet support them) (#72, #73, thanks @pathmissing)
+    * Added options to turn automatic synchronization on/off with page saves, delete and media changes (#105, thanks @AmauryCarrade)
 1. [](#improved)
     * GitLab: Updated wizard instructions to be inline with the new GitLab UI (#90)
     * Tweaked alignment of links in the wizard (#57)

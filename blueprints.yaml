@@ -20,9 +20,9 @@ dependencies:
 form:
   validation: strict
   fields:
-    Settings:
+    Basic:
       type: section
-      title: Settings
+      title: Basic Settings
       underline: true
     enabled:
       type: toggle
@@ -39,7 +39,7 @@ form:
       multiple: true
       label: Sync Folders
       classes: fancy
-      description: Warning: Removing folders after they have been added and synced may cause undersired results
+      description: Warning: Removing folders after they have been added and synced may cause undesired results
       default:
         - pages
       options:
@@ -137,7 +137,7 @@ form:
         type: bool
     Advanced:
       type: section
-      title: Advanced
+      title: Advanced Settings
       underline: true
     branch:
       type: text
