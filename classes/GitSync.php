@@ -142,7 +142,23 @@ class GitSync extends Git
 
         $ignore = ['/*'];
         foreach ($folders as $folder) {
-            $ignore[] = '!/' . $folder;
+            $folder = rtrim($folder,'/');
+            $nested = substr_count($folder, '/');
+
+            if ($nested) {
+                $subfolders = explode('/', $folder);
+                $nested_tracking = '';
+                foreach ($subfolders as $index => $subfolder) {
+                    $last = $index === (count($subfolders) - 1);
+                    $nested_tracking .= $subfolder . '/';
+                    if (!in_array('!/' . $nested_tracking, $ignore)) {
+                        $ignore[] = rtrim($nested_tracking . (!$last ? '*' : ''), '/');
+                        $ignore[] = rtrim('!/' . $nested_tracking, '/');
+                    }
+                }
+            } else {
+                $ignore[] = '!/' . $folder;
+            }
         }
 
         $file = File::instance(rtrim($this->repositoryPath, '/') . '/.gitignore');
