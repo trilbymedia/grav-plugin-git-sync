@@ -40,6 +40,14 @@ class GitSyncPlugin extends Plugin
     }
 
     /**
+     * @return string
+     */
+    public static function generateRandomWebhook()
+    {
+        return '/_git-sync-' . bin2hex(openssl_random_pseudo_bytes(6));
+    }
+
+    /**
      * Initialize the plugin
      */
     public function onPluginsInitialized()
@@ -71,7 +79,7 @@ class GitSyncPlugin extends Plugin
 
             if ($route === $webhook && $_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($secret && $enabled) {
-                    if (!$this->isRequestAuthorzied($secret)) {
+                    if (!$this->isRequestAuthorized($secret)) {
                         echo json_encode([
                             'status' => 'error',
                             'message' => 'Unauthorized request'
@@ -91,7 +99,7 @@ class GitSyncPlugin extends Plugin
                         'message' => 'GitSync failed to synchronize'
                     ]);
                 }
-                exit;                
+                exit;
             }
         }
     }
@@ -101,7 +109,7 @@ class GitSyncPlugin extends Plugin
      * @param  string $secret local secret
      * @return boolean         whether or not the request is authorized
      */
-    public function isRequestAuthorzied($secret)
+    public function isRequestAuthorized($secret)
     {
         if (isset($_SERVER['HTTP_X_HUB_SIGNATURE'])) {
             $payload = file_get_contents('php://input');

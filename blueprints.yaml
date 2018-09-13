@@ -75,22 +75,23 @@ form:
       type: text
       label: Repository Web Hook URL
       placeholder: /_git-sync
-      default: /_git-sync
-    webhook_secret:
-      type: text
-      label: Repository Web Hook Secret
-      placeholder: Your Web Hook Secret
-      data-default@: '\Grav\Plugin\GitSyncPlugin::generateWebhookSecret'
-      description: You can either use this randomly generated string or enter your own secret
+      data-default@: '\Grav\Plugin\GitSyncPlugin::generateRandomWebhook'
     webhook_enabled:
       type: toggle
-      label: Use Web Hook Secret
+      label: Web Hook Secret
       highlight: 1
       default: 0
       options:
         1: Enabled
         0: Disabled
       description: With this setting enabled, only authorized webhook calls will be able to trigger a synchronization (recommended)
+    webhook_secret:
+      type: text
+      label: Repository Web Hook Secret
+      placeholder: Your Web Hook Secret
+      data-default@: '\Grav\Plugin\GitSyncPlugin::generateWebhookSecret'
+      description: You can either use this randomly generated string or enter your own secret. <br /> **Bitbucket** does not yet support Webhook Secrets.
+      markdown: true
     Sync:
       type: section
       title: Automatic Synchronization

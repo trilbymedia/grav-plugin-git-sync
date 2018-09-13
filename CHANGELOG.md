@@ -5,11 +5,13 @@
     * Other than `pages`, it is now possible to enable `config`, `data`, `plugins` and `themes` for synchronization. You can also add any custom folder you have in your `user` (#4, #21, #34, #58, #63, #83)
     * Allow users with `admin.pages` permissions to synchronize through quick tray (#79, thanks @apfrod)
     * When using Grav as committer, the user email will be now used for the commit (#81, thanks @apfrod)
+    * Added support for Webhook Secret (Bitbucket does not yet support them) (#72, #73, thanks @pathmissing)
 1. [](#improved)
     * GitLab: Updated wizard instructions to be inline with the new GitLab UI (#90)
     * Tweaked alignment of links in the wizard (#57)
     * Properly support local branches that aren't `master` (#56)
     * Allow to specify custom local_repository (default, `USER_DIR`) (#95, thanks @Hydraner, also #54, #33, #25)
+    * Webhook URL is now more robust and secure, by default it is generated with a random value
 1. [](#bugfix)
     * Fixed issue where Wizard wouldn't work in case the `admin` path was modified (#27, #94, #77, thanks @pathmissing)
     * Fixed webhook generated URL when multi-lang active (#71)

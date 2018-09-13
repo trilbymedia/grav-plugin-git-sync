@@ -194,12 +194,23 @@
         <h1>Step 3 - Setting up the Webhook</h1>
         <div class="panel hidden disabled" data-gitsync-uribase="{{ frontend_url }}">
             <p>
-                The Webhook allows to synchronize the site every time a change happens in the repository. The Webhook is an URL that needs to be setup in the repository. By Default the Webhook is set to <code>/_git-sync</code> but you can change it to whatever name you'd like.</p>
+                The Webhook allows to synchronize the site every time a change happens in the repository. The Webhook is an URL that needs to be setup in the repository. By default it is auto-generated but you can change it to whatever name you'd like.</p>
 
             <p>
                 <label>
                     Webhook
                     <input type="text" name="gitsync[webhook]" placeholder="/_git-sync" value="{{ settings.webhook|default('/_git-sync') }}" />
+                </label>
+            </p>
+
+            <p class="webhook-secret-wrapper">
+                <label for="gitsync-webhook-secret-input">
+                    <input id="gitsync-webhook-secret-input" type="checkbox" name="gitsync[webhook_enabled]" {{ settings.webhook_enabled ? 'checked' }}>
+                    Use Webhook Secret
+                </label>
+                <label class="{{ not settings.webhook_enabled ? 'hidden' }}">
+                    Webhook Secret
+                    <input type="text" name="gitsync[webhook_secret]" placeholder="Your Web Hook Secret" value="{{ settings.webhook_secret }}" />
                 </label>
             </p>
 
@@ -218,7 +229,7 @@
                         <ul>
                             <li><strong>Payload URL</strong>: <code>{{ frontend_url }}<span class="gitsync-webhook">{{ settings.webhook|default('/_git-sync') }}</span></code></li>
                             <li><strong>Content type</strong>: <code>application/json</code></li>
-                            <li><strong>Secret</strong>: <em>leave empty</em></li>
+                            <li><strong>Secret</strong>: <span class="gitsync-webhook-secret">{{ (settings.webhook_enabled and settings.webhook_secret ? '<code>' ~ settings.webhook_secret ~ '</code>' : '<em>leave empty</em>')|raw }}</span></li>
                             <li><strong>Which events would you like to trigger this webhook?</strong> <code>Just the push event.</code></li>
                             <li><strong>Active</strong>: <i class="fa fa-check-square-o"></i></li>
                         </ul>
@@ -254,7 +265,7 @@
                         Fill out the form as follows
                         <ul>
                             <li><strong>URL</strong>: <code>{{ frontend_url }}<span class="gitsync-webhook">{{ settings.webhook|default('/_git-sync') }}</span></code></li>
-                            <li><strong>Secret Token</strong>: <em>leave empty</em></li>
+                            <li><strong>Secret Token</strong>: <span class="gitsync-webhook-secret">{{ (settings.webhook_enabled and settings.webhook_secret ? '<code>' ~ settings.webhook_secret ~ '</code>' : '<em>leave empty</em>')|raw }}</span></li>
                             <li><strong>Push events</strong>: <i class="fa fa-check-square-o"></i></li>
                         </ul>
                     </li>
@@ -275,7 +286,7 @@
                         Compile the form as follows
                         <ul>
                             <li><strong>URL</strong>: <code>{{ frontend_url }}<span class="gitsync-webhook">{{ settings.webhook|default('/_git-sync') }}</span></code></li>
-                            <li><strong>Secret Token</strong>: <em>leave empty</em></li>
+                            <li><strong>Secret Token</strong>: <span class="gitsync-webhook-secret">{{ (settings.webhook_enabled and settings.webhook_secret ? '<code>' ~ settings.webhook_secret ~ '</code>' : '<em>leave empty</em>')|raw }}</span></li>
                             <li><strong>Push events</strong>: <i class="fa fa-check-square-o"></i></li>
                         </ul>
                     </li>

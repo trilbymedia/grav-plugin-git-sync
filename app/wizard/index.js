@@ -26,7 +26,12 @@ const openWizard = () => {
     previous.addClass('hidden');
     save.addClass('hidden');
 
+    const webhook = $('[name="data[webhook]"]').val();
+    const webhook_secret = $('[name="data[webhook_secret]"]').val();
     $('[name="gitsync[repository]"]').trigger('change');
+    $('[name="gitsync[webhook]"]').val(webhook);
+    $('[name="gitsync[webhook_secret]"]').val(webhook_secret);
+    $('.gitsync-webhook').text(webhook);
 
     modal.open();
 };
@@ -93,6 +98,9 @@ $(document).on('click', '[data-gitsync-action]', (event) => {
     const user = $('[name="gitsync[repo_user]"]').val();
     const password = $('[name="gitsync[repo_password]"]').val();
     const repository = $('[name="gitsync[repo_url]"]').val();
+    const webhook = $('[name="gitsync[webhook]"]').val();
+    const webhook_enabled = $('[name="gitsync[webhook_enabled]"]').is(':checked');
+    const webhook_secret = $('[name="gitsync[webhook_secret]"]').val();
 
     let error = [];
 
@@ -121,6 +129,9 @@ $(document).on('click', '[data-gitsync-action]', (event) => {
         $('[name="data[repository]"]').val(repository);
         $('[name="data[user]"]').val(user);
         $('[name="data[password]"]').val(password);
+        $('[name="data[webhook]"]').val(webhook);
+        $(`[name="data[webhook_enabled]"][value="${webhook_enabled ? 1 : 0}"]`).prop('checked', true);
+        $('[name="data[webhook_secret]"]').val(webhook_secret);
 
         const dataFolders = $('[name="data[folders][]"]');
         if (dataFolders && dataFolders[0] && dataFolders[0].selectize) {
@@ -175,6 +186,18 @@ $(document).on('keyup', '[data-gitsync-uribase] [name="gitsync[webhook]"]', (eve
     $('.gitsync-webhook').text(value);
 });
 
+$(document).on('keyup', '[data-gitsync-uribase] [name="gitsync[webhook_secret]"]', (event) => {
+    $('[data-gitsync-uribase] [name="gitsync[webhook_enabled]"]').trigger('change');
+});
+
+$(document).on('change', '[data-gitsync-uribase] [name="gitsync[webhook_enabled]"]', (event) => {
+    const target = $(event.currentTarget);
+    const checked = target.is(':checked');
+    const secret = $('[name="gitsync[webhook_secret]"]').val();
+    target.closest('.webhook-secret-wrapper').find('label:last-child')[checked ? 'removeClass' : 'addClass']('hidden');
+    $('.gitsync-webhook-secret').html(!checked || !secret.length ? '<em>leave empty</em>' : `<code>${secret}</code>`);
+});
+
 $(document).on('change', '[name="gitsync[repository]"]', (event) => {
     const target = $(event.target);
     if (!target.is(':checked')) {
@@ -186,6 +209,7 @@ $(document).on('change', '[name="gitsync[repository]"]', (event) => {
     Object.keys(SERVICES).forEach((service) => {
         WIZARD.find(`.hidden-step-${service}`)[service === SERVICE ? 'removeClass' : 'addClass']('hidden');
         if (service === SERVICE) {
+            WIZARD.find('.webhook-secret-wrapper')[service === 'bitbucket' ? 'addClass' : 'removeClass']('hidden');
             WIZARD
                 .find('input[name="gitsync[repo_url]"][placeholder]')
                 .attr('placeholder', TEMPLATES.REPO_URL.replace(/\{placeholder\}/, SERVICES[service]));
