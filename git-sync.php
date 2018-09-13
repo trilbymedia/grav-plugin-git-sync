@@ -262,6 +262,7 @@ class GitSyncPlugin extends Plugin
 
         $this->grav['assets']->addJs('plugin://git-sync/js/vendor.js', ['loading' => 'defer', 'priority' => 0]);
         $this->grav['assets']->addJs('plugin://git-sync/js/app.js', ['loading' => 'defer', 'priority' => 0]);
+        $this->grav['assets']->addCss('plugin://git-sync/css-compiled/git-sync-icon.css');
 
         return true;
     }

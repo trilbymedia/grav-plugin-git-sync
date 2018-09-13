@@ -13,6 +13,7 @@
     * Properly support local branches that aren't `master` (#56)
     * Allow to specify custom local_repository (default, `USER_DIR`) (#95, thanks @Hydraner, also #54, #33, #25)
     * Webhook URL is now more robust and secure, by default it is generated with a random value
+    * Git icon from Admin has been replaced to use the `git` text icon instead of the logo
 1. [](#bugfix)
     * Fixed issue where Wizard wouldn't work in case the `admin` path was modified (#27, #94, #77, thanks @pathmissing)
     * Fixed webhook generated URL when multi-lang active (#71)

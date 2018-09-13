@@ -1,0 +1,21 @@
+@font-face {
+    font-family: 'gitsync';
+    src:
+        url('../fonts/gitsync.ttf?ivrc6k') format('truetype'),
+        url('../fonts/gitsync.woff?ivrc6k') format('woff'),
+        url('../fonts/gitsync.svg?ivrc6k#gitsync') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.fa.fa-git,
+.fa.fa-git-square {
+    font-family: 'gitsync' !important;
+}
+
+.fa-git-square:before {
+    content: "\e900" !important;
+}
+.fa-git:before {
+    content: "\e901" !important;
+}
