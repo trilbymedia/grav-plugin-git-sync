@@ -32,6 +32,14 @@ class GitSyncPlugin extends Plugin
     }
 
     /**
+     * @return string
+     */
+    public static function generateWebhookSecret()
+    {
+        return bin2hex(openssl_random_pseudo_bytes(24));
+    }
+
+    /**
      * Initialize the plugin
      */
     public function onPluginsInitialized()
@@ -55,27 +63,84 @@ class GitSyncPlugin extends Plugin
 
             return;
         } else {
-            $config  = $this->config->get('plugins.' . $this->name);
-            $route   = $this->grav['uri']->route();
+            $config = $this->config->get('plugins.' . $this->name);
+            $route = $this->grav['uri']->route();
             $webhook = isset($config['webhook']) ? $config['webhook'] : false;
+            $secret = isset($config['webhook_secret']) ? $config['webhook_secret'] : false;
+            $enabled = isset($config['webhook_enabled']) ? $config['webhook_enabled'] : false;
 
-            if ($route === $webhook) {
+            if ($route === $webhook && $_SERVER['REQUEST_METHOD'] === 'POST') {
+                if ($secret && $enabled) {
+                    if (!$this->isRequestAuthorzied($secret)) {
+                        echo json_encode([
+                            'status' => 'error',
+                            'message' => 'Unauthorized request'
+                        ]);
+                        exit;
+                    }
+                }
                 try {
                     $this->synchronize();
-
                     echo json_encode([
-                        'status'  => 'success',
+                        'status' => 'success',
                         'message' => 'GitSync completed the synchronization'
                     ]);
                 } catch (\Exception $e) {
                     echo json_encode([
-                        'status'  => 'error',
+                        'status' => 'error',
                         'message' => 'GitSync failed to synchronize'
                     ]);
                 }
-                exit;
+                exit;                
             }
         }
+    }
+
+    /**
+     * Returns true if the request contains a valid signature or token
+     * @param  string $secret local secret
+     * @return boolean         whether or not the request is authorized
+     */
+    public function isRequestAuthorzied($secret)
+    {
+        if (isset($_SERVER['HTTP_X_HUB_SIGNATURE'])) {
+            $payload = file_get_contents('php://input');
+            return $this->isGithubSignatureValid($secret, $_SERVER['HTTP_X_HUB_SIGNATURE'], $payload);
+        } elseif (isset($_SERVER['HTTP_X_GITLAB_TOKEN'])) {
+            return $this->isGitlabTokenValid($secret, $_SERVER['HTTP_X_GITLAB_TOKEN']);
+        }
+
+        return false;
+    }
+
+    /**
+     * Hashes the webhook request body with the client secret and
+     * checks if it matches the webhook signature header
+     * @param  string $secret The webhook secret
+     * @param  string $signatureHeader The signature of the webhook request
+     * @param  string $payload The webhook request body
+     * @return boolean                 Whether the signature is valid or not
+     */
+    public function isGithubSignatureValid($secret, $signatureHeader, $payload)
+    {
+        list($algorigthm, $signature) = explode('=', $signatureHeader);
+
+        if ($signature === hash_hmac($algorigthm, $payload, $secret)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns true if given Gitlab token matches secret
+     * @param  string $secret local secret
+     * @param  string $token token received from Gitlab webhook request
+     * @return boolean        whether or not secret and token match
+     */
+    public function isGitlabTokenValid($secret, $token)
+    {
+        return $secret === $token;
     }
 
     public function onAdminMenu()
