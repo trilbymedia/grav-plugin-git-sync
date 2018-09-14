@@ -243,7 +243,6 @@ $(document).on('mouseenter', '[data-remodal-id="wizard"] .step-4 label', (event)
 
 $(document).on('mouseleave', '[data-remodal-id="wizard"] .columns .column:first-child', (event) => {
     const target = $(event.currentTarget);
-    const selection = target.find('input').val();
     const column = target.siblings('.column');
 
     column.find('[class*="description-"]').addClass('hidden');
