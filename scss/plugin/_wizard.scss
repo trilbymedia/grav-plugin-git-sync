@@ -82,8 +82,11 @@
             &:first-child {
                 width: 25%;
                 flex: none;
-                border-right: 1px solid #ddd;
-                margin-right: 2rem;
+
+                &:hover {
+                    border-right: 1px solid #ddd;
+                    margin-right: 2rem;
+                }
             }
         }
     }

@@ -54,9 +54,10 @@
     flex: 1; }
     [data-remodal-id="wizard"] .columns .column:first-child, [data-remodal-id="reset-local"] .columns .column:first-child {
       width: 25%;
-      flex: none;
-      border-right: 1px solid #ddd;
-      margin-right: 2rem; }
+      flex: none; }
+      [data-remodal-id="wizard"] .columns .column:first-child:hover, [data-remodal-id="reset-local"] .columns .column:first-child:hover {
+        border-right: 1px solid #ddd;
+        margin-right: 2rem; }
 
 [data-remodal-id="wizard"] .step-1 div.column:nth-child(1), [data-remodal-id="reset-local"] .step-1 div.column:nth-child(1) {
   flex-grow: 1.5; }
