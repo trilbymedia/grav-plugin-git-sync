@@ -72,21 +72,14 @@
         align-items: center;
         justify-content: center;
 
-        label:hover {
-            font-weight: bold;
-        }
-
         .column {
             flex: 1;
 
             &:first-child {
                 width: 25%;
                 flex: none;
-
-                &:hover {
-                    border-right: 1px solid #ddd;
-                    margin-right: 2rem;
-                }
+                border-right: 1px solid #ddd;
+                margin-right: 2rem;
             }
         }
     }
@@ -127,6 +120,12 @@
             vertical-align: middle;
         }
 
+        .info-desc {
+            color: #0091ff;
+            float: right;
+            margin-right: .5rem;
+            font-size: 1.2rem;
+        }
     }
 }
 

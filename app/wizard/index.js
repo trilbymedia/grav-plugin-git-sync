@@ -232,13 +232,30 @@ $(document).on('click', '[data-access-tokens-details]', (event) => {
     });
 });
 
-$(document).on('mouseenter', '[data-remodal-id="wizard"] .step-4 label', (event) => {
-    const target = $(event.currentTarget);
-    const selection = target.find('input').val();
+const showNotices = (element) => {
+    const target = $(element);
+
+    const selection = target.val();
     const column = target.closest('.columns').find('.column:last');
 
     column.find('[class*="description-"]').addClass('hidden');
-    column.find(`.description-${selection}`).removeClass('hidden');
+    column.find(`.description-${selection}`).removeClass('hidden').hide().fadeIn({
+        duration: 250
+    });
+};
+
+$(document).on('input', '[data-remodal-id="wizard"] .step-4 input[type="checkbox"]', (event) => {
+    const target = $(event.currentTarget);
+    if (!target.is(':checked')) {
+        return;
+    }
+    
+    showNotices(target);
+});
+
+$(document).on('mouseenter', '[data-remodal-id="wizard"] .step-4 .info-desc', (event) => {
+    const target = $(event.currentTarget).siblings('input[type="checkbox"]');
+    showNotices(target);
 });
 
 $(document).on('mouseleave', '[data-remodal-id="wizard"] .columns .column:first-child', (event) => {

@@ -311,30 +311,36 @@
                     <label>
                         <input type="checkbox" value="pages" name="gitsync[folders]" {{ not settings.folders or 'pages' in settings.folders ? 'checked' : '' }} />
                         Pages
+                        <i class="info-desc fa fa-info-circle"></i>
                     </label>
                     <label>
                         <input type="checkbox" value="themes" name="gitsync[folders]" {{ 'themes' in settings.folders ? 'checked' : '' }} />
                         Themes
+                        <i class="info-desc fa fa-info-circle"></i>
                     </label>
                     <label>
                         <input type="checkbox" value="plugins" name="gitsync[folders]" {{ 'plugins' in settings.folders ? 'checked' : '' }} />
                         Plugins
+                        <i class="info-desc fa fa-info-circle"></i>
                     </label>
                     <label>
                         <input type="checkbox" value="config" name="gitsync[folders]" {{ 'config' in settings.folders ? 'checked' : '' }} />
                         Config
                         <span class="hint--right" data-hint="This folder might contain sensitive data"><i class="fa fa-warning"></i></span>
+                        <i class="info-desc fa fa-info-circle"></i>
                     </label>
                     <label>
                         <input type="checkbox" value="data" name="gitsync[folders]"{{ 'data' in settings.folders ? 'checked' : '' }} />
                         Data
                         <span class="hint--right" data-hint="This folder might contain sensitive data"><i class="fa fa-warning"></i></span>
+                        <i class="info-desc fa fa-info-circle"></i>
                     </label>
                     {% if 'accounts' in settings.folders %}
                         <label>
                             <input type="checkbox" value="accounts" name="gitsync[folders]" {{ 'accounts' in settings.folders ? 'checked' : '' }} />
                             Accounts
                             <span class="hint--right" data-hint="This folder contains sensitive data"><i class="fa fa-warning"></i></span>
+                            <i class="info-desc fa fa-info-circle"></i>
                         </label>
                     {% endif %}
                 </div>

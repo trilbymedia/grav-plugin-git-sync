@@ -48,16 +48,13 @@
   display: flex;
   align-items: center;
   justify-content: center; }
-  [data-remodal-id="wizard"] .columns label:hover, [data-remodal-id="reset-local"] .columns label:hover {
-    font-weight: bold; }
   [data-remodal-id="wizard"] .columns .column, [data-remodal-id="reset-local"] .columns .column {
     flex: 1; }
     [data-remodal-id="wizard"] .columns .column:first-child, [data-remodal-id="reset-local"] .columns .column:first-child {
       width: 25%;
-      flex: none; }
-      [data-remodal-id="wizard"] .columns .column:first-child:hover, [data-remodal-id="reset-local"] .columns .column:first-child:hover {
-        border-right: 1px solid #ddd;
-        margin-right: 2rem; }
+      flex: none;
+      border-right: 1px solid #ddd;
+      margin-right: 2rem; }
 
 [data-remodal-id="wizard"] .step-1 div.column:nth-child(1), [data-remodal-id="reset-local"] .step-1 div.column:nth-child(1) {
   flex-grow: 1.5; }
@@ -83,6 +80,12 @@
 
 [data-remodal-id="wizard"] .step-4 .wizard-padding label > *, [data-remodal-id="reset-local"] .step-4 .wizard-padding label > * {
   vertical-align: middle; }
+
+[data-remodal-id="wizard"] .step-4 .info-desc, [data-remodal-id="reset-local"] .step-4 .info-desc {
+  color: #0091ff;
+  float: right;
+  margin-right: .5rem;
+  font-size: 1.2rem; }
 
 #admin-main [data-grav-field="git-wizard"] {
   margin: 0 1rem; }
