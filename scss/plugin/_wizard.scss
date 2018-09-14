@@ -72,8 +72,19 @@
         align-items: center;
         justify-content: center;
 
+        label:hover {
+            font-weight: bold;
+        }
+
         .column {
             flex: 1;
+
+            &:first-child {
+                width: 25%;
+                flex: none;
+                border-right: 1px solid #ddd;
+                margin-right: 2rem;
+            }
         }
     }
 

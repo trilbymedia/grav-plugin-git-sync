@@ -48,8 +48,15 @@
   display: flex;
   align-items: center;
   justify-content: center; }
+  [data-remodal-id="wizard"] .columns label:hover, [data-remodal-id="reset-local"] .columns label:hover {
+    font-weight: bold; }
   [data-remodal-id="wizard"] .columns .column, [data-remodal-id="reset-local"] .columns .column {
     flex: 1; }
+    [data-remodal-id="wizard"] .columns .column:first-child, [data-remodal-id="reset-local"] .columns .column:first-child {
+      width: 25%;
+      flex: none;
+      border-right: 1px solid #ddd;
+      margin-right: 2rem; }
 
 [data-remodal-id="wizard"] .step-1 div.column:nth-child(1), [data-remodal-id="reset-local"] .step-1 div.column:nth-child(1) {
   flex-grow: 1.5; }
