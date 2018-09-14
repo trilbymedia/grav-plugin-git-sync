@@ -85,7 +85,10 @@ class GitSync extends Git
     public function initializeRepository($force = false)
     {
         if ($force || !Helper::isGitInitialized()) {
+            $branch = $this->getRemote('branch', null);
+            $local_branch = $this->getConfig('branch', $branch);
             $this->execute('init');
+            $this->execute('checkout ' . $local_branch);
         }
 
         $this->enableSparseCheckout();
@@ -279,11 +282,9 @@ class GitSync extends Git
     {
         $name = $this->getRemote('name', $name);
         $branch = $this->getRemote('branch', $branch);
-        $local_branch = $this->getConfig('branch', $branch);
         $this->addRemote(null, null, true);
 
         $this->fetch($name, $branch);
-        $this->execute('checkout ' . $local_branch);
         $this->pull($name, $branch);
         $this->push($name, $branch);
 
