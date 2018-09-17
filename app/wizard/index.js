@@ -249,13 +249,21 @@ $(document).on('input', '[data-remodal-id="wizard"] .step-4 input[type="checkbox
     if (!target.is(':checked')) {
         return;
     }
-    
+
     showNotices(target);
 });
 
 $(document).on('mouseenter', '[data-remodal-id="wizard"] .step-4 .info-desc', (event) => {
     const target = $(event.currentTarget).siblings('input[type="checkbox"]');
     showNotices(target);
+});
+
+$(document).on('mouseleave', '[data-remodal-id="wizard"] .step-4 label', (event) => {
+    const target = $(event.currentTarget);
+    const container = target.closest('.columns');
+    const column = container.find('.column:last-child');
+
+    column.find('[class*="description-"]').addClass('hidden');
 });
 
 $(document).on('mouseleave', '[data-remodal-id="wizard"] .columns .column:first-child', (event) => {
