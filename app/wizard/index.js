@@ -36,6 +36,18 @@ const openWizard = () => {
     modal.open();
 };
 
+const disableButton = (next) => {
+    next
+        .attr('disabled', 'disabled')
+        .addClass('hint--top');
+};
+
+const enableButton = (next) => {
+    next
+        .attr('disabled', null)
+        .removeClass('hint--top');
+};
+
 let STEP = 0;
 let STEPS = 0;
 let SERVICE = null;
@@ -101,6 +113,10 @@ $(document).on('click', '[data-gitsync-action]', (event) => {
     const webhook = $('[name="gitsync[webhook]"]').val();
     const webhook_enabled = $('[name="gitsync[webhook_enabled]"]').is(':checked');
     const webhook_secret = $('[name="gitsync[webhook_secret]"]').val();
+
+    if (target.attr('disabled')) {
+        return;
+    }
 
     let error = [];
 
@@ -173,10 +189,44 @@ $(document).on('click', '[data-gitsync-action]', (event) => {
         next.removeClass('hidden');
     }
 
+    if (STEP === 1) {
+        const selectedRepo = $('[name="gitsync[repository]"]:checked');
+        if (!selectedRepo.length) {
+            disableButton(next);
+        } else {
+            enableButton(next);
+        }
+    }
+
+    if (STEP === 2) {
+        const repoURL = $('[name="gitsync[repo_url]"]').val();
+        if (!repoURL.length) {
+            disableButton(next);
+        } else {
+            enableButton(next);
+        }
+    }
+
     if (STEP === STEPS) {
         next.addClass('hidden');
         previous.removeClass('hidden');
         save.removeClass('hidden');
+    }
+});
+
+$(document).on('change', '[name="gitsync[repository]"]', () => {
+    enableButton(WIZARD.find('[data-gitsync-action="next"]'));
+});
+
+$(document).on('input', '[name="gitsync[repo_url]"]', (event) => {
+    const target = $(event.currentTarget);
+    const value = target.val();
+    const next = WIZARD.find('[data-gitsync-action="next"]');
+
+    if (value.length) {
+        enableButton(next);
+    } else {
+        disableButton(next);
     }
 });
 
