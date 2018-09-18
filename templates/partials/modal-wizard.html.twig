@@ -179,10 +179,9 @@
 
                     <input type="text" name="gitsync[repo_url]" placeholder="https://github.com/getgrav/grav.git" value="{{ settings.repository|default('') }}" />
                 </label>
-
-                <p class="info">
-                    GitSync expects the repository to be your <strong>user/</strong> folder. At this time it is not possible to use a full Grav site repository as source for GitSync.
-                </p>
+                <span>
+                    GitSync will use the above repository to store the <strong>user/</strong> folder items selected in Step 4.
+                </span>
             </p>
 
             <p class="center">
