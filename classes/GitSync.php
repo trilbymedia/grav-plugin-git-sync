@@ -312,7 +312,8 @@ class GitSync extends Git
         $paths = [];
 
         foreach ($folders as $folder) {
-            $paths[] = $folder;
+            $folder = explode('/', $folder);
+            $paths[] = is_array($folder) ? array_shift($folder) : $folder;
         }
 
         $message = 'nothing to commit';
