@@ -82,13 +82,13 @@ class GitSync extends Git
         return $this->execute("ls-remote \"${url}\"");
     }
 
-    public function initializeRepository($force = false)
+    public function initializeRepository()
     {
-        if ($force || !Helper::isGitInitialized()) {
+        if (!Helper::isGitInitialized()) {
             $branch = $this->getRemote('branch', null);
             $local_branch = $this->getConfig('branch', $branch);
             $this->execute('init');
-            $this->execute('checkout ' . $local_branch);
+            $this->execute('checkout ' . $local_branch, true);
         }
 
         $this->enableSparseCheckout();
@@ -321,7 +321,7 @@ class GitSync extends Git
         return (substr($output[count($output)-1], 0, strlen($message)) !== $message);
     }
 
-    public function execute($command)
+    public function execute($command, $quiet = false)
     {
         try {
             $bin = Helper::getGitBinary($this->getGitConfig('bin', 'git'));
@@ -352,7 +352,7 @@ class GitSync extends Git
                 exec($command, $output, $returnValue);
             }
 
-            if ($returnValue !== 0) {
+            if ($returnValue !== 0 && !$quiet) {
                 throw new \RuntimeException(implode("\r\n", $output));
             }
 
