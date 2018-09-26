@@ -328,7 +328,7 @@ $(document).ready(() => {
     WIZARD.wrapInner('<form></form>');
     RESET_LOCAL.wrapInner('<form></form>');
 
-    if (Settings.first_time || !Settings.git_installed) {
+    if (WIZARD.length && (Settings.first_time || !Settings.git_installed)) {
         openWizard();
     }
 });

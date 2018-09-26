@@ -315,9 +315,9 @@ class GitSyncPlugin extends Plugin
         $adminPath	   = trim($this->grav['admin']->base, '/');
         $uriPath       = $this->grav['uri']->path();
         $isPluginRoute = $uriPath == "/$adminPath/plugins/" . $this->name;
-        $folders = $event['object']->get('folders', []);
 
         if ($obj instanceof Data) {
+            $folders = $this->controller->git->getConfig('folders', $event['object']->get('folders', []));
             $data_type = preg_replace('#^/' . preg_quote($adminPath, '#') . '/#', '', $uriPath);
             $data_type = explode('/', $data_type);
             $data_type = array_shift($data_type);
