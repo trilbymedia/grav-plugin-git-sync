@@ -285,7 +285,7 @@ $(document).on('click', '[data-access-tokens-details]', (event) => {
 const showNotices = (element) => {
     const target = $(element);
 
-    const selection = target.val();
+    const selection = target.val().replace(/\//g, '-');
     const column = target.closest('.columns').find('.column:last');
 
     column.find('[class*="description-"]').addClass('hidden');

@@ -18,10 +18,10 @@
     </div>
 
     <div class="step-1">
-        {% set selectedRepo = 'allothers' in settings.repository ? 'allothers' : selectedRepo %}
         {% set selectedRepo = 'github.com' in settings.repository ? 'github' : selectedRepo %}
         {% set selectedRepo = 'bitbucket.com' in settings.repository ? 'bitbucket' : selectedRepo %}
         {% set selectedRepo = 'gitlab.com' in settings.repository ? 'gitlab' : selectedRepo %}
+        {% set selectedRepo = not (settings.repository is empty) and not selectedRepo ? 'allothers' : selectedRepo %}
 
         <h1>Step 1 - Hosting Service</h1>
         <div class="panel hidden disabled">
@@ -314,39 +314,48 @@
                 <div class="column">
                     <label>
                         <input type="checkbox" value="pages" name="gitsync[folders]" {{ not settings.folders or 'pages' in settings.folders ? 'checked' : '' }} />
-                        Pages
+                        <span>Pages</span>
                         <i class="info-desc fa fa-info-circle"></i>
                     </label>
                     <label>
                         <input type="checkbox" value="themes" name="gitsync[folders]" {{ 'themes' in settings.folders ? 'checked' : '' }} />
-                        Themes
+                        <span>Themes</span>
                         <i class="info-desc fa fa-info-circle"></i>
                     </label>
                     <label>
                         <input type="checkbox" value="plugins" name="gitsync[folders]" {{ 'plugins' in settings.folders ? 'checked' : '' }} />
-                        Plugins
+                        <span>Plugins</span>
                         <i class="info-desc fa fa-info-circle"></i>
                     </label>
                     <label>
                         <input type="checkbox" value="config" name="gitsync[folders]" {{ 'config' in settings.folders ? 'checked' : '' }} />
-                        Config
+                        <span>Config</span>
                         <span class="hint--right" data-hint="This folder might contain sensitive data"><i class="fa fa-warning"></i></span>
                         <i class="info-desc fa fa-info-circle"></i>
                     </label>
                     <label>
                         <input type="checkbox" value="data" name="gitsync[folders]"{{ 'data' in settings.folders ? 'checked' : '' }} />
-                        Data
+                        <span>Data</span>
                         <span class="hint--right" data-hint="This folder might contain sensitive data"><i class="fa fa-warning"></i></span>
                         <i class="info-desc fa fa-info-circle"></i>
                     </label>
                     {% if 'accounts' in settings.folders %}
                         <label>
                             <input type="checkbox" value="accounts" name="gitsync[folders]" {{ 'accounts' in settings.folders ? 'checked' : '' }} />
-                            Accounts
+                            <span>Accounts</span>
                             <span class="hint--right" data-hint="This folder contains sensitive data"><i class="fa fa-warning"></i></span>
                             <i class="info-desc fa fa-info-circle"></i>
                         </label>
                     {% endif %}
+
+                    {% for folder in settings.folders if '/' in folder %}
+                        {% if loop.index0 == 0%}<hr />{% endif %}
+                        <label>
+                            <input type="checkbox" value="{{ folder }}" name="gitsync[folders]" checked />
+                            <span>{{ folder }}</span>
+                            <i class="info-desc fa fa-info-circle"></i>
+                        </label>
+                    {% endfor %}
                 </div>
                 <div class="column">
                     <div class="description">
@@ -372,6 +381,12 @@
                         <p class="info warning description-accounts description-config description-data hidden">Careful! This folder can contain sensitive data and synchronizing it will potentially expose the data publicly. Private repository recommended.</p>
 
                         <p class="info alert description-themes hidden">Note that changes happening in this folder can't be detected automatically by GitSync, therefore a manual synchronization will be required.</p>
+
+                        {% for folder in settings.folders if '/' in folder %}
+                            <p class="description-{{ folder|replace({'/': '-'}) }} hidden">
+                                This folders was manually added either by you in the settings or by your Skeleton.
+                            </p>
+                        {% endfor %}
                     </div>
                 </div>
             </div>

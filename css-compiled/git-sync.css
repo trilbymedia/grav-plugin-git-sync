@@ -58,7 +58,7 @@
   [data-remodal-id="wizard"] .columns .column, [data-remodal-id="reset-local"] .columns .column {
     flex: 1; }
     [data-remodal-id="wizard"] .columns .column:first-child, [data-remodal-id="reset-local"] .columns .column:first-child {
-      width: 25%;
+      width: 35%;
       flex: none;
       border-right: 1px solid #ddd;
       margin-right: 2rem; }
@@ -98,6 +98,9 @@
   float: right;
   margin-right: .5rem;
   font-size: 1.2rem; }
+
+[data-remodal-id="wizard"] .step-4 hr, [data-remodal-id="reset-local"] .step-4 hr {
+  margin: .5rem 0; }
 
 #admin-main [data-grav-field="git-wizard"] {
   margin: 0 1rem; }

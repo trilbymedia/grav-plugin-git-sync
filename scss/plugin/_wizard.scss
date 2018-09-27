@@ -87,7 +87,7 @@
       flex: 1;
 
       &:first-child {
-        width: 25%;
+        width: 35%;
         flex: none;
         border-right: 1px solid #ddd;
         margin-right: 2rem;
@@ -144,6 +144,10 @@
       float: right;
       margin-right: .5rem;
       font-size: 1.2rem;
+    }
+
+    hr {
+      margin: .5rem 0;
     }
   }
 }
