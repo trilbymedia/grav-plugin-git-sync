@@ -1,3 +1,16 @@
+# v2.0.0-rc.3
+## 09/28/2018
+
+1. [](#new)
+    * Added logic to display custom nested folders in wizard
+1. [](#improved)
+    * Rearranged blueprint order (thanks @paulhibbitts)
+1. [](#bugfix)
+    * Fixed issue where on first initialization the checkout process would error out
+    * Fixed issue with Pages save. 
+    * Fixed JS error in plugins list
+    * Fixed nested folders not synchronizing
+
 # v2.0.0-rc.2
 ## 09/26/2018
 
