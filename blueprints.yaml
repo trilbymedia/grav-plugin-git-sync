@@ -24,9 +24,10 @@ form:
       type: section
       title: Basic Settings
       underline: true
+
     enabled:
       type: toggle
-      label: Plugin status
+      label: Plugin Status
       highlight: 1
       default: 0
       options:
@@ -34,12 +35,13 @@ form:
         0: Disabled
       validate:
         type: bool
+
     folders:
       type: select
       multiple: true
-      label: Sync Folders
+      label: Folders to Sync
       classes: fancy
-      description: Warning: Removing folders after they have been added and synced may cause undesired results
+      description: Removing folders after they have been synced may cause undesired results.
       default:
         - pages
       options:
@@ -52,56 +54,18 @@ form:
         create: true
       validate:
         type: commalist
-    local_repository:
-      type: hidden
-      multiple: false
-      size: medium
-      label: Local Repository Path
-    repository:
-      type: text
-      label: Git Repository
-      placeholder: https://github.com/user/repository.git
-    user:
-      type: text
-      label: Git User
-      placeholder: Username, not email
-      autocomplete: off
-    password:
-      type: enc-password
-      label: Git Password or Token
-      placeholder: Your Git Password or Token
-      description: Enter your password or token to encrypt and securely store it, then save the settings. It will not show up here for security reasons.
-      autocomplete: off
-    webhook:
-      type: text
-      label: Repository Web Hook URL
-      placeholder: /_git-sync
-      data-default@: '\Grav\Plugin\GitSyncPlugin::generateRandomWebhook'
-    webhook_enabled:
-      type: toggle
-      label: Web Hook Secret
-      highlight: 1
-      default: 0
-      options:
-        1: Enabled
-        0: Disabled
-      description: With this setting enabled, only authorized webhook calls will be able to trigger a synchronization (recommended)
-    webhook_secret:
-      type: text
-      label: Repository Web Hook Secret
-      placeholder: Your Web Hook Secret
-      data-default@: '\Grav\Plugin\GitSyncPlugin::generateWebhookSecret'
-      description: You can either use this randomly generated string or enter your own secret. <br /> **Bitbucket** does not yet support Webhook Secrets.
-      markdown: true
+
     Sync:
       type: section
-      title: Automatic Synchronization
+      title: Automatic Synchronization Settings
       underline: true
+
     SyncNotice:
       type: spacer
       markdown: true
       text: |
-        ! Note, to improve the speed of saving pages you can disable automatic sync. Then, changes to the page will not be sent to the remote repository on every save. To sync your changes to the repository tap the GitSync button (<i class="fa fa-git"></i>) in the top left of the Administration Panel, or automate the process with the GitSync command on the server.
+        ! To improve the speed of saving pages you can disable automatic sync. Then, changes to a page will not be sent to the remote repository on every save. To sync your changes to the repository tap the GitSync button (<i class="fa fa-git"></i>) in the top left of the Administration Panel, or automate the process with the GitSync command on the server.
+
     sync.on_save:
       type: toggle
       label: Sync on Page Save
@@ -113,6 +77,7 @@ form:
         0: PLUGIN_ADMIN.NO
       validate:
         type: bool
+
     sync.on_delete:
       type: toggle
       label: Sync on Page Delete
@@ -124,6 +89,7 @@ form:
         0: PLUGIN_ADMIN.NO
       validate:
         type: bool
+
     sync.on_media:
       type: toggle
       label: Sync on Media Changes
@@ -135,25 +101,83 @@ form:
         0: PLUGIN_ADMIN.NO
       validate:
         type: bool
+
+    Repo:
+      type: section
+      title: Git Repository Settings
+      underline: true
+
+    local_repository:
+      type: hidden
+      multiple: false
+      size: medium
+      label: Local Repository Path
+
+    repository:
+      type: text
+      label: Git Repository
+      placeholder: https://github.com/user/repository.git
+
+    user:
+      type: text
+      label: Git User
+      placeholder: Username, not email
+      autocomplete: off
+
+    password:
+      type: enc-password
+      label: Git Password or Token
+      placeholder: Your Git Password or Token
+      description: Enter your password or token to encrypt and securely store it, then save the settings. It will not show up here for security reasons.
+      autocomplete: off
+
+    webhook:
+      type: text
+      label: Repository Web Hook URL
+      placeholder: /_git-sync
+      data-default@: '\Grav\Plugin\GitSyncPlugin::generateRandomWebhook'
+
+    webhook_enabled:
+      type: toggle
+      label: Web Hook Secret
+      highlight: 1
+      default: 0
+      options:
+        1: Enabled
+        0: Disabled
+      description: With this setting enabled, only authorized webhook calls will be able to trigger a synchronization (recommended)
+
+    webhook_secret:
+      type: text
+      label: Repository Web Hook Secret
+      placeholder: Your Web Hook Secret
+      data-default@: '\Grav\Plugin\GitSyncPlugin::generateWebhookSecret'
+      description: You can either use this randomly generated string or enter your own secret. <br /> **Bitbucket** does not yet support Webhook Secrets.
+      markdown: true
+
     Advanced:
       type: section
-      title: Advanced Settings
+      title: Advanced Git Settings
       underline: true
+
     branch:
       type: text
       default: master
       label: Local Branch
       placeholder: master
+
     remote.name:
       type: text
       default: origin
       label: Remote Name
       placeholder: origin
+
     remote.branch:
       type: text
       default: master
       label: Remote Branch
       placeholder: master
+
     git.author:
       type: select
       default: gituser
@@ -163,22 +187,26 @@ form:
         gitsync: Use GitSync Committer Name
         gravuser: Use Grav User Name
         gravfull: Use Grav User Full Name
+
     git.name:
       type: text
       default: GitSync
       label: Committer Name
       placeholder: GitSync
+
     git.email:
       type: text
       default: git-sync@trilby.media
       label: Committer Email
       placeholder: git-sync@trilby.media
+
     git.bin:
       type: text
       default: git
       label: Git Binary Path
       help: If the default `git` command doesn't work on your machine or if you want to specify a custom path, do it in here
       placeholder: /usr/bin/git
+
     logging:
       type: toggle
       default: 0
@@ -190,10 +218,12 @@ form:
         0: PLUGIN_ADMIN.NO
       validate:
         type: bool
+
     Actions:
       type: section
       title: Actions
       underline: true
+
     _wizard:
       type: git-wizard
       label: Text Variable
