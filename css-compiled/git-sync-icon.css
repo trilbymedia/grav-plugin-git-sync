@@ -11,6 +11,7 @@
 .fa.fa-git,
 .fa.fa-git-square {
     font-family: 'gitsync' !important;
+    vertical-align: middle;
 }
 
 .fa-git-square:before {
