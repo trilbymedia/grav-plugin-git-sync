@@ -3,7 +3,7 @@
 
 1. [](#improved)
     * Fixed alignment of the git icon in the Wizard (#115)
-    * Prevent Wizard modal to get canceled when pressing ESC or if clicking on the overlay background (#115)
+    * Prevent Wizard modal to get canceled when clicking on the overlay background (#115)
     * Quick tray icon is now smarter. If GitSync has not been initialized yet, it will take you straight to wizard, otherwise it would perform a synchronization (#115)
 
 # v2.0.0-rc.3

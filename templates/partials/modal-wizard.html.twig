@@ -1,7 +1,7 @@
 {% set settings = config.plugins['git-sync'] %}
 {% set frontend_url = (uri.base ~ uri.rootUrl)|trim('/') %}
 
-<div class="remodal" data-remodal-id="wizard" data-remodal-options="hashTracking: false, closeOnOutsideClick: false, closeOnEscape: false">
+<div class="remodal" data-remodal-id="wizard" data-remodal-options="hashTracking: false, closeOnOutsideClick: false">
 
     <h1>Git Sync - Wizard</h1>
     {% if git_sync.git_installed %}
@@ -139,7 +139,7 @@
             <p>
                 If you already have a repository set up and ready to use, you can skip this step. Otherwise, please follow these steps:
             </p>
-            
+
             <div class="wizard-padding">
                 <ol>
                     <li>If you are creating a new repository, create an initial commit.
@@ -217,7 +217,7 @@
                     <input type="text" name="gitsync[webhook]" placeholder="/_git-sync" value="{{ settings.webhook|default('/_git-sync') }}" />
                 </label>
             </p>
-            
+
             <p>
                 You can also use a secret token if your service provider supports it:</p>
 
