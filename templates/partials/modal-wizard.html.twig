@@ -1,7 +1,7 @@
 {% set settings = config.plugins['git-sync'] %}
 {% set frontend_url = (uri.base ~ uri.rootUrl)|trim('/') %}
 
-<div class="remodal" data-remodal-id="wizard" data-remodal-options="hashTracking: false">
+<div class="remodal" data-remodal-id="wizard" data-remodal-options="hashTracking: false, closeOnOutsideClick: false, closeOnEscape: false">
 
     <h1>Git Sync - Wizard</h1>
     {% if git_sync.git_installed %}

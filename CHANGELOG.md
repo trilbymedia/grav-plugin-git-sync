@@ -2,8 +2,8 @@
 ## mm/dd/2018
 
 1. [](#improved)
-    * Fixed alignment of the git icon in the Wizard (#115, thanks @OleVik)
-    * Fixed alignment of the git icon in the Wizard (#115, thanks @OleVik)
+    * Fixed alignment of the git icon in the Wizard (#115)
+    * Prevent Wizard modal to get canceled when pressing ESC or if clicking on the overlay background (#115)
 
 # v2.0.0-rc.3
 ## 09/28/2018
