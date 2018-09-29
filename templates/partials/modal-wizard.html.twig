@@ -111,7 +111,7 @@
                     <div class="hidden-step-gitlab hidden">
                         <h4>GitLab</h4>
                         <p>
-                            For <a href="https://docs.gitlab.com/ee/api/README.html#personal-access-tokens" target="_blank">GitLab's Personal Access Tokens</a> select the following Scopes:
+                            For <a href="https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html" target="_blank">GitLab's Personal Access Tokens</a> select the following Scopes:
                         </p>
 
                         <ul>
@@ -137,10 +137,25 @@
         <h1>Step 2 - Setting up the Repository</h1>
         <div class="panel hidden disabled">
             <p>
-                If you already have a repository set up and ready to use, you can skip this step. Otherwise please continue reading.
+                If you already have a repository set up and ready to use, you can skip this step. Otherwise, please follow these steps:
             </p>
-
-            <p>If you are going to set up the repository now, please ensure you also make a commit as the service provider offers to do when it is created (whether it's the README or .gitignore). GitSync won't work unless the repository has at least one commit.</p>
+            
+            <div class="wizard-padding">
+                <ol>
+                    <li>If you are creating a new repository, create an initial commit.
+                        <ul>
+                            <li>The service providers often ask you to do this when you made it.</li>
+                            <li>Check the box that says Initialize repository with a README or .gitignore</li>
+                            <li>This is required for GitSync to work.</li>
+                        </ul>
+                    </li>
+                    <li>Once you have made your repository, copy the full HTTPS URL and paste it into the box below.
+                        <ul>
+                            <li>Most services offer both SSH and HTTPS addresses, <strong>but only HTTPS is supported at this time</strong>.</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
 
             <div class="hidden-step-github wizard-padding hidden">
                 <h4>GitHub</h4>
@@ -157,17 +172,13 @@
             <div class="hidden-step-gitlab wizard-padding hidden">
                 <h4>GitLab</h4>
                 <p>
-                    Follow the instructions on <a href="https://docs.gitlab.com/ce/gitlab-basics/create-project.html" target="_blank">GitLab Documentation</a> to create a new GitLab repository.
+                    GitLab calls repositories "Projects". Follow the instructions on <a href="https://docs.gitlab.com/ce/gitlab-basics/create-project.html" target="_blank">GitLab Documentation</a> to create a new GitLab repository.
                 </p>
             </div>
             <div class="hidden-step-allothers wizard-padding hidden">
               <h4>Other Git Repositories</h4>
 
             </div>
-
-            <p>
-                Once you created your repository, insert below the full HTTPS URL for the repository you just created. This is the URL used to clone the repository. All services offer both SSH and HTTPS URLs but <strong>ONLY</strong> HTTPS is supported at this time.
-            </p>
 
             <p class="hidden-step-bitbucket hidden">
                 When you copy the HTTPS URL from Bitbucket, it also adds <code>your-user@</code> at the beginning of the URL which is not needed and should be removed. The URL be something like <code>https://bitbucket.org/your-user/your-repository.git</code>
@@ -198,7 +209,7 @@
         <h1>Step 3 - Setting up the Webhook</h1>
         <div class="panel hidden disabled" data-gitsync-uribase="{{ frontend_url }}">
             <p>
-                The Webhook allows to synchronize the site every time a change happens in the repository. The Webhook is an URL that needs to be setup in the repository. By default it is auto-generated but you can change it to whatever name you'd like.</p>
+                A Webhook synchronizes the site when a change happens in the repository, and is set up at the service provider. This is a special URL to your site, that you add to your repository's settings. We've auto-generated one for you below, but you can change this to whatever you'd like.</p>
 
             <p>
                 <label>
@@ -206,6 +217,9 @@
                     <input type="text" name="gitsync[webhook]" placeholder="/_git-sync" value="{{ settings.webhook|default('/_git-sync') }}" />
                 </label>
             </p>
+            
+            <p>
+                You can also use a secret token if your service provider supports it:</p>
 
             <p class="webhook-secret-wrapper">
                 <label for="gitsync-webhook-secret-input">
@@ -219,8 +233,7 @@
             </p>
 
             <p>
-                In order to setup the Webhook in your repository, please follow the steps below. If you haven't already created a repository from the previous steps, now is the time to do so.
-            </p>
+                Follow the steps below to add the Webhook to your service provider.</p>
 
             <div class="hidden-step-github wizard-padding hidden">
                 <h4>GitHub</h4>
