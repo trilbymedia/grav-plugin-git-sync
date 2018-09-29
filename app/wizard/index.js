@@ -183,6 +183,7 @@ $(document).on('click', '[data-gitsync-action]', (event) => {
 
     if (STEP <= 0) {
         previous.addClass('hidden');
+        enableButton(next);
     }
 
     if (STEP > 0) {
