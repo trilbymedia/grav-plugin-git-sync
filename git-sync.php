@@ -160,17 +160,23 @@ class GitSyncPlugin extends Plugin
     {
         $base = rtrim($this->grav['base_url'], '/') . '/' . trim($this->grav['admin']->base, '/');
         $options = [
-            'hint' => 'Synchronize GitSync',
+            'hint' => Helper::isGitInitialized() ? 'Synchronize GitSync' : 'Configure GitSync',
             'class' => 'gitsync-sync',
             'location' => 'pages',
-            'route' => 'admin',
-            'data'  => [
-                'gitsync-useraction' => 'sync',
-                'gitsync-uri' => $base . '/plugins/git-sync'
-            ],
+            'route' => Helper::isGitInitialized() ? 'admin' : 'admin/plugins/git-sync',
             'icon' => 'fa-' . $this->grav['plugins']->get('git-sync')->blueprints()->get('icon')
         ];
-        $this->grav['twig']->plugins_quick_tray['GitSync'] = $options;
+
+        if (Helper::isGitInstalled()) {
+            if (Helper::isGitInitialized()) {
+                $options['data'] = [
+                    'gitsync-useraction' => 'sync',
+                    'gitsync-uri' => $base . '/plugins/git-sync'
+                ];
+            }
+
+            $this->grav['twig']->plugins_quick_tray['GitSync'] = $options;
+        }
     }
 
     public function init()
