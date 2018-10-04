@@ -1,6 +1,8 @@
-# v2.0.0
-## mm/dd/2018
+# v2.0.0-rc.4
+## 10/04/2018
 
+1. [](#new)
+    * Added support for new awesome Grav 1.6 Scheduler
 1. [](#improved)
     * Fixed alignment of the git icon in the Wizard (#115)
     * Prevent Wizard modal to get canceled when clicking on the overlay background (#115)

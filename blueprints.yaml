@@ -102,6 +102,29 @@ form:
       validate:
         type: bool
 
+    CronNotice:
+      type: spacer
+      markdown: true
+      text: |
+        ! You can also let Grav Scheduler automatically synchronize at a given time. You could for example disable all the automatic synchronizations above and just enable the Scheduler below. **Requires Grav 1.6**
+    sync.cron_enable:
+      type: toggle
+      label: Add Job to Scheduler
+      help: Add GitSync Job to the Scheduler so it can automatically perform synchronization at a given time
+      default: 0
+      highlight: 1
+      options:
+        1: PLUGIN_ADMIN.YES
+        0: PLUGIN_ADMIN.NO
+      validate:
+        type: bool
+
+    sync.cron_at:
+      type: cron
+      label: Run Scheduled Job
+      help: When should the scheduler run the automatic synchronization
+      default: '0 12,23 * * *'
+
     Repo:
       type: section
       title: Git Repository Settings

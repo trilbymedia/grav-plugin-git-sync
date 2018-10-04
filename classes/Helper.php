@@ -78,6 +78,24 @@ class Helper {
         }
     }
 
+    public static function synchronize()
+    {
+        if (!Helper::isGitInstalled() || !Helper::isGitInitialized()) {
+            return true;
+        }
+
+        $git = new GitSync();
+
+        if ($git->hasChangesToCommit()) {
+            $git->commit();
+        }
+
+        // synchronize with remote
+        $git->sync();
+
+        return true;
+    }
+
     public static function preventReadablePassword($str, $password) {
       return str_replace(urlencode(self::decrypt($password)), '{password}', $str);
     }

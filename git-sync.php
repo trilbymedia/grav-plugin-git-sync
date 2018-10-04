@@ -3,6 +3,7 @@
 namespace Grav\Plugin;
 
 use Grav\Common\Data\Data;
+use Grav\Common\Grav;
 use Grav\Common\Plugin;
 use Grav\Plugin\GitSync\AdminController;
 use Grav\Plugin\GitSync\GitSync;
@@ -25,9 +26,10 @@ class GitSyncPlugin extends Plugin
     public static function getSubscribedEvents()
     {
         return [
-            'onPluginsInitialized' => ['onPluginsInitialized', 1000],
-            'onPageInitialized'    => ['onPageInitialized', 0],
-            'onFormProcessed'      => ['onFormProcessed', 0]
+            'onPluginsInitialized'   => ['onPluginsInitialized', 1000],
+            'onPageInitialized'      => ['onPageInitialized', 0],
+            'onFormProcessed'        => ['onFormProcessed', 0],
+            'onSchedulerInitialized' => ['onSchedulerInitialized', 0]
         ];
     }
 
@@ -210,6 +212,22 @@ class GitSyncPlugin extends Plugin
         $this->grav->fireEvent('onGitSyncAfterSynchronize');
 
         return true;
+    }
+
+    public function onSchedulerInitialized(Event $event)
+    {
+
+        /** @var Config $config */
+        $config = Grav::instance()['config'];
+        $run_at = $config->get('plugins.git-sync.sync.cron_at', '0 12,23 * * *');
+
+
+        if ($config->get('plugins.git-sync.sync.cron_enable', false)) {
+            /** @var Scheduler $scheduler */
+            $scheduler = $event['scheduler'];
+            $job = $scheduler->addFunction('Grav\Plugin\GitSync\Helper::synchronize', [], 'GitSync');
+            $job->at($run_at);
+        }
     }
 
     public function reset()
