@@ -64,7 +64,7 @@ form:
       type: spacer
       markdown: true
       text: |
-        ! To improve the speed of saving pages you can disable automatic sync. Then, changes to a page will not be sent to the remote repository on every save. To sync your changes to the repository tap the GitSync button (<i class="fa fa-git"></i>) in the top left of the Administration Panel, or automate the process with the GitSync command on the server.
+        ! To improve the speed of saving pages you can disable automatic sync. Then, changes to a page will not be sent to the remote repository on every save. To sync your changes to the repository tap the GitSync button (<i class="fa fa-git"></i>) in the top left of the Administration Panel, or use the below Scheduler option to add the GitSync Syncronization Job to the Scheduler (<strong>Grav 1.6 required</strong>).
 
     sync.on_save:
       type: toggle
@@ -102,15 +102,10 @@ form:
       validate:
         type: bool
 
-    CronNotice:
-      type: spacer
-      markdown: true
-      text: |
-        ! You can also let Grav Scheduler automatically synchronize at a given time. You could for example disable all the automatic synchronizations above and just enable the Scheduler below. **Requires Grav 1.6**
     sync.cron_enable:
       type: toggle
-      label: Add Job to Scheduler
-      help: Add GitSync Job to the Scheduler so it can automatically perform synchronization at a given time
+      label: Add Sync to Scheduler
+      help: Add GitSync Job to the Scheduler so it can automatically perform synchronization at the given time
       default: 0
       highlight: 1
       options:
@@ -121,8 +116,8 @@ form:
 
     sync.cron_at:
       type: cron
-      label: Run Scheduled Job
-      help: When should the scheduler run the automatic synchronization
+      label: Run Sync at
+      help: When should the Scheduler run the automatic GitSync synchronization job
       default: '0 12,23 * * *'
 
     Repo:
