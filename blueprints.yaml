@@ -204,6 +204,13 @@ form:
         gitsync: Use GitSync Committer Name
         gravuser: Use Grav User Name
         gravfull: Use Grav User Full Name
+        
+    git.message:
+      type: text
+      default: (Grav GitSync) Automatic Commit
+      label: Commit message
+      placeholder: (Grav GitSync) Automatic Commit
+      help: You can use {{pageTitle}} or {{pageRoute}} in your message as placeholders for the title or route of the page being saved
 
     git.name:
       type: text
