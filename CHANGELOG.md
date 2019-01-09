@@ -3,7 +3,9 @@
 
 1. [](#improved)
     * Allow setting a personalised commit message (#123, thanks @kyed)
-
+1. [](#bugfix)
+    * Fixed `LC_ALL` to use `C` instead of en_US.UTF-8`, to be more flexible (#124, #125, thanks @lambopedia)
+    
 # v2.0.0
 ## 10/15/2018
 
