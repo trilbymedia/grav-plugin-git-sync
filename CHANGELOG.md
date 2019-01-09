@@ -1,3 +1,9 @@
+# v2.0.1
+## mm/dd/2019
+
+1. [](#improved)
+    * Allow setting a personalised commit message (#123, thanks @kyed)
+
 # v2.0.0
 ## 10/15/2018
 
