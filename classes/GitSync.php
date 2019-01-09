@@ -349,7 +349,7 @@ class GitSync extends Git
             $command .= ' 2>&1';
 
             if (DIRECTORY_SEPARATOR == '/') {
-                $command = 'LC_ALL=en_US.UTF-8 ' . $command;
+                $command = 'LC_ALL=C ' . $command;
             }
 
             if ($this->getConfig('logging', false)) {
