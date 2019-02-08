@@ -16,7 +16,7 @@ class InitiateCommand extends ConsoleCommand
         $this
             ->setName('initiate')
             ->setDescription('Performs a initialization of your git repository')
-            ->setHelp('The <info>initiate</info> command runs the same git commands as the onAdminAfterSave function. Use this to manually reinitialise the gitsync (useful for automated deployments).')
+            ->setHelp('The <info>initiate</info> command runs the same git commands as the onAdminAfterSave function. Use this to manually reinitialise git-sync (useful for automated deployments).')
         ;
     }
 
