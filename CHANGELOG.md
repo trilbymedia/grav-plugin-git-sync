@@ -3,6 +3,7 @@
 
 1. [](#improved)
     * Allow setting a personalised commit message (#123, thanks @kyed)
+    * Added better directions for Azure + IIS users for the Git Binary
 1. [](#bugfix)
     * Fixed `LC_ALL` to use `C` instead of en_US.UTF-8`, to be more flexible (#124, #125, thanks @lambopedia)
     
