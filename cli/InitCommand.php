@@ -1,22 +1,21 @@
-<?php
-namespace Grav\Plugin\Console;
+<?php namespace Grav\Plugin\Console;
 
 use Grav\Console\ConsoleCommand;
 use Grav\Plugin\GitSync\GitSync;
 
 /**
- * Class LogCommand
+ * Class Initommand
  *
  * @package Grav\Plugin\Console
  */
-class InitiateCommand extends ConsoleCommand
+class InitCommand extends ConsoleCommand
 {
     protected function configure()
     {
         $this
-            ->setName('initiate')
-            ->setDescription('Performs a initialization of your git repository')
-            ->setHelp('The <info>initiate</info> command runs the same git commands as the onAdminAfterSave function. Use this to manually reinitialise git-sync (useful for automated deployments).')
+            ->setName('init')
+            ->setDescription('Initializes your git repository')
+            ->setHelp('The <info>init</info> command runs the same git commands as the onAdminAfterSave function. Use this to manually initialise git-sync (useful for automated deployments).')
         ;
     }
 
