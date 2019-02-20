@@ -4,7 +4,7 @@ use Grav\Console\ConsoleCommand;
 use Grav\Plugin\GitSync\GitSync;
 
 /**
- * Class Initommand
+ * Class InitCommand
  *
  * @package Grav\Plugin\Console
  */
@@ -15,7 +15,7 @@ class InitCommand extends ConsoleCommand
         $this
             ->setName('init')
             ->setDescription('Initializes your git repository')
-            ->setHelp('The <info>init</info> command runs the same git commands as the onAdminAfterSave function. Use this to manually initialise git-sync (useful for automated deployments).')
+            ->setHelp('The <info>init</info> command runs the same git commands as the onAdminAfterSave function. Use this to manually initialize git-sync (useful for automated deployments).')
         ;
     }
 
@@ -29,12 +29,12 @@ class InitCommand extends ConsoleCommand
         $this->output->writeln('');
 
         if (!$repository) {
-            $this->output->writeln('<red>ERROR:</red> No repository has been configured');
+            $this->output->writeln('<red>ERROR:</red> No repository has been configured!');
         }
 
-        $this->output->writeln('Initialising <cyan>' . $repository . '</cyan>');
+        $this->output->writeln('Initializing <cyan>' . $repository . '</cyan>');
 
-        $this->output->write('Starting Initialisation...');
+        $this->output->write('Starting initialization...');
 
         $plugin->initializeRepository();
         $plugin->setUser();
