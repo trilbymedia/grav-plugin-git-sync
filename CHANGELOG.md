@@ -1,5 +1,5 @@
 # v2.0.1
-## mm/dd/2019
+## 02/19/2019
 
 1. [](#new)
     * Added new `init` CLI command (`bin/plugin git-sync init`) (#128, thanks @LeonRyan and @alex-mohemian) 

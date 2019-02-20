@@ -1,5 +1,5 @@
 name: Git Sync
-version: 2.0.0
+version: 2.0.1
 description: Allows to synchronize portions of Grav with Git Repositories (GitHub, BitBucket, GitLab)
 icon: git
 author:
@@ -204,7 +204,7 @@ form:
         gitsync: Use GitSync Committer Name
         gravuser: Use Grav User Name
         gravfull: Use Grav User Full Name
-        
+
     git.message:
       type: text
       default: (Grav GitSync) Automatic Commit
