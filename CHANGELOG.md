@@ -1,3 +1,11 @@
+# v2.0.2
+## 02/21/2019
+
+1. [](#improved)
+    * Fixed InitCommand spelling (#132, thanks @alex-mohemian)
+1. [](#bugfix)
+    * Fixed PHP 5.6 incompatibility introduced by latest release.
+
 # v2.0.1
 ## 02/19/2019
 

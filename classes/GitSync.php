@@ -218,17 +218,23 @@ class GitSync extends Git
         if (defined('GRAV_CLI') && in_array($authorType, ['gravuser', 'gravfull'])) {
             $authorType = 'gituser';
         }
-        
+
+        // @TODO: After 1.6 it should be changed to `$configMessage ?? $message`
         // get message from config, it any, or stick to the default one
-        $message = $this->getConfig('git', null)['message'] ?? $message;
+        $configMessage = $this->getConfig('git', null)['message'];
+        $message = $configMessage ? $configMessage : $message;
 
         // get Page Title and Route from Post
-        $pageTitle = $_POST['data']['header']['title']??'NO TITLE FOUND';
-        $pageRoute = $_POST['data']['route']??'NO ROUTE FOUND';
+        $uri = $this->grav['uri'];
+        $page_title = $uri->post('data.header.title');
+        $page_route = $uri->post('data.route');
+
+        $pageTitle = $page_title ? $page_title : 'NO TITLE FOUND';
+        $pageRoute = $page_route ? $page_route : 'NO ROUTE FOUND';
 
         // include page title and route in the message, if placeholders exist
-        $message = str_replace( '{{pageTitle}}', $pageTitle, $message );
-        $message = str_replace( '{{pageRoute}}', $pageRoute, $message );
+        $message = str_replace('{{pageTitle}}', $pageTitle, $message);
+        $message = str_replace('{{pageRoute}}', $pageRoute, $message);
 
         switch ($authorType) {
             case 'gitsync':

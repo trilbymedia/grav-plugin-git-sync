@@ -1,5 +1,5 @@
 name: Git Sync
-version: 2.0.1
+version: 2.0.2
 description: Allows to synchronize portions of Grav with Git Repositories (GitHub, BitBucket, GitLab)
 icon: git
 author:
