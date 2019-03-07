@@ -1,3 +1,9 @@
+# v2.0.3
+## 03/07/2019
+
+1. [](#bugifx)
+    * Properly fallback to config message if not there yet (#134)
+
 # v2.0.2
 ## 02/21/2019
 

@@ -221,8 +221,8 @@ class GitSync extends Git
 
         // @TODO: After 1.6 it should be changed to `$configMessage ?? $message`
         // get message from config, it any, or stick to the default one
-        $configMessage = $this->getConfig('git', null)['message'];
-        $message = $configMessage ? $configMessage : $message;
+        $config = $this->getConfig('git', null);
+        $message = isset($config['message']) ? $config['message'] : $message;
 
         // get Page Title and Route from Post
         $uri = $this->grav['uri'];
