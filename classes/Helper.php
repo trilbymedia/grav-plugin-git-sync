@@ -48,6 +48,7 @@ class Helper {
 
     public static function prepareRepository($user, $password, $repository)
     {
+        $user = urlencode($user);
         $password = urlencode($password);
         return str_replace('://', "://${user}:${password}@", $repository);
     }

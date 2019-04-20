@@ -1,3 +1,9 @@
+# v2.0.4
+## mm/dd/2019
+
+1. [](#improved)
+    * urlencode username to allow for special characters (#139)
+
 # v2.0.3
 ## 03/07/2019
 
