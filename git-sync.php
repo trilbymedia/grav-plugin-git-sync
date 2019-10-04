@@ -123,6 +123,9 @@ class GitSyncPlugin extends Plugin
             return $this->isGithubSignatureValid($secret, $_SERVER['HTTP_X_HUB_SIGNATURE'], $payload);
         } elseif (isset($_SERVER['HTTP_X_GITLAB_TOKEN'])) {
             return $this->isGitlabTokenValid($secret, $_SERVER['HTTP_X_GITLAB_TOKEN']);
+        } else {
+            $payload = file_get_contents('php://input');
+            return $this->isGiteaSecretValid($secret, $payload);
         }
 
         return false;
@@ -156,6 +159,24 @@ class GitSyncPlugin extends Plugin
     public function isGitlabTokenValid($secret, $token)
     {
         return $secret === $token;
+    }
+
+    /**
+     * Returns true if secret contained in the payload matches the client
+     * secret
+     * @param  string $secret The webhook secret
+     * @param  string $payload The webhook request body
+     * @return boolean Whether the client secret matches the payload secret or
+     * not
+     */
+    public function isGiteaSecretValid($secret, $payload)
+    {
+        $payload = json_decode($payload, true);
+        if (!empty($payload) && isset($payload['secret'])) {
+            return $secret === $payload['secret'];
+        }
+
+        return false;
     }
 
     public function onAdminMenu()
