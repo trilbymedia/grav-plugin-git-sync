@@ -6,6 +6,7 @@
     * Pass phpstan level 2 tests
 1. [](#improved)
     * Code cleanup
+    * Added support for Gitea / Gogs webhook secret (#149, thanks @Aisbergg)
 
 # v2.0.5
 ## 05/06/2019
