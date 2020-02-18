@@ -7,4 +7,6 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Grav\\Plugin\\GitSync\\' => array($baseDir . '/classes'),
+    'Grav\\Plugin\\Console\\' => array($baseDir . '/cli'),
+    'Defuse\\Crypto\\' => array($vendorDir . '/defuse/php-encryption/src'),
 );

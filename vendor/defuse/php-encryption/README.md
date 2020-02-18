@@ -2,11 +2,16 @@ php-encryption
 ===============
 
 [![Build Status](https://travis-ci.org/defuse/php-encryption.svg?branch=master)](https://travis-ci.org/defuse/php-encryption)
+[![codecov](https://codecov.io/gh/defuse/php-encryption/branch/master/graph/badge.svg)](https://codecov.io/gh/defuse/php-encryption)
+[![Latest Stable Version](https://poser.pugx.org/defuse/php-encryption/v/stable)](https://packagist.org/packages/defuse/php-encryption)
+[![Latest Unstable Version](https://poser.pugx.org/defuse/php-encryption/v/unstable)](https://packagist.org/packages/defuse/php-encryption)
+[![License](https://poser.pugx.org/defuse/php-encryption/license)](https://packagist.org/packages/defuse/php-encryption)
+[![Downloads](https://img.shields.io/packagist/dt/defuse/php-encryption.svg)](https://packagist.org/packages/defuse/php-encryption)
 
 This is a library for encrypting data with a key or password in PHP. **It
-requires PHP 5.4 or newer.** The current version is v2.0.0, which is expected to
-remain stable and supported by its authors with security and bugfixes until at
-least January 1st, 2019.
+requires PHP 5.6 or newer and OpenSSL 1.0.1 or newer.** The current version is
+v2.2.1, which is expected to remain stable and supported by its authors with
+security and bugfixes until at least January 1st, 2020.
 
 The library is a joint effort between [Taylor Hornby](https://defuse.ca/) and
 [Scott Arciszewski](https://paragonie.com/blog/author/scott-arcizewski) as well
@@ -19,14 +24,15 @@ ecosystem. Secondly, this library is "difficult to misuse." Like
 [libsodium](https://github.com/jedisct1/libsodium), its API is designed to be
 easy to use in a secure way and hard to use in an insecure way.
 
+
 Dependencies
 ------------
 
-This library requres no special dependencies except for PHP 5.4 or newer with
-the OpenSSL extensions enabled (this is the default). It uses
-[random\_compat](https://github.com/paragonie/random_compat), which is bundled
-in with this library so that your users will not need to follow any special
-installation steps.
+This library requires no special dependencies except for PHP 5.6 or newer with
+the OpenSSL extensions (version 1.0.1 or later) enabled (this is the default).
+It uses [random\_compat](https://github.com/paragonie/random_compat), which is
+bundled in with this library so that your users will not need to follow any
+special installation steps.
 
 Getting Started
 ----------------
@@ -53,6 +59,14 @@ documentation.
 If you're interested in contributing to this library, see the [Internal
 Developer Documentation](docs/InternalDeveloperDocs.md).
 
+Other Language Support
+----------------------
+
+This library is intended for server-side PHP software that needs to encrypt data at rest.
+If you are building software that needs to encrypt client-side, or building a system that
+requires cross-platform encryption/decryption support, we strongly recommend using
+[libsodium](https://download.libsodium.org/doc/bindings_for_other_languages) instead.
+
 Examples
 ---------
 
@@ -60,6 +74,7 @@ If the documentation is not enough for you to understand how to use this
 library, then you can look at an example project that uses this library:
 
 - [encutil](https://github.com/defuse/encutil)
+- [fileencrypt](https://github.com/tsusanka/fileencrypt)
 
 Security Audit Status
 ---------------------
@@ -82,6 +97,6 @@ The GnuPG public key used to sign releases is available in
 2FA6 1D8D 99B9 2658 6BAC  3D53 385E E055 A129 1538
 ```
 
-You can verify it against the Taylor Hornby's [contact
+You can verify it against Taylor Hornby's [contact
 page](https://defuse.ca/contact.htm) and
 [twitter](https://twitter.com/DefuseSec/status/723741424253059074).

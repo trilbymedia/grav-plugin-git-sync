@@ -47,8 +47,6 @@ EOF
 
     protected function serve()
     {
-        require_once __DIR__ . '/../vendor/autoload.php';
-
         $plugin = new GitSync();
         $this->output->writeln('');
 
@@ -71,7 +69,7 @@ EOF
         }
 
         // needed to prevent out put in logs:
-        $password = Helper::decrypt($plugin->getPassword());
+        $password = Helper::decrypt($plugin->getPassword() ?? '');
 
 
         $this->console_header('local git config:');
@@ -89,7 +87,7 @@ EOF
         }
         $testRepository = $plugin->testRepository(
             Helper::prepareRepository(
-              $plugin->getUser(),
+              $plugin->getUser() ?? '',
               $password,
               $repository)
         );

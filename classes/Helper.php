@@ -3,11 +3,13 @@
 namespace Grav\Plugin\GitSync;
 
 use Defuse\Crypto\Crypto;
+use Grav\Common\Config\Config;
 use Grav\Common\Grav;
 use SebastianBergmann\Git\RuntimeException;
 
-class Helper {
-
+class Helper
+{
+    /** @var string */
     private static $hash = '594ef69d-6c29-45f7-893a-f1b4342687d3';
 
     /**
@@ -20,68 +22,105 @@ class Helper {
         return file_exists(rtrim(USER_DIR, '/') . '/.git');
     }
 
+    /**
+     * @param bool $version
+     * @return bool|string
+     */
     public static function isGitInstalled($version = false)
     {
         $bin = Helper::getGitBinary();
 
         exec($bin . ' --version', $output, $returnValue);
 
-        $installed = $returnValue !== 0 ? false : true;
+        $installed = $returnValue === 0;
 
         if ($version && $output) {
             $output = explode(' ', array_shift($output));
-            $installed = array_filter($output, function($item) {
+            $versions = array_filter($output, static function($item) {
                 return version_compare($item, '0.0.1', '>=');
             });
-            $installed = array_shift($installed);
+
+            $installed = (bool)array_shift($versions);
         }
 
         return $installed;
     }
 
+    /**
+     * @param bool $override
+     * @return string
+     */
     public static function getGitBinary($override = false)
     {
-        $grav = Grav::instance()['config'];
+        /** @var Config $grav */
+        $config = Grav::instance()['config'];
 
-        return $override ?: $grav->get('plugins.git-sync.git.bin', 'git');
+        return $override ?: $config->get('plugins.git-sync.git.bin', 'git');
     }
 
+    /**
+     * @param string $user
+     * @param string $password
+     * @param string $repository
+     * @return string
+     */
     public static function prepareRepository($user, $password, $repository)
     {
         $user = urlencode($user);
         $password = urlencode($password);
+
         return str_replace('://', "://${user}:${password}@", $repository);
     }
 
-    public static function testRepository($user, $password, $repository) {
+    /**
+     * @param string $user
+     * @param string $password
+     * @param string $repository
+     * @return string[]
+     */
+    public static function testRepository($user, $password, $repository)
+    {
         $git = new GitSync();
         $repository = self::prepareRepository($user, $password, $repository);
 
         try {
             return $git->testRepository($repository);
         } catch (RuntimeException $e) {
-            return $e->getMessage();
+            return [$e->getMessage()];
         }
     }
 
+    /**
+     * @param string $password
+     * @return string
+     * @throws \Defuse\Crypto\Exception\EnvironmentIsBrokenException
+     */
     public static function encrypt($password)
     {
         return 'gitsync-' . Crypto::encryptWithPassword($password, self::$hash);
     }
 
+    /**
+     * @param string $enc_password
+     * @return string
+     */
     public static function decrypt($enc_password)
     {
-        if (substr($enc_password, 0, 8) === 'gitsync-') {
+        if (strpos($enc_password, 'gitsync-') === 0) {
             $enc_password = substr($enc_password, 8);
+
             return Crypto::decryptWithPassword($enc_password, self::$hash);
-        } else {
-            return $enc_password;
         }
+
+        return $enc_password;
     }
 
+    /**
+     * @return bool
+     */
     public static function synchronize()
     {
-        if (!Helper::isGitInstalled() || !Helper::isGitInitialized()) {
+        if (!self::isGitInstalled() || !self::isGitInitialized()) {
             return true;
         }
 
@@ -97,7 +136,15 @@ class Helper {
         return true;
     }
 
-    public static function preventReadablePassword($str, $password) {
-      return str_replace(urlencode(self::decrypt($password)), '{password}', $str);
+    /**
+     * @param string $str
+     * @param string $password
+     * @return string
+     */
+    public static function preventReadablePassword($str, $password)
+    {
+        $encoded = urlencode(self::decrypt($password));
+
+        return str_replace($encoded, '{password}', $str);
     }
 }

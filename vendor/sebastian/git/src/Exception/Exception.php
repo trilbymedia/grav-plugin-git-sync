@@ -10,8 +10,6 @@
 
 namespace SebastianBergmann\Git;
 
-/**
- */
 interface Exception
 {
 }

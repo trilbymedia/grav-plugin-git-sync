@@ -10,8 +10,6 @@
 
 namespace SebastianBergmann\Git;
 
-/**
- */
 class RuntimeException extends \RuntimeException implements Exception
 {
 }

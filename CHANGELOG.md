@@ -1,3 +1,12 @@
+# v2.1.0
+## mm/dd/2020
+
+1. [](#new)
+    * Requires Grav v1.6.0
+    * Pass phpstan level 2 tests
+1. [](#improved)
+    * Code cleanup
+
 # v2.0.5
 ## 05/06/2019
 

@@ -13,7 +13,7 @@ docs: https://github.com/trilbymedia/grav-plugin-git-sync
 license: MIT
 
 dependencies:
-- { name: grav, version: '>=1.5.0' }
+- { name: grav, version: '>=1.6.0' }
 - { name: form, version: '>=2.16.3' }
 
 form:

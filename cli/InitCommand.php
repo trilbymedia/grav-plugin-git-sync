@@ -21,8 +21,6 @@ class InitCommand extends ConsoleCommand
 
     protected function serve()
     {
-        require_once __DIR__ . '/../vendor/autoload.php';
-
         $plugin = new GitSync();
         $repository = $plugin->getConfig('repository', false);
 

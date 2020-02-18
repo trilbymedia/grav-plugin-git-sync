@@ -1,12 +1,22 @@
 {
     "require": {
+        "php": ">=7.1.3",
+        "ext-json": "*",
+        "ext-openssl": "*",
         "sebastian/git": "^2.1",
         "defuse/php-encryption": "^2.0"
     },
+    "replace": {
+        "paragonie/random_compat": "9.99.99"
+    },
     "autoload": {
         "psr-4": {
-            "Grav\\Plugin\\GitSync\\": "classes/"
-        }
+            "Grav\\Plugin\\GitSync\\": "classes/",
+            "Grav\\Plugin\\Console\\": "cli/"
+        },
+        "classmap": [
+            "git-sync.php"
+        ]
     },
     "license": "Apache-2.0",
     "authors": [

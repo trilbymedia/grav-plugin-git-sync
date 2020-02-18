@@ -14,28 +14,31 @@ class AdminController extends AdminBaseController
     protected $active;
     protected $plugin;
     protected $task_prefix = 'task';
+
+    /** @var GitSync */
     public $git;
 
     /**
-     * @param Plugin   $plugin
+     * @param Plugin $plugin
      */
     public function __construct(Plugin $plugin)
     {
-        $post = !empty($_POST) ? $_POST : [];
         $this->grav = Grav::instance();
         $this->active = false;
         $uri = $this->grav['uri'];
-        $this->post = $this->getPost($post);
         $this->plugin = $plugin;
+
+        $post = !empty($_POST) ? $_POST : [];
+        $this->post = $this->getPost($post);
 
         // Ensure the controller should be running
         if (Utils::isAdminPlugin()) {
             $routeDetails = $this->grav['admin']->getRouteDetails();
             $target = array_pop($routeDetails);
-            $this->git = new GitSync($plugin);
+            $this->git = new GitSync();
 
             // return null if this is not running
-            if ($target != $plugin->name)  {
+            if ($target !== $plugin->name)  {
                 return;
             }
 
@@ -45,7 +48,7 @@ class AdminController extends AdminBaseController
             $this->admin = Grav::instance()['admin'];
 
             $task = !empty($post['task']) ? $post['task'] : $uri->param('task');
-            if ($task && ($this->target == $plugin->name || $uri->route() == '/lessons')) {
+            if ($task && ($this->target === $plugin->name || $uri->route() === '/lessons')) {
                 $this->task = $task;
                 $this->active = true;
             }
@@ -54,19 +57,20 @@ class AdminController extends AdminBaseController
 
     public function taskTestConnection()
     {
-        $post    = $this->post;
-        $data    = json_decode(base64_decode($post['test']));
+        $post = $this->post;
+        $test = base64_decode($post['test']) ?: null;
+        $data = $test ? json_decode($test, false) : new \stdClass();
 
         try {
             Helper::testRepository($data->user, $data->password, $data->repository);
             echo json_encode([
-                'status'  => "success",
+                'status'  => 'success',
                 'message' => 'The connection to the repository has been successful.'
             ]);
         } catch (\Exception $e) {
             $invalid = str_replace($data->password, '{password}', $e->getMessage());
             echo json_encode([
-                'status'  => "error",
+                'status'  => 'error',
                 'message' => $invalid
             ]);
         }
@@ -79,13 +83,13 @@ class AdminController extends AdminBaseController
         try {
             $this->plugin->synchronize();
             echo json_encode([
-                'status'  => "success",
+                'status'  => 'success',
                 'message' => 'GitSync has successfully synchronized with the repository.'
             ]);
         } catch (\Exception $e) {
             $invalid = str_replace($this->git->getConfig('password', null), '{password}', $e->getMessage());
             echo json_encode([
-                'status'  => "error",
+                'status'  => 'error',
                 'message' => $invalid
             ]);
         }
@@ -98,13 +102,13 @@ class AdminController extends AdminBaseController
         try {
             $this->plugin->reset();
             echo json_encode([
-                'status'  => "success",
+                'status'  => 'success',
                 'message' => 'GitSync has successfully reset your local changes and synchronized with the repository.'
             ]);
         } catch (\Exception $e) {
             $invalid = str_replace($this->git->getConfig('password', null), '{password}', $e->getMessage());
             echo json_encode([
-                'status'  => "error",
+                'status'  => 'error',
                 'message' => $invalid
             ]);
         }
@@ -115,11 +119,10 @@ class AdminController extends AdminBaseController
     /**
      * Performs a task or action on a post or target.
      *
-     * @return bool|mixed
+     * @return bool
      */
     public function execute()
     {
-        $success = false;
         $params = [];
 
         // Handle Task & Action
@@ -142,10 +145,10 @@ class AdminController extends AdminBaseController
             return false;
         }
 
-        $success = call_user_func_array([$this, $method], $params);
+        $success = $this->{$method}(...$params);
 
         // Grab redirect parameter.
-        $redirect = isset($this->post['_redirect']) ? $this->post['_redirect'] : null;
+        $redirect = $this->post['_redirect'] ?? null;
         unset($this->post['_redirect']);
 
         // Redirect if requested.
@@ -156,6 +159,9 @@ class AdminController extends AdminBaseController
         return $success;
     }
 
+    /**
+     * @return bool
+     */
     public function isActive()
     {
         return (bool) $this->active;
