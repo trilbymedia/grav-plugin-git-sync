@@ -34,18 +34,18 @@ After having installed the plugin, make sure to go in the plugin settings in ord
 * Webhooks support allow for automatic synchronization from the Git Repository with secure Webhook URL auto-generated and support for Webhook Secret (when available)
 * Automatically handles simple merges behind the scenes
 * Easy one-click button to reset your local changes and restores it to the actual state of the git repository
-* Easy one-click button to manually synchronize
-* Support for Admin Quick Tray so you can synchronize from anywhere in Admin
+* Easy one-click button for manual synchronization
+* Support for Admin Quick Tray, so you can synchronize from anywhere in Admin
 * Ability to customize whether GitSync should synchronize upon save or just manually
 * Customize the Committer Name, choose between Git User, GitSync Commiter Name, Grav User Name and Grav user Fullname 
 * With the built-in Form Process action `gitsync`, you can trigger the synchronization anytime someone submits a post.
 * Any 3rd party plugin can integrate with Git Sync and trigger the synchronization through the `gitsync` event.
-* Built-in CLI command to automate synchronizations
+* Built-in CLI commands to automate synchronizations
 * Log any command performed by GitSync to ensure everything runs smoothly or debug potential issues
 
 # Command Line Interface
 
-Git Sync comes with a CLI that allows to run synchronizations right within your terminal. This feature is extremely useful in case you'd like to run an autonomous periodic crontab job to synchronize with your repository.
+Git Sync comes with a CLI that allows running synchronizations right within your terminal. This feature is extremely useful in case you'd like to run an autonomous periodic crontab jobs to synchronize with your repository.
 
 To execute the command simply run:
 
@@ -53,11 +53,23 @@ To execute the command simply run:
 bin/plugin git-sync sync
 ```
 
+You can also get a status by running:
+```bash
+bin/plugin git-sync status
+```
+
+Since version 2.1.1 you can now also programmatically change user/password via the `bin/plugin git-sync passwd`. This is useful if you have a container that resets your password, or you have some running scripts that require to programmatically update the password.
+
 # Requirements
 
 In order for the plugin to work, the server needs to run `git` 1.7.1 and above. 
 
-The PHP `exec()` and `escapeshellarg()` functions are required to be enabled.
+The PHP `exec()` and `escapeshellarg()` functions are mandatory. Ensure the options to be enabled in your PHP.
+
+# Known Issues and Resolutions
+**Q:** `error: The requested URL returned error: 403 Forbidden while accessing...` [#39](https://github.com/trilbymedia/grav-plugin-git-sync/issues/39)  
+**A:** This might be caused by your computer having stored in the registry a user/password that might conflict with the one you are intending to use.  
+[Follow the instructions for resolving the issue...](https://github.com/trilbymedia/grav-plugin-git-sync/issues/39#issuecomment-538867548)
 
 # Sponsored by
 
