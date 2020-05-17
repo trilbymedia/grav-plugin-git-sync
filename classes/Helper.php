@@ -66,13 +66,10 @@ class Helper
      */
     public static function prepareRepository($user, $password, $repository)
     {
-        $user = urlencode($user);
+        $user = $user ? urlencode($user) . ':' : '';
         $password = urlencode($password);
 
-        if ($user == "NO_USER")
-            return str_replace('://', "://${password}@", $repository);
-
-        return str_replace('://', "://${user}:${password}@", $repository);
+        return str_replace('://', "://${user}${password}@", $repository);
     }
 
     /**

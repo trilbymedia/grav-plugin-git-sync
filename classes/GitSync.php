@@ -36,7 +36,7 @@ class GitSync extends Git
 
         static::$instance = $this;
 
-        $this->user = $this->config['user'] ?? null;
+        $this->user = $this->config['no_user'] ? '' : ($this->config['user'] ?? null);
         $this->password = $this->config['password'] ?? null;
 
         unset($this->config['user'], $this->config['password']);

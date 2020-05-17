@@ -108,6 +108,7 @@ $(document).on('click', '[data-gitsync-action]', (event) => {
     const save = WIZARD.find('[data-gitsync-action="save"]');
     const action = target.data('gitsyncAction');
     const user = $('[name="gitsync[repo_user]"]').val();
+    const noUser = $('[name="gitsync[no_user]"]').is(':checked');
     const password = $('[name="gitsync[repo_password]"]').val();
     const repository = $('[name="gitsync[repo_url]"]').val();
     const webhook = $('[name="gitsync[webhook]"]').val();
@@ -120,7 +121,7 @@ $(document).on('click', '[data-gitsync-action]', (event) => {
 
     let error = [];
 
-    if (!user) {
+    if (!user && !noUser) {
         error.push('Username is missing.');
     }
     /*
@@ -143,6 +144,7 @@ $(document).on('click', '[data-gitsync-action]', (event) => {
     if (action === 'save') {
         const folders = $('[name="gitsync[folders]"]:checked').map((i, item) => item.value);
         $('[name="data[repository]"]').val(repository);
+        $('[name="data[no_user]"]').val(noUser ? '1' : '0');
         $('[name="data[user]"]').val(user);
         $('[name="data[password]"]').val(password);
         $('[name="data[webhook]"]').val(webhook);
@@ -161,7 +163,11 @@ $(document).on('click', '[data-gitsync-action]', (event) => {
 
     if (action === 'test') {
         const URI = `${config.current_url}.json`;
-        const test = global.btoa(JSON.stringify({ user, password, repository }));
+        const test = global.btoa(JSON.stringify({
+            user: noUser ? '' : user,
+            password,
+            repository
+        }));
 
         request(URI, {
             method: 'post',
@@ -215,6 +221,20 @@ $(document).on('click', '[data-gitsync-action]', (event) => {
     }
 });
 
+$(document).on('input', '[name="gitsync[no_user]"]', (event) => {
+    const target = $(event.currentTarget);
+    const user = $('[name="gitsync[repo_user]"]');
+    if (target.is(':checked')) {
+        user
+            .val('')
+            .prop('disabled', 'disabled')
+            .attr('placeholder', '<username not required>');
+    } else {
+        user
+            .prop('disabled', null)
+            .attr('placeholder', 'Username, not email');
+    }
+});
 $(document).on('change', '[name="gitsync[repository]"]', () => {
     enableButton(WIZARD.find('[data-gitsync-action="next"]'));
 });

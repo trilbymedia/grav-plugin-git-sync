@@ -39,6 +39,10 @@
   [data-remodal-id="wizard"] .wizard-padding p, [data-remodal-id="reset-local"] .wizard-padding p {
     padding: 0; }
 
+[data-remodal-id="wizard"] input[disabled], [data-remodal-id="reset-local"] input[disabled] {
+  background: #efefef;
+  border-color: #ddd; }
+
 [data-remodal-id="wizard"] label.disabled, [data-remodal-id="reset-local"] label.disabled {
   color: #ccc; }
 
@@ -73,7 +77,14 @@
   margin-left: 25px; }
 
 [data-remodal-id="wizard"] .step-1 div.column:nth-child(2) > label:nth-child(1) > input:nth-child(1), [data-remodal-id="wizard"] .step-1 div.column:nth-child(2) > label:nth-child(2) > input:nth-child(1), [data-remodal-id="reset-local"] .step-1 div.column:nth-child(2) > label:nth-child(1) > input:nth-child(1), [data-remodal-id="reset-local"] .step-1 div.column:nth-child(2) > label:nth-child(2) > input:nth-child(1) {
-  width: 85%; }
+  width: 100%; }
+
+[data-remodal-id="wizard"] .step-1 .no_user, [data-remodal-id="reset-local"] .step-1 .no_user {
+  float: right;
+  font-size: .8rem;
+  padding: 0; }
+  [data-remodal-id="wizard"] .step-1 .no_user input, [data-remodal-id="reset-local"] .step-1 .no_user input {
+    margin-right: 0; }
 
 [data-remodal-id="wizard"] .step-2 .info, [data-remodal-id="reset-local"] .step-2 .info {
   margin: 0.2rem 0;
