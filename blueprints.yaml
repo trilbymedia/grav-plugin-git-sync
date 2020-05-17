@@ -135,6 +135,16 @@ form:
       label: Git Repository
       placeholder: https://github.com/user/repository.git
 
+    no_user:
+      type: toggle
+      label: User not required
+      highlight: 0
+      default: 0
+      options:
+        1: Enabled
+        0: Disabled
+      description: With this setting enabled, the user can be left blank and it will be ignored from the authentication. Useful when only needing access tokens `token@host` rather than `user:password@host`
+
     user:
       type: text
       label: Git User

@@ -52,9 +52,24 @@
                     </label>
                 </div>
                 <div class="column">
-                    <label>
-                        Git User
-                        <input type="text" name="gitsync[repo_user]" placeholder="Username, not email" value="{{ settings.user|default('') }}" />
+                    <label for="gs-user-field">
+                        <span class="block">
+                            Git User
+                            <label for="gs-no-user" class="no_user">
+                                <input id="gs-no-user" type="checkbox" name="gitsync[no_user]" {{ settings.no_user ? 'checked' }}/>
+                                No User
+                            </label>
+                        </span>
+                        <input
+                            id="gs-user-field"
+                            type="text"
+                            name="gitsync[repo_user]"
+                            {% if settings.no_user %}
+                            disabled="disabled"
+                            {% endif %}
+                            placeholder="{{ settings.no_user ? '<username not required>' : 'Username, not email' }}"
+                            value="{{ settings.user|default('') }}"
+                        />
                     </label>
                     <label>
                         Git Password or Token

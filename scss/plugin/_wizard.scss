@@ -61,6 +61,11 @@
     }
   }
 
+  input[disabled] {
+    background: #efefef;
+    border-color: #ddd;
+  }
+
   label {
     &.disabled {
       color: #ccc;
@@ -109,7 +114,17 @@
       margin-left: 25px;
     }
     div.column:nth-child(2) > label:nth-child(1) > input:nth-child(1), div.column:nth-child(2) > label:nth-child(2) > input:nth-child(1) {
-      width: 85%;
+      width: 100%;
+    }
+
+    .no_user {
+      float: right;
+      font-size: .8rem;
+      padding: 0;
+
+      input {
+        margin-right: 0;
+      }
     }
   }
 
