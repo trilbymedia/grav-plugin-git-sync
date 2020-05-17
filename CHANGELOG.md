@@ -3,6 +3,7 @@
 
 1. [](#bugfix)
     * Fixed classes not being loaded in `cli` commands due to Grav changes (#167)
+    * Updated dependencies / recompiled JS for production
 
 # v2.1.0
 ## 03/13/2020
