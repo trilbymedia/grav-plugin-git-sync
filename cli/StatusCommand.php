@@ -47,6 +47,8 @@ EOF
 
     protected function serve()
     {
+        require_once __DIR__ . '/../vendor/autoload.php';
+
         $plugin = new GitSync();
         $this->output->writeln('');
 

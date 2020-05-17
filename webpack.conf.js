@@ -1,10 +1,10 @@
-var webpack = require('webpack'),
-    path = require('path'),
-    exec = require('child_process').execSync,
-    UglifyJsPlugin = require('uglifyjs-webpack-plugin'),
-    isProd = process.env.NODE_ENV === 'production',
-    pwd = exec('pwd').toString(),
-    adminPath = path.resolve(pwd + '/../admin/themes/grav/app');
+const webpack = require('webpack');
+const path = require('path');
+const exec = require('child_process').execSync;
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const isProd = process.env.NODE_ENV === 'production';
+const pwd = exec('pwd').toString();
+const adminPath = process.env.GRAV_ADMIN_PATH || path.resolve(pwd + '/../admin/themes/grav/app');
 
 module.exports = {
     entry: {
@@ -58,15 +58,18 @@ module.exports = {
     },
     module: {
         rules: [
-            {enforce: 'pre', test: /\.json$/, loader: 'json-loader'},
-            {enforce: 'pre', test: /\.js$/, loader: 'eslint-loader', exclude: /node_modules/},
-            {test: /\.css$/, loader: 'style-loader!css-loader'},
+            { enforce: 'pre', test: /\.json$/, loader: 'json-loader' },
+            { enforce: 'pre', test: /\.js$/, loader: 'eslint-loader', exclude: /node_modules/ },
+            { test: /\.css$/, loader: 'style-loader!css-loader' },
             {
                 test: /\.js$/,
-                loader: 'babel-loader',
                 exclude: /node_modules/,
-                query: {
-                    presets: ['es2015', 'stage-3']
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: ['@babel/preset-env'],
+                        plugins: ['@babel/plugin-proposal-object-rest-spread']
+                    }
                 }
             }
         ]
