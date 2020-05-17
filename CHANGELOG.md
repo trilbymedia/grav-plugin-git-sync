@@ -2,7 +2,8 @@
 ## 05/17/2020
 
 1. [](#new)
-    * Added `No User` option to allow disabling the username requirement. This is useful for when you have a token and the user is not required. (#166, thanks GwynethLlewelyn) 
+    * Added `No User` option to allow disabling the username requirement. This is useful for when you have a token and the user is not required. (#166, thanks GwynethLlewelyn)
+    * Added `passwd` command for programmatically change user/password (use: `bin/plugin git-sync passwd`) (#146)
 1. [](#bugfix)
     * Fixed classes not being loaded in `cli` commands due to Grav changes (#167)
     * Updated dependencies / recompiled JS for production
