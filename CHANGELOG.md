@@ -1,3 +1,9 @@
+# v2.1.1
+## 05/17/2020
+
+1. [](#bugfix)
+    * Fixed classes not being loaded in `cli` commands due to Grav changes (#167)
+
 # v2.1.0
 ## 03/13/2020
 
