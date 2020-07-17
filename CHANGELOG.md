@@ -3,6 +3,8 @@
 
 1. [](#bugfix)
     * Fixed regression wrongly returning the installed Git version and causing all sort of problems, including unrelated histories not kicking off (#61, #168, #171, #173)
+    * Fixed potential issue where the new feature `no_user` my throw an error
+    * Fixed issue with autoload
 # v2.1.1
 ## 05/17/2020
 
