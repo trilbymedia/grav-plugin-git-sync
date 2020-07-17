@@ -1,22 +1,17 @@
-# v2.1.2
-## 07/17/2020
-
-1. [](#bugfix)
-    * Fixed regression wrongly returning the installed Git version and causing all sort of problems, including unrelated histories not kicking off (#61, #168, #171, #173)
-    * Fixed potential issue where the new feature `no_user` my throw an error
-    * Fixed issue with autoload
-1. [](#improved)
-    * Bumped modules versions
-
 # v2.1.1
-## 05/17/2020
+## 07/17/2020
 
 1. [](#new)
     * Added `No User` option to allow disabling the username requirement. This is useful for when you have a token and the user is not required. (#166, thanks GwynethLlewelyn)
     * Added `passwd` command for programmatically change user/password (use: `bin/plugin git-sync passwd`) (#146)
+    * Fixed regression wrongly returning the installed Git version and causing all sort of problems, including unrelated histories not kicking off (#61, #168, #171, #173)
+    * Fixed potential issue where the new feature `no_user` my throw an error
+    * Fixed issue with autoload
 1. [](#bugfix)
     * Fixed classes not being loaded in `cli` commands due to Grav changes (#167)
     * Updated dependencies / recompiled JS for production
+1. [](#improved)
+    * Bumped modules versions
 
 # v2.1.0
 ## 03/13/2020
