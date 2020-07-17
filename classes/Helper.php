@@ -40,7 +40,7 @@ class Helper
                 return version_compare($item, '0.0.1', '>=');
             });
 
-            $installed = (bool)array_shift($versions);
+            $installed = array_shift($versions);
         }
 
         return $installed;
