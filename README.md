@@ -6,6 +6,10 @@ Git Sync captures any change that you make on your site and instantly updates yo
 
 Thanks to this powerful bi-directional flow, Git Sync can now turn your site into a collaborative environment where the source of truth is always your git repository and unlimited collaborators and sites can share and contribute to the same content.
 
+> :warning: With GitHub’s recent change of repository default branches being named ‘main’ instead of ‘master’ the following work-around is needed until GitHub also addresses automatic default branch re-routing:
+> 1. Once you have created your new repo, create a new branch called ‘master’
+> 2. Set the default branch of the repo to this newly created ‘master’ branch
+
 ## Videos: Setup and Demo
 
 | Up and Running in 2 mins | 2-way Sync Demonstration |
