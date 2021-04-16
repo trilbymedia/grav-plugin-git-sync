@@ -62,11 +62,19 @@ class AdminController extends AdminBaseController
         $data = $test ? json_decode($test, false) : new \stdClass();
 
         try {
-            Helper::testRepository($data->user, $data->password, $data->repository);
-            echo json_encode([
-                'status'  => 'success',
-                'message' => 'The connection to the repository has been successful.'
-            ]);
+            $testResult = Helper::testRepository($data->user, $data->password, $data->repository, $data->branch);
+
+            if (!empty($testResult)) {
+                echo json_encode([
+                    'status' => 'success',
+                    'message' => 'The connection to the repository has been successful.'
+                ]);
+            } else {
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'Branch "' . $data->branch .'" not found in the repository.'
+                ]);
+            }
         } catch (\Exception $e) {
             $invalid = str_replace($data->password, '{password}', $e->getMessage());
             echo json_encode([

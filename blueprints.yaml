@@ -38,7 +38,7 @@ form:
         type: bool
 
     folders:
-      type: selectize
+      type: select
       multiple: true
       label: Folders to Sync
       classes: fancy

@@ -113,9 +113,10 @@ class GitSync extends Git
      * @param string $url
      * @return string[]
      */
-    public function testRepository($url)
+    public function testRepository($url, $branch)
     {
-        return $this->execute("ls-remote \"{$url}\"");
+        $branch = $branch ? '"' . $branch . '"' : '';
+        return $this->execute("ls-remote \"{$url}\" {$branch}");
     }
 
     /**
@@ -127,7 +128,7 @@ class GitSync extends Git
             $branch = $this->getRemote('branch', null);
             $local_branch = $this->getConfig('branch', $branch);
             $this->execute('init');
-            $this->execute('checkout ' . $local_branch, true);
+            $this->execute('checkout -b ' . $local_branch, true);
         }
 
         $this->enableSparseCheckout();
@@ -370,7 +371,7 @@ class GitSync extends Git
     {
         $name = $this->getRemote('name', $name);
         $branch = $this->getRemote('branch', $branch);
-        $local_branch = $this->getConfig('branch', $branch);
+        $local_branch = $this->getConfig('branch', null);
 
         return $this->execute("push {$name} {$local_branch}:{$branch}");
     }
