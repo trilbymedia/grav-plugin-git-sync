@@ -1,3 +1,12 @@
+# v2.2.0
+## 04/17/2021
+
+1. [](#improved)
+   * Better support for branches other than `master`. This includes the transition to `main` from GitHub and the groundwork to support other big providers making the change as announced soon. GitSync is now capable of preset the branch based on the provider selected. You are now also able to specify any custom branch and when testing the repository connection it will also ensure the branch exists and provide feedback if not. 
+1. [](#bugfix)
+   * Changing remote branch is now going to properly reference it instead of remaining stuck to `master` [#192](https://github.com/trilbymedia/grav-plugin-git-sync/issues/192), [#183](https://github.com/trilbymedia/grav-plugin-git-sync/issues/183)
+   * Fixed issue where the Folders to synchronize from the Wizard wouldn't get properly saved [#178](https://github.com/trilbymedia/grav-plugin-git-sync/issues/178)
+
 # v2.1.1
 ## 07/17/2020
 

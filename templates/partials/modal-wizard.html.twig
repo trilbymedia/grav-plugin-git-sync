@@ -43,7 +43,7 @@
                     <label>
                         <input type="radio" value="gitlab" name="gitsync[repository]" {{ selectedRepo == 'gitlab' ? 'checked' : '' }} />
                         <img src="{{ url('plugin://git-sync/images/repos/gitlab.svg') }}" />
-                        <a href="https://gitlab.com/users/sign_in" target="_blank">(create account)</a>
+                        <a href="https://gitlab.com/users/sign_up" target="_blank">(create account)</a>
                     </label>
                      <label>
                         <input type="radio" value="allothers" name="gitsync[repository]" {{ selectedRepo == 'allothers' ? 'checked' : '' }} />
@@ -81,11 +81,12 @@
             <div class="access-tokens wizard-padding">
                 <h3>Access Tokens and 2FA (Two-factor Authentication)</h3>
                 <p>If you have never used Access Tokens or don't know what 2FA is, you most likely only need your <strong>regular password</strong> for the field above. You can then skip this step and press <strong>Next</strong> to continue.</p>
+                <p>However be aware that some services such as GitHub, don't accept your plain password any longer and require the use of Access Token. You should use the Access Token as you preferred method.</p>
 
                 <p><a href="#" class="button" data-access-tokens-details>More Details <i class="fa fa-fw fa-chevron-down"></i></a></p>
 
                 <div class="access-tokens-details" style="display: none;">
-                    <p>With GitSync you have the option to use an Access Token instead of your password, however if you have <strong>2FA (Two-factor authentication)</strong> enabled for your git service, you can use Access Tokens.</p>
+                    <p>With GitSync you have the option to use an Access Token instead of your password, however if you have <strong>2FA (Two-factor authentication)</strong> enabled for your git service, you can only use Access Tokens.</p>
 
                     <p>Using a token is more secure than using your password, because you can limit what can be done using it and it can be revoked without worrying about changing the password. As we are just syncing, we only need to give it read-and-write access to repositories and webhooks.
                     </p>
@@ -210,8 +211,16 @@
                 </span>
             </p>
 
+            <p>
+                <label>
+                    Repository Branch (master/main)
+
+                    <input type="text" name="gitsync[branch]" placeholder="master" value="{{ settings.branch }}">
+                </label>
+            </p>
+
             <p class="center">
-                <a href="#" class="button" data-gitsync-action="test"><i class="fa fa-fw fa-plug"></i> Test Connection</a>
+                <a href="#" class="button" data-gitsync-action="test"><i class="fa fa-fw fa-plug"></i> Verify Authentication, Connection and Branch</a>
             </p>
 
             <p>

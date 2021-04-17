@@ -46,11 +46,6 @@ module.exports = {
             }
         }
     },
-    plugins: [
-        new webpack.ProvidePlugin({
-            'fetch': 'imports-loader?this=>global!exports-loader?global.fetch!whatwg-fetch'
-        })
-    ],
     externals: {
         jquery: 'jQuery',
         'git-sync': 'GitSync',
@@ -60,16 +55,14 @@ module.exports = {
         rules: [
             { enforce: 'pre', test: /\.json$/, loader: 'json-loader' },
             { enforce: 'pre', test: /\.js$/, loader: 'eslint-loader', exclude: /node_modules/ },
-            { test: /\.css$/, loader: 'style-loader!css-loader' },
+            { test: /\.css$/, use: ['style-loader', 'css-loader'] },
             {
                 test: /\.js$/,
+                loader: 'babel-loader',
                 exclude: /node_modules/,
-                use: {
-                    loader: 'babel-loader',
-                    options: {
-                        presets: ['@babel/preset-env'],
-                        plugins: ['@babel/plugin-proposal-object-rest-spread']
-                    }
+                options: {
+                    presets: ['@babel/preset-env'],
+                    plugins: ['@babel/plugin-proposal-object-rest-spread']
                 }
             }
         ]

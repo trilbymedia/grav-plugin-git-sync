@@ -3,10 +3,12 @@ import request from 'admin/utils/request';
 import toastr from 'admin/utils/toastr';
 import { config } from 'grav-config';
 import $ from 'jquery';
+import 'whatwg-fetch';
 
 const WIZARD = $('[data-remodal-id="wizard"]');
 const RESET_LOCAL = $('[data-remodal-id="reset-local"]');
 const SERVICES = { 'github': 'github.com', 'bitbucket': 'bitbucket.org', 'gitlab': 'gitlab.com', 'allothers': 'allothers.repo' };
+const BRANCHES = { 'github': 'main', 'bitbucket': 'master', 'gitlab': 'master', 'allothers': 'master' };
 const TEMPLATES = {
     REPO_URL: 'https://{placeholder}/getgrav/grav.git'
 };
@@ -111,6 +113,7 @@ $(document).on('click', '[data-gitsync-action]', (event) => {
     const noUser = $('[name="gitsync[no_user]"]').is(':checked');
     const password = $('[name="gitsync[repo_password]"]').val();
     const repository = $('[name="gitsync[repo_url]"]').val();
+    const branch = $('[name="gitsync[branch]"]').val();
     const webhook = $('[name="gitsync[webhook]"]').val();
     const webhook_enabled = $('[name="gitsync[webhook_enabled]"]').is(':checked');
     const webhook_secret = $('[name="gitsync[webhook_secret]"]').val();
@@ -134,8 +137,11 @@ $(document).on('click', '[data-gitsync-action]', (event) => {
     }
 
     if (['save', 'test'].includes(action)) {
+        target.find('.fa').removeClass(action === 'test' ? 'fa-plug' : 'fa-check').addClass('fa-spin fa-circle-o-notch');
+
         if (error.length) {
             toastr.error(error.join('<br />'));
+            target.find('.fa').removeClass('fa-spin fa-circle-o-notch').addClass(action === 'test' ? 'fa-plug' : 'fa-check');
 
             return false;
         }
@@ -147,6 +153,8 @@ $(document).on('click', '[data-gitsync-action]', (event) => {
         $('[name="data[no_user]"]').val(noUser ? '1' : '0');
         $('[name="data[user]"]').val(user);
         $('[name="data[password]"]').val(password);
+        $('[name="data[branch]"]').val(branch);
+        $('[name="data[remote][branch]"]').val(branch);
         $('[name="data[webhook]"]').val(webhook);
         $(`[name="data[webhook_enabled]"][value="${webhook_enabled ? 1 : 0}"]`).prop('checked', true);
         $('[name="data[webhook_secret]"]').val(webhook_secret);
@@ -166,7 +174,8 @@ $(document).on('click', '[data-gitsync-action]', (event) => {
         const test = global.btoa(JSON.stringify({
             user: noUser ? '' : user,
             password,
-            repository
+            repository,
+            branch
         }));
 
         request(URI, {
@@ -174,6 +183,7 @@ $(document).on('click', '[data-gitsync-action]', (event) => {
             body: { test, task: 'testConnection' }
         });
 
+        target.find('.fa').removeClass('fa-spin fa-circle-o-notch').addClass('fa-plug');
         return false;
     }
 
@@ -207,7 +217,7 @@ $(document).on('click', '[data-gitsync-action]', (event) => {
 
     if (STEP === 2) {
         const repoURL = $('[name="gitsync[repo_url]"]').val();
-        if (!repoURL.length) {
+        if (!repoURL.length || !branch) {
             disableButton(next);
         } else {
             enableButton(next);
@@ -283,7 +293,11 @@ $(document).on('change', '[name="gitsync[repository]"]', (event) => {
             WIZARD.find('.webhook-secret-wrapper')[service === 'bitbucket' ? 'addClass' : 'removeClass']('hidden');
             WIZARD
                 .find('input[name="gitsync[repo_url]"][placeholder]')
-                .attr('placeholder', TEMPLATES.REPO_URL.replace(/\{placeholder\}/, SERVICES[service]));
+                .attr('placeholder', TEMPLATES.REPO_URL.replace(/\{placeholder\}/, SERVICES[service]))
+                .end()
+                .find('input[name="gitsync[branch]"]')
+                .attr('placeholder', BRANCHES[service])
+                .val(BRANCHES[service]);
         }
     });
 

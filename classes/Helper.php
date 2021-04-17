@@ -78,13 +78,13 @@ class Helper
      * @param string $repository
      * @return string[]
      */
-    public static function testRepository($user, $password, $repository)
+    public static function testRepository($user, $password, $repository, $branch)
     {
         $git = new GitSync();
         $repository = self::prepareRepository($user, $password, $repository);
 
         try {
-            return $git->testRepository($repository);
+            return $git->testRepository($repository, $branch);
         } catch (RuntimeException $e) {
             return [$e->getMessage()];
         }
