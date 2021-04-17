@@ -1,5 +1,5 @@
 # v2.2.0
-## 04/16/2021
+## 04/17/2021
 
 1. [](#improved)
    * Better support for branches other than `master`. This includes the transition to `main` from GitHub and the groundwork to support other big providers making the change as announced soon. GitSync is now capable of preset the branch based on the provider selected. You are now also able to specify any custom branch and when testing the repository connection it will also ensure the branch exists and provide feedback if not. 
