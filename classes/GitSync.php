@@ -145,9 +145,16 @@ class GitSync extends Git
     {
         $name = $this->getConfig('git', $name)['name'];
         $email = $this->getConfig('git', $email)['email'];
+        $privateKey = $this->getGitConfig('private_key', null);
 
         $this->execute("config user.name \"{$name}\"");
         $this->execute("config user.email \"{$email}\"");
+
+        if ($privateKey) {
+            $this->execute('config core.sshCommand "ssh -i ' . $privateKey . ' -F /dev/null"');
+        } else {
+            $this->execute('config --unset core.sshCommand');
+        }
 
         return true;
     }
@@ -474,7 +481,7 @@ class GitSync extends Git
                 exec($command, $output, $returnValue);
             }
 
-            if ($returnValue !== 0 && !$quiet) {
+            if ($returnValue !== 0 && (!empty($output) && $returnValue === 5) && !$quiet) {
                 throw new \RuntimeException(implode("\r\n", $output));
             }
 

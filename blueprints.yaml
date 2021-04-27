@@ -252,6 +252,20 @@ form:
         node_modules
         /.idea
 
+    git.private_key:
+      type: text
+      label: Private SSH Key
+      placeholder: ~/.ssh/id_rsa
+      markdown: true
+      description: >
+        In order to be able to sparse-checkout and push changes, it is expected you have an ssh-key configured for accessing the repository. This is usually found under `~/.ssh` and it needs to be configured for the same user that runs the web-server. <br />
+        <br />
+        Point it to the secret (not the public) and make also sure you have strict permissions to the file. (`-rw-------`). <br />
+        <br />
+        Example: `private_key: /home/www-data/.ssh/id_rsa`<br />
+        <br />
+        **IMPORTANT**: SSH keys with passphrase are __NOT__ supported. To remove a passphrase, run the `ssh-keygen -p` command and when asked for the new passphrase leave blank and return.
+
     logging:
       type: toggle
       default: 0

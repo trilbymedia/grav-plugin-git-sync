@@ -3,7 +3,7 @@
 
 1. [](#new)
    * Added new Advanced Git Ignore field where it is possible to specify custom git ignore entries to play along with GitSync [#197](https://github.com/trilbymedia/grav-plugin-git-sync/issues/197) [#117](https://github.com/trilbymedia/grav-plugin-git-sync/issues/117) 
-   * Support for basic `ssh://` protocol repositories (requires you have SSH Key properly setup on your machine. Password protected SSH Keys not supported) [#110](https://github.com/trilbymedia/grav-plugin-git-sync/issues/110)
+   * Support `ssh://` protocol and SSH Key authentication ([read more](https://github.com/trilbymedia/grav-plugin-git-sync#ssh-enterprise)) [#110](https://github.com/trilbymedia/grav-plugin-git-sync/issues/110)
 1. [](#improved)
    * Updated PHP Encryption dependency
 1. [](#bugfix)
