@@ -34,6 +34,7 @@ class ComposerStaticInitc058e1b5c686df0909ec1cc39bb5d854
     );
 
     public static $classMap = array (
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Grav\\Plugin\\GitSyncPlugin' => __DIR__ . '/../..' . '/git-sync.php',
         'SebastianBergmann\\Git\\Exception' => __DIR__ . '/..' . '/sebastian/git/src/Exception/Exception.php',
         'SebastianBergmann\\Git\\Git' => __DIR__ . '/..' . '/sebastian/git/src/Git.php',

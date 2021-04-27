@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
     'Grav\\Plugin\\GitSyncPlugin' => $baseDir . '/git-sync.php',
     'SebastianBergmann\\Git\\Exception' => $vendorDir . '/sebastian/git/src/Exception/Exception.php',
     'SebastianBergmann\\Git\\Git' => $vendorDir . '/sebastian/git/src/Git.php',

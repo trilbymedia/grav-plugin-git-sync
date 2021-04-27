@@ -3,6 +3,8 @@
 
 1. [](#new)
    * Added new Advanced Git Ignore field where it is possible to specify custom git ignore entries to play along with GitSync [#197](https://github.com/trilbymedia/grav-plugin-git-sync/issues/197) [#117](https://github.com/trilbymedia/grav-plugin-git-sync/issues/117) 
+1. [](#improved)
+   * Updated PHP Encryption dependency
 1. [](#bugfix)
    * Fixed issue with Flex Objects, preventing GitSync's settings to get refreshed `onAdminSave` when "Sync on Page Save" disabled
 
