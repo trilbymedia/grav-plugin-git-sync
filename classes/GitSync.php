@@ -214,6 +214,9 @@ class GitSync extends Git
             }
         }
 
+        $ignoreEntries = explode("\n", $this->getGitConfig('ignore', ''));
+        $ignore = array_merge($ignore, $ignoreEntries);
+
         $file = File::instance(rtrim($this->repositoryPath, '/') . '/.gitignore');
         $file->save(implode("\r\n", $ignore));
         $file->free();

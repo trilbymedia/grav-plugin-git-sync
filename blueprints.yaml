@@ -243,6 +243,15 @@ form:
       help: If the default `git` command doesn't work on your machine or if you want to specify a custom path, do it in here
       placeholder: /usr/bin/git
 
+    git.ignore:
+      type: textarea
+      label: Git Ignore
+      help: Add custom git ignore rules to go along with GitSync. One per line
+      rows: 6
+      placeholder: |
+        node_modules
+        /.idea
+
     logging:
       type: toggle
       default: 0
