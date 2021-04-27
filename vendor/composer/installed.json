@@ -1,115 +1,124 @@
-[
-    {
-        "name": "defuse/php-encryption",
-        "version": "v2.2.1",
-        "version_normalized": "2.2.1.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/defuse/php-encryption.git",
-            "reference": "0f407c43b953d571421e0020ba92082ed5fb7620"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/defuse/php-encryption/zipball/0f407c43b953d571421e0020ba92082ed5fb7620",
-            "reference": "0f407c43b953d571421e0020ba92082ed5fb7620",
-            "shasum": ""
-        },
-        "require": {
-            "ext-openssl": "*",
-            "paragonie/random_compat": ">= 2",
-            "php": ">=5.4.0"
-        },
-        "require-dev": {
-            "nikic/php-parser": "^2.0|^3.0|^4.0",
-            "phpunit/phpunit": "^4|^5"
-        },
-        "time": "2018-07-24T23:27:56+00:00",
-        "bin": [
-            "bin/generate-defuse-key"
-        ],
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Defuse\\Crypto\\": "src"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Taylor Hornby",
-                "email": "taylor@defuse.ca",
-                "homepage": "https://defuse.ca/"
+{
+    "packages": [
+        {
+            "name": "defuse/php-encryption",
+            "version": "v2.3.1",
+            "version_normalized": "2.3.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/defuse/php-encryption.git",
+                "reference": "77880488b9954b7884c25555c2a0ea9e7053f9d2"
             },
-            {
-                "name": "Scott Arciszewski",
-                "email": "info@paragonie.com",
-                "homepage": "https://paragonie.com"
-            }
-        ],
-        "description": "Secure PHP Encryption Library",
-        "keywords": [
-            "aes",
-            "authenticated encryption",
-            "cipher",
-            "crypto",
-            "cryptography",
-            "encrypt",
-            "encryption",
-            "openssl",
-            "security",
-            "symmetric key cryptography"
-        ]
-    },
-    {
-        "name": "sebastian/git",
-        "version": "2.1.4",
-        "version_normalized": "2.1.4.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/sebastianbergmann/git.git",
-            "reference": "815bbbc963cf35e5413df195aa29df58243ecd24"
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/defuse/php-encryption/zipball/77880488b9954b7884c25555c2a0ea9e7053f9d2",
+                "reference": "77880488b9954b7884c25555c2a0ea9e7053f9d2",
+                "shasum": ""
+            },
+            "require": {
+                "ext-openssl": "*",
+                "paragonie/random_compat": ">= 2",
+                "php": ">=5.6.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4|^5|^6|^7|^8|^9"
+            },
+            "time": "2021-04-09T23:57:26+00:00",
+            "bin": [
+                "bin/generate-defuse-key"
+            ],
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Defuse\\Crypto\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Hornby",
+                    "email": "taylor@defuse.ca",
+                    "homepage": "https://defuse.ca/"
+                },
+                {
+                    "name": "Scott Arciszewski",
+                    "email": "info@paragonie.com",
+                    "homepage": "https://paragonie.com"
+                }
+            ],
+            "description": "Secure PHP Encryption Library",
+            "keywords": [
+                "aes",
+                "authenticated encryption",
+                "cipher",
+                "crypto",
+                "cryptography",
+                "encrypt",
+                "encryption",
+                "openssl",
+                "security",
+                "symmetric key cryptography"
+            ],
+            "support": {
+                "issues": "https://github.com/defuse/php-encryption/issues",
+                "source": "https://github.com/defuse/php-encryption/tree/v2.3.1"
+            },
+            "install-path": "../defuse/php-encryption"
         },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/sebastianbergmann/git/zipball/815bbbc963cf35e5413df195aa29df58243ecd24",
-            "reference": "815bbbc963cf35e5413df195aa29df58243ecd24",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.3"
-        },
-        "time": "2017-01-23T20:57:12+00:00",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.1-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "classmap": [
-                "src/"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "BSD-3-Clause"
-        ],
-        "authors": [
-            {
-                "name": "Sebastian Bergmann",
-                "email": "sebastian@phpunit.de"
-            }
-        ],
-        "description": "Simple wrapper for Git",
-        "homepage": "http://www.github.com/sebastianbergmann/git",
-        "keywords": [
-            "git"
-        ],
-        "abandoned": true
-    }
-]
+        {
+            "name": "sebastian/git",
+            "version": "2.1.4",
+            "version_normalized": "2.1.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sebastianbergmann/git.git",
+                "reference": "815bbbc963cf35e5413df195aa29df58243ecd24"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sebastianbergmann/git/zipball/815bbbc963cf35e5413df195aa29df58243ecd24",
+                "reference": "815bbbc963cf35e5413df195aa29df58243ecd24",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "time": "2017-01-23T20:57:12+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.1-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Sebastian Bergmann",
+                    "email": "sebastian@phpunit.de"
+                }
+            ],
+            "description": "Simple wrapper for Git",
+            "homepage": "http://www.github.com/sebastianbergmann/git",
+            "keywords": [
+                "git"
+            ],
+            "abandoned": true,
+            "install-path": "../sebastian/git"
+        }
+    ],
+    "dev": true,
+    "dev-package-names": []
+}

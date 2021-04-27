@@ -5,6 +5,7 @@ namespace Grav\Plugin\GitSync;
 use Defuse\Crypto\Crypto;
 use Grav\Common\Config\Config;
 use Grav\Common\Grav;
+use Grav\Common\Utils;
 use SebastianBergmann\Git\RuntimeException;
 
 class Helper
@@ -68,6 +69,10 @@ class Helper
     {
         $user = $user ? urlencode($user) . ':' : '';
         $password = urlencode($password);
+
+        if (Utils::startsWith($repository, 'ssh://')) {
+            return $repository;
+        }
 
         return str_replace('://', "://${user}${password}@", $repository);
     }

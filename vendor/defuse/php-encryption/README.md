@@ -4,14 +4,23 @@ php-encryption
 [![Build Status](https://travis-ci.org/defuse/php-encryption.svg?branch=master)](https://travis-ci.org/defuse/php-encryption)
 [![codecov](https://codecov.io/gh/defuse/php-encryption/branch/master/graph/badge.svg)](https://codecov.io/gh/defuse/php-encryption)
 [![Latest Stable Version](https://poser.pugx.org/defuse/php-encryption/v/stable)](https://packagist.org/packages/defuse/php-encryption)
-[![Latest Unstable Version](https://poser.pugx.org/defuse/php-encryption/v/unstable)](https://packagist.org/packages/defuse/php-encryption)
 [![License](https://poser.pugx.org/defuse/php-encryption/license)](https://packagist.org/packages/defuse/php-encryption)
 [![Downloads](https://img.shields.io/packagist/dt/defuse/php-encryption.svg)](https://packagist.org/packages/defuse/php-encryption)
 
+```terminal
+composer require defuse/php-encryption
+```
+
 This is a library for encrypting data with a key or password in PHP. **It
-requires PHP 5.6 or newer and OpenSSL 1.0.1 or newer.** The current version is
-v2.2.1, which is expected to remain stable and supported by its authors with
-security and bugfixes until at least January 1st, 2020.
+requires PHP 5.6 or newer and OpenSSL 1.0.1 or newer.** We recommend using a
+version of PHP that [still has security
+support](https://www.php.net/supported-versions.php), which at the time of
+writing means PHP 7.3 or later. Using this library with an unsupported
+version of PHP could lead to security vulnerabilities.
+
+The current version of `php-encryption` is v2.3.1. This library is expected to
+remain stable and supported by its authors with security and bugfixes until at
+least January 1st, 2022.
 
 The library is a joint effort between [Taylor Hornby](https://defuse.ca/) and
 [Scott Arciszewski](https://paragonie.com/blog/author/scott-arcizewski) as well
@@ -90,7 +99,7 @@ a formal audit, please [contact Taylor Hornby](https://defuse.ca/contact.htm).
 Public Keys
 ------------
 
-The GnuPG public key used to sign releases is available in
+The GnuPG public key used to sign current and older releases is available in
 [dist/signingkey.asc](https://github.com/defuse/php-encryption/raw/master/dist/signingkey.asc). Its fingerprint is:
 
 ```
@@ -100,3 +109,13 @@ The GnuPG public key used to sign releases is available in
 You can verify it against Taylor Hornby's [contact
 page](https://defuse.ca/contact.htm) and
 [twitter](https://twitter.com/DefuseSec/status/723741424253059074).
+
+Due to the old key expiring, new releases will be signed with a new public key
+available in [dist/signingkey-new.asc](https://github.com/defuse/php-encryption/raw/master/dist/signingkey-new.asc). Its fingerprint is:
+
+```
+6DD6 E677 0281 5846 FC85  25A3 DD2E 507F 7BDB 1669
+```
+
+A signature of this new key by the old key is available in
+[dist/signingkey-new.asc.sig](https://github.com/defuse/php-encryption/raw/master/dist/signingkey-new.asc.sig).

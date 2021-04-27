@@ -6,9 +6,6 @@ Git Sync captures any change that you make on your site and instantly updates yo
 
 Thanks to this powerful bi-directional flow, Git Sync can now turn your site into a collaborative environment where the source of truth is always your git repository and unlimited collaborators and sites can share and contribute to the same content.
 
-> :warning: With GitHub’s recent change of repository default branches being named ‘main’ instead of ‘master’ the following work-around is needed until GitHub also addresses automatic default branch re-routing:
-> 1. Once you have created your new repo, create a new branch called ‘master’
-> 2. Set the default branch of the repo to this newly created ‘master’ branch
 
 ## Videos: Setup and Demo
 
@@ -33,6 +30,7 @@ After having installed the plugin, make sure to go in the plugin settings in ord
 * Easy step-by-step Wizard setup will guide you through a detailed process for setting things up
 * Supported hosting services: [GitHub](https://github.com), [BitBucket](https://bitbucket.org), [GitLab](https://gitlab.com) as well as any self-hosted and git service with webhooks support.
 * Private repositories
+* Basic SSH / Enterprise support (You will need SSH Key properly setup on your machine)
 * Synchronize any folder under `user` (pages, themes, config) 
 * 2FA (Two-Factor Authentication) and Access Token support
 * Webhooks support allow for automatic synchronization from the Git Repository with secure Webhook URL auto-generated and support for Webhook Secret (when available)
@@ -69,6 +67,18 @@ Since version 2.1.1 you can now also programmatically change user/password via t
 In order for the plugin to work, the server needs to run `git` 1.7.1 and above. 
 
 The PHP `exec()` and `escapeshellarg()` functions are mandatory. Ensure the options to be enabled in your PHP.
+
+# SSH / Enterprise
+
+Since version v2.3.0, GitSync supports SSH authentication. This means you can omit password altogether and rely on the Repository URL and SSH key on your machine, that you can point to from the Advanced settings in GitSync.
+
+Please note that In order to be able to sparse-checkout and push changes, it is expected you have an ssh-key configured for accessing the repository. This is usually found under `~/.ssh` and it needs to be configured for the same user that runs the web-server.
+
+Point it to the secret (not the public) and make also sure you have strict permissions to the file. (`-rw-------`).
+
+Example: private_key: `/home/www-data/.ssh/id_rsa`
+
+> **IMPORTANT**: SSH keys with passphrase are **NOT** supported. To remove a passphrase, run the `ssh-keygen -p` command and when asked for the new passphrase leave blank and return.
 
 # Known Issues and Resolutions
 **Q:** `error: The requested URL returned error: 403 Forbidden while accessing...` [#39](https://github.com/trilbymedia/grav-plugin-git-sync/issues/39)  

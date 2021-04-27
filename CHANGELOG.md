@@ -1,3 +1,15 @@
+# v2.3.0
+## 04/27/2021
+
+1. [](#new)
+   * Added new Advanced Git Ignore field where it is possible to specify custom git ignore entries to play along with GitSync [#197](https://github.com/trilbymedia/grav-plugin-git-sync/issues/197) [#117](https://github.com/trilbymedia/grav-plugin-git-sync/issues/117) 
+   * Support `ssh://` protocol and SSH Key authentication ([read more](https://github.com/trilbymedia/grav-plugin-git-sync#ssh--enterprise)) [#110](https://github.com/trilbymedia/grav-plugin-git-sync/issues/110)
+1. [](#improved)
+   * Updated PHP Encryption dependency
+1. [](#bugfix)
+   * Fixed issue with Flex Objects, preventing GitSync's settings to get refreshed `onAdminSave` when "Sync on Page Save" disabled
+   * Return raw URL for repositories setup with `ssh://` protocol, instead of injecting the password like `git://` and `http://` protocols do [#104](https://github.com/trilbymedia/grav-plugin-git-sync/issues/104)
+
 # v2.2.0
 ## 04/17/2021
 

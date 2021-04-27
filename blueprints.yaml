@@ -1,7 +1,7 @@
 name: Git Sync
 type: plugin
 slug: git-sync
-version: 2.2.0
+version: 2.3.0
 description: Allows to synchronize portions of Grav with Git Repositories (GitHub, BitBucket, GitLab)
 icon: git
 author:
@@ -242,6 +242,29 @@ form:
       label: Git Binary Path
       help: If the default `git` command doesn't work on your machine or if you want to specify a custom path, do it in here
       placeholder: /usr/bin/git
+
+    git.ignore:
+      type: textarea
+      label: Git Ignore
+      help: Add custom git ignore rules to go along with GitSync. One per line
+      rows: 6
+      placeholder: |
+        node_modules
+        /.idea
+
+    git.private_key:
+      type: text
+      label: Private SSH Key
+      placeholder: ~/.ssh/id_rsa
+      markdown: true
+      description: >
+        In order to be able to sparse-checkout and push changes, it is expected you have an ssh-key configured for accessing the repository. This is usually found under `~/.ssh` and it needs to be configured for the same user that runs the web-server. <br />
+        <br />
+        Point it to the secret (not the public) and make also sure you have strict permissions to the file. (`-rw-------`). <br />
+        <br />
+        Example: `private_key: /home/www-data/.ssh/id_rsa`<br />
+        <br />
+        **IMPORTANT**: SSH keys with passphrase are __NOT__ supported. To remove a passphrase, run the `ssh-keygen -p` command and when asked for the new passphrase leave blank and return.
 
     logging:
       type: toggle
