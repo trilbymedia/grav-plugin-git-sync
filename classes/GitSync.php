@@ -481,7 +481,7 @@ class GitSync extends Git
                 exec($command, $output, $returnValue);
             }
 
-            if ($returnValue !== 0 && (!empty($output) && $returnValue === 5) && !$quiet) {
+            if ($returnValue !== 0 && $returnValue !== 5 && !$quiet) {
                 throw new \RuntimeException(implode("\r\n", $output));
             }
 
