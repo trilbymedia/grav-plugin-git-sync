@@ -1,3 +1,10 @@
+# v2.3.1
+## 04/30/2021
+
+1. [](#bugfix)
+   * Fixed regression where `testRepository` would erroneously pass with invalid credentials [#200](https://github.com/trilbymedia/grav-plugin-git-sync/issues/200)
+   * Fixed Exception thrown with `bin/plugin git-sync status` command, preventing `sync` [#200](https://github.com/trilbymedia/grav-plugin-git-sync/issues/200)
+
 # v2.3.0
 ## 04/27/2021
 
