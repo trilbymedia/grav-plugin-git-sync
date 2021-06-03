@@ -4,6 +4,7 @@ namespace Grav\Plugin\GitSync;
 use Grav\Common\Grav;
 use Grav\Common\Plugin;
 use Grav\Common\Utils;
+use http\Exception\RuntimeException;
 use RocketTheme\Toolbox\File\File;
 use SebastianBergmann\Git\Git;
 
@@ -115,6 +116,10 @@ class GitSync extends Git
      */
     public function testRepository($url, $branch)
     {
+        if (!preg_match(Helper::GIT_REGEX, $url)) {
+            throw new \RuntimeException("Git Repository value does not match the supported format.");
+        }
+
         $branch = $branch ? '"' . $branch . '"' : '';
         return $this->execute("ls-remote \"{$url}\" {$branch}");
     }

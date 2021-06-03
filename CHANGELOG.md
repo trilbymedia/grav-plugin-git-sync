@@ -1,3 +1,10 @@
+# v2.3.2
+## 06/03/2021
+
+1. [](#bugfix)
+   * Better validation for Git Repository value on both Wizard and Backend. 
+   * Prevent malicious commands from being executed in Wizard when "Verifying Authentication, Connection and Branch".
+
 # v2.3.1
 ## 04/30/2021
 
