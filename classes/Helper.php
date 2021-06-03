@@ -13,6 +13,9 @@ class Helper
     /** @var string */
     private static $hash = '594ef69d-6c29-45f7-893a-f1b4342687d3';
 
+    /** @var string */
+    const GIT_REGEX = '/(?:git|ssh|https?|git@[-\w.]+):(\/\/)?(.*?)(\.git)(\/?|\#[-\d\w._]+?)$/';
+
     /**
      * Checks if the user/ folder is already initialized
      *

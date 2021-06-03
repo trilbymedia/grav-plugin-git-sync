@@ -43,6 +43,10 @@
   background: #efefef;
   border-color: #ddd; }
 
+[data-remodal-id="wizard"] input.invalid, [data-remodal-id="reset-local"] input.invalid {
+  border-color: #f4516d;
+  color: #f4516d; }
+
 [data-remodal-id="wizard"] label.disabled, [data-remodal-id="reset-local"] label.disabled {
   color: #ccc; }
 
@@ -130,4 +134,4 @@
     -o-transform: translateY(0) !important;
     transform: translateY(0) !important; }
 
-/*# sourceMappingURL=../css-compiled/git-sync.css.map */
+/*# sourceMappingURL=git-sync.css.map */
