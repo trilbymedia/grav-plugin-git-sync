@@ -81,9 +81,9 @@ Example: private_key: `/home/www-data/.ssh/id_rsa`
 > **IMPORTANT**: SSH keys with passphrase are **NOT** supported. To remove a passphrase, run the `ssh-keygen -p` command and when asked for the new passphrase leave blank and return.
 
 # Known Issues and Resolutions
-**Q:** `error: The requested URL returned error: 403 Forbidden while accessing...` [#39](https://github.com/trilbymedia/grav-plugin-git-sync/issues/39)  
+**Q:** `error: The requested URL returned error: 403 Forbidden while accessing...` (reference, [#39](https://github.com/trilbymedia/grav-plugin-git-sync/issues/39))   
 **A:** This might be caused by your computer having stored in the registry a user/password that might conflict with the one you are intending to use.  
-[Follow the instructions for resolving the issue...](https://github.com/trilbymedia/grav-plugin-git-sync/issues/39#issuecomment-538867548)
+[Follow the instructions for resolving the issue...](https://github.com/trilbymedia/grav-plugin-git-sync/discussions/202#discussioncomment-869460)
 
 # Sponsored by
 
