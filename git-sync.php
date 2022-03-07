@@ -98,8 +98,8 @@ class GitSyncPlugin extends Plugin
         $secret = $config['webhook_secret'] ?? false;
         $enabled = $config['webhook_enabled'] ?? false;
 
-        if ($route === $webhook && $_SERVER['REQUEST_METHOD'] === 'POST') {
-            if ($secret && $enabled) {
+        if ($enabled && $route === $webhook && $_SERVER['REQUEST_METHOD'] === 'POST') {
+            if ($secret) {
                 if (!$this->isRequestAuthorized($secret)) {
                     http_response_code(401);
                     header('Content-Type: application/json');
