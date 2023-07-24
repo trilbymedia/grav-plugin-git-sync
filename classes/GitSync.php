@@ -136,7 +136,10 @@ class GitSync extends Git
             $this->execute('checkout -b ' . $local_branch, true);
         }
 
-        $this->enableSparseCheckout();
+        // Check if the 'sparse_checkout' config option is enabled
+        if ($this->getConfig('sparse_checkout', false)) {
+            $this->enableSparseCheckout();
+        }
 
         return true;
     }
