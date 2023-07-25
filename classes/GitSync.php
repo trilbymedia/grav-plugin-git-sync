@@ -438,19 +438,21 @@ class GitSync extends Git
      */
     public function hasChangesToCommit()
     {
-        $folders = $this->config['folders'];
+        $sparseCheckoutEnabled = $this->config['sparseCheckoutEnabled'];
+        $folders = $sparseCheckoutEnabled ? $this->config['folders'] : ['']; // If sparse checkout is disabled, check the whole repository
         $paths = [];
-
+    
         foreach ($folders as $folder) {
             $folder = explode('/', $folder);
             $paths[] = array_shift($folder);
         }
-
+    
         $message = 'nothing to commit';
         $output = $this->execute('status ' . implode(' ', $paths));
-
+    
         return strpos($output[count($output) - 1], $message) !== 0;
     }
+    
 
     /**
      * @param string $command
