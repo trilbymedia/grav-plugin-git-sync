@@ -438,7 +438,7 @@ class GitSync extends Git
      */
     public function hasChangesToCommit()
     {
-        $sparseCheckoutEnabled = $this->config['sparseCheckoutEnabled'];
+        $sparseCheckoutEnabled = isset($this->config['sparseCheckoutEnabled']) && $this->config['sparseCheckoutEnabled'] ? $this->config['sparseCheckoutEnabled'] : false;
         $folders = $sparseCheckoutEnabled ? $this->config['folders'] : ['']; // If sparse checkout is disabled, check the whole repository
         $paths = [];
     
