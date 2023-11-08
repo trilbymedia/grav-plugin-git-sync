@@ -126,7 +126,7 @@ class GitSync extends Git
 
     /**
      * @return bool
-     */
+     */    
     public function initializeRepository()
     {
     
@@ -134,11 +134,33 @@ class GitSync extends Git
 
             $branch = $this->getRemote('branch', null);
             $local_branch = $this->getConfig('branch', $branch);
+
+            // Create the .git folder
             $this->execute('init');
+
+            // Add the repo as a remote upstream
+            $this->remoteAddUpstream(true);
+
+            // Check out the appropriate branch
             $this->execute('checkout -b ' . $local_branch, true);
-    
-            // Ensure .gitignore is in place and properly configured
-            $this->ensureGitignore();
+
+            // Fetch from the upstream (get info from the source of truth)
+            $this->fetchUpstream();
+
+            // Save untracked files
+            $this->saveUntrackedFiles();
+
+            // Integrate fetched updates, minus untracked files, into the local branch
+            $this->mergeUpstream();
+
+            // Restore the untracked files if there are any, crossing fingers that there are no conflicts
+            $this->restoreUntrackedFiles();
+
+            // Now that the updates are integrated, add and commit them locally
+            $this->initialAddCommit();
+
+            // Push this initial commit
+            $this->pushUpstream();
     
             // Check if the 'sparse_checkout' config option is enabled
             if ($this->getConfig('sparse_checkout', false)) {
@@ -150,27 +172,106 @@ class GitSync extends Git
         return true;
     }    
     
-    private function ensureGitignore() {
+    private function remoteAddUpstream($authenticated = false) {
+        if (!$this->hasRemote('origin')) {
+            $url = $this->getConfig('repository', null);
+            if ($authenticated) {
+                // You should retrieve the username and password in a secure way
+                $user = $this->user ?? '';
+                $password = $this->password ? Helper::decrypt($this->password) : '';
+                // Perhaps you need to update the remote URL with the credentials here
+                $url = $this->getConfig('repository', null);
+                $url = Helper::prepareRepository($user, $password, $url);
+                // fetch upstream with credentials
+                $this->execute('remote add upstream  '.$url);
+            } else {
+                $this->grav['log']->error('Authentication needed');
+            }
+        }
+    }
+
+    private function fetchUpstream() {
         $branch = $this->getRemote('branch', null);
         $local_branch = $this->getConfig('branch', $branch);
-        $gitignorePath = $this->repositoryPath . '/.gitignore';
-        
-        // Check if .gitignore exists
-        if (!file_exists($gitignorePath)) {
+        $this->execute('fetch upstream '. $local_branch);
+    }
 
-            // Ensure the remote is set up correctly
-            if (!$this->hasRemote('origin')) {
-                $url = $this->getConfig('repository', null);
-                $this->addRemote('origin', $url);
-            }
-
-            $this->fetch('origin', null, true);
-
-            // Checkout the .gitignore file from the remote repository
-            $this->execute('checkout origin/' . $local_branch . ' -- .gitignore');
-        } else {
-            $this->grav['log']->info('.gitignore already exists.');
+    private function saveUntrackedFiles() {
+        $untrackedFiles = $this->execute('ls-files --others --exclude-standard');
+        if (!empty($untrackedFiles)) {
+            $this->backupUntrackedFiles($untrackedFiles);
         }
+    }
+
+    private function backupUntrackedFiles($untrackedFiles) {
+        $backupDirectory = 'tmp/git-sync/';
+        $userDirectory = 'user/'; // Set the correct directory where the files reside
+    
+        if (!is_dir($backupDirectory) && !mkdir($backupDirectory, 0777, true) && !is_dir($backupDirectory)) {
+            throw new \Exception("Unable to create directory: " . $backupDirectory);
+        }
+    
+        foreach ($untrackedFiles as $file) {
+            $sourcePath = realpath($userDirectory . $file); // Prepend the /user/ directory to the path
+            if ($sourcePath === false) {
+                throw new \Exception("Source file does not exist: " . $userDirectory . $file);
+            }
+    
+            // Maintain the directory structure
+            $destinationPath = $backupDirectory . $file;
+            $destinationDir = dirname($destinationPath);
+    
+            // Create the directory structure if it doesn't exist
+            if (!is_dir($destinationDir) && !mkdir($destinationDir, 0777, true)) {
+                throw new \Exception("Unable to create directory: " . $destinationDir);
+            }
+    
+            if (!rename($sourcePath, $destinationPath)) {
+                throw new \Exception("Unable to move file: " . $userDirectory . $file);
+            }
+        }
+    }           
+
+    private function mergeUpstream() {
+        $branch = $this->getRemote('branch', null);
+        $local_branch = $this->getConfig('branch', $branch);
+        $this->execute('merge upstream/'. $local_branch);
+    }
+
+    private function restoreUntrackedFiles() {
+        $backupDirectory = 'tmp/git-sync/';
+        $userDirectory = 'user/'; // Set the correct directory where the files should be restored
+    
+        // Use rsync to synchronize directories
+        $rsyncCommand = "rsync -av --ignore-existing '$backupDirectory' '$userDirectory'";
+        exec($rsyncCommand, $output, $returnVar);
+    
+        if ($returnVar !== 0) {
+            throw new \Exception("Rsync failed with error code $returnVar");
+        }
+    
+        // After successful rsync, remove the backup directory
+        $this->cleanUpBackupDirectory($backupDirectory);
+    }
+    
+    private function cleanUpBackupDirectory($backupDirectory) {
+        $command = "rm -rf " . escapeshellarg($backupDirectory);
+        exec($command, $output, $returnVar);
+        if ($returnVar !== 0) {
+            throw new \Exception("Failed to remove the backup directory.");
+        }
+    }    
+
+    private function initialAddCommit() {
+        $this->execute('add .');
+        $commitCommand = '-c user.name="Your Grav Site" -c user.email="sales@happydog.digital" commit -m "Initial merge of the repo and the project"';
+        $this->execute($commitCommand);
+    }
+
+    private function pushUpstream() {
+        $branch = $this->getRemote('branch', null);
+        $local_branch = $this->getConfig('branch', $branch);
+        $this->execute('push upstream '. $local_branch);
     }
 
     /**
@@ -386,8 +487,10 @@ class GitSync extends Git
         $branch = $this->getRemote('branch', $branch);
     
         if ($authenticated) {
+            // You should retrieve the username and password in a secure way
             $user = $this->user ?? '';
             $password = $this->password ? Helper::decrypt($this->password) : '';
+            // Perhaps you need to update the remote URL with the credentials here
             $url = $this->getConfig('repository', null);
             $url = Helper::prepareRepository($user, $password, $url);
             // Set the remote URL with credentials
@@ -395,7 +498,7 @@ class GitSync extends Git
         }
     
         return $this->execute("fetch {$name} {$branch}");
-    }
+    }    
 
     /**
      * @param string|null $name
