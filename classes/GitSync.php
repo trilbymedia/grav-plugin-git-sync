@@ -129,19 +129,48 @@ class GitSync extends Git
      */
     public function initializeRepository()
     {
+    
         if (!Helper::isGitInitialized()) {
+
             $branch = $this->getRemote('branch', null);
             $local_branch = $this->getConfig('branch', $branch);
             $this->execute('init');
             $this->execute('checkout -b ' . $local_branch, true);
-        }
+    
+            // Ensure .gitignore is in place and properly configured
+            $this->ensureGitignore();
+    
+            // Check if the 'sparse_checkout' config option is enabled
+            if ($this->getConfig('sparse_checkout', false)) {
+                $this->enableSparseCheckout();
+            }
 
-        // Check if the 'sparse_checkout' config option is enabled
-        if ($this->getConfig('sparse_checkout', false)) {
-            $this->enableSparseCheckout();
         }
-
+    
         return true;
+    }    
+    
+    private function ensureGitignore() {
+        $branch = $this->getRemote('branch', null);
+        $local_branch = $this->getConfig('branch', $branch);
+        $gitignorePath = $this->repositoryPath . '/.gitignore';
+        
+        // Check if .gitignore exists
+        if (!file_exists($gitignorePath)) {
+
+            // Ensure the remote is set up correctly
+            if (!$this->hasRemote('origin')) {
+                $url = $this->getConfig('repository', null);
+                $this->addRemote('origin', $url);
+            }
+
+            $this->fetch('origin', null, true);
+
+            // Checkout the .gitignore file from the remote repository
+            $this->execute('checkout origin/' . $local_branch . ' -- .gitignore');
+        } else {
+            $this->grav['log']->info('.gitignore already exists.');
+        }
     }
 
     /**
@@ -351,11 +380,20 @@ class GitSync extends Git
      * @param string|null $branch
      * @return string[]
      */
-    public function fetch($name = null, $branch = null)
+    public function fetch($name = null, $branch = null, $authenticated = false)
     {
         $name = $this->getRemote('name', $name);
         $branch = $this->getRemote('branch', $branch);
-
+    
+        if ($authenticated) {
+            $user = $this->user ?? '';
+            $password = $this->password ? Helper::decrypt($this->password) : '';
+            $url = $this->getConfig('repository', null);
+            $url = Helper::prepareRepository($user, $password, $url);
+            // Set the remote URL with credentials
+            $this->execute("remote set-url {$name} \"{$url}\"");
+        }
+    
         return $this->execute("fetch {$name} {$branch}");
     }
 
