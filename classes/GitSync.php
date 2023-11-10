@@ -161,6 +161,9 @@ class GitSync extends Git
 
             // Push this initial commit
             $this->pushUpstream();
+
+            // We are up to date. We can remove upstream and rely on origin
+            $this->removeUpstream();
     
             // Check if the 'sparse_checkout' config option is enabled
             if ($this->getConfig('sparse_checkout', false)) {
@@ -272,6 +275,10 @@ class GitSync extends Git
         $branch = $this->getRemote('branch', null);
         $local_branch = $this->getConfig('branch', $branch);
         $this->execute('push upstream '. $local_branch);
+    }
+
+    private function removeUpstream() {
+        $this->execute('remote remove upstream');
     }
 
     /**
@@ -481,22 +488,10 @@ class GitSync extends Git
      * @param string|null $branch
      * @return string[]
      */
-    public function fetch($name = null, $branch = null, $authenticated = false)
+    public function fetch($name = null, $branch = null)
     {
         $name = $this->getRemote('name', $name);
-        $branch = $this->getRemote('branch', $branch);
-    
-        if ($authenticated) {
-            // You should retrieve the username and password in a secure way
-            $user = $this->user ?? '';
-            $password = $this->password ? Helper::decrypt($this->password) : '';
-            // Perhaps you need to update the remote URL with the credentials here
-            $url = $this->getConfig('repository', null);
-            $url = Helper::prepareRepository($user, $password, $url);
-            // Set the remote URL with credentials
-            $this->execute("remote set-url {$name} \"{$url}\"");
-        }
-    
+        $branch = $this->getRemote('branch', $branch);    
         return $this->execute("fetch {$name} {$branch}");
     }    
 
