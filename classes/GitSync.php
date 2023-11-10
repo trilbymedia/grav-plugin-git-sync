@@ -141,17 +141,17 @@ class GitSync extends Git
             // Add the repo as a remote upstream
             $this->remoteAddUpstream(true);
 
-            // Check out the appropriate branch
-            $this->execute('checkout -b ' . $local_branch, true);
-
             // Fetch from the upstream (get info from the source of truth)
             $this->fetchUpstream();
 
             // Save untracked files
             $this->saveUntrackedFiles();
 
+            // Check out the appropriate branch then set upstream to that branch
+            $this->execute('checkout -b ' . $local_branch);
+            
             // Integrate fetched updates, minus untracked files, into the local branch
-            $this->mergeUpstream();
+            $this->pullUpstream();
 
             // Restore the untracked files if there are any, crossing fingers that there are no conflicts
             $this->restoreUntrackedFiles();
@@ -241,6 +241,12 @@ class GitSync extends Git
         $this->execute('merge upstream/'. $local_branch);
     }
 
+    private function pullUpstream() {
+        $branch = $this->getRemote('branch', null);
+        $local_branch = $this->getConfig('branch', $branch);
+        $this->execute('pull upstream '. $local_branch);
+    }
+
     private function restoreUntrackedFiles() {
         $backupDirectory = 'tmp/git-sync/';
         $userDirectory = 'user/'; // Set the correct directory where the files should be restored
@@ -267,9 +273,15 @@ class GitSync extends Git
 
     private function initialAddCommit() {
         $this->execute('add .');
-        $commitCommand = '-c user.name="Your Grav Site" -c user.email="sales@happydog.digital" commit -m "Initial merge of the repo and the project"';
-        $this->execute($commitCommand);
-    }
+        // Check if there are changes to commit
+        $status = $this->execute('status --porcelain');
+        if (!empty($status)) {
+            $commitCommand = '-c user.name="Your Grav Site" -c user.email="sales@happydog.digital" commit -m "Initial merge of the repo and the project"';
+            $this->execute($commitCommand);
+        } else {
+            $this->grav['log']->info('No changes to commit');
+        }
+    }    
 
     private function pushUpstream() {
         $branch = $this->getRemote('branch', null);
@@ -488,10 +500,20 @@ class GitSync extends Git
      * @param string|null $branch
      * @return string[]
      */
-    public function fetch($name = null, $branch = null)
+    public function fetch($name = null, $branch = null, $authenticated = false)
     {
         $name = $this->getRemote('name', $name);
-        $branch = $this->getRemote('branch', $branch);    
+        $branch = $this->getRemote('branch', $branch);
+        if ($authenticated) {
+            // You should retrieve the username and password in a secure way
+            $user = $this->user ?? '';
+            $password = $this->password ? Helper::decrypt($this->password) : '';
+            // Perhaps you need to update the remote URL with the credentials here
+            $url = $this->getConfig('repository', null);
+            $url = Helper::prepareRepository($user, $password, $url);
+            // Set the remote URL with credentials
+            $this->execute("remote set-url {$name} \"{$url}\"");
+        }
         return $this->execute("fetch {$name} {$branch}");
     }    
 
