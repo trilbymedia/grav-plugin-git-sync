@@ -77,7 +77,7 @@ class Helper
             return $repository;
         }
 
-        return str_replace('://', "://${user}${password}@", $repository);
+        return str_replace('://', "://{$user}{$password}@", $repository);
     }
 
     /**
