@@ -398,6 +398,7 @@ class GitSyncPlugin extends Plugin
 
             if ($isPluginRoute) {
                 $this->git->setConfig($obj->toArray());
+                $this->config->reload();
 
                 // initialize git if not done yet
                 $this->git->initializeRepository();
