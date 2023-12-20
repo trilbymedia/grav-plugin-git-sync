@@ -37,6 +37,17 @@ form:
       validate:
         type: bool
 
+    sparse_checkout:
+      type: toggle
+      label: Enable Sparse Checkout
+      highlight: 1
+      default: 0
+      options:
+        1: Enabled
+        0: Disabled
+      validate:
+        type: bool
+
     folders:
       type: select
       multiple: true
