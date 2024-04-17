@@ -87,4 +87,4 @@ Example: private_key: `/home/www-data/.ssh/id_rsa`
 
 # Sponsored by
 
-This plugin could not have been realized without the sponsorship of [Hibbitts Design](http://www.hibbittsdesign.org/blog/) and the development of [Trilby Media](http://trilby.media).
+This plugin could not have been realized without the sponsorship of [HibbittsDesign.org](http://www.hibbittsdesign.org) and the development of [Trilby Media](http://trilby.media).
