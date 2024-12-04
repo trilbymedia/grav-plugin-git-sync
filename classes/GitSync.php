@@ -502,6 +502,8 @@ class GitSync extends Git
 
             throw new \RuntimeException($message);
         }
+
+        return 0;
     }
 
     /**

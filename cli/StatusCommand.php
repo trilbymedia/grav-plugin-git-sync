@@ -129,6 +129,8 @@ EOF
         } else {
           $this->console_header('Looks good: use <info>--fetch</info> option to check for updates.');
         }
+
+        return 0;
     }
 
     private function console_header($readable, $cmd = '', $remote_action = false)
