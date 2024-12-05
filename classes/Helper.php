@@ -24,7 +24,7 @@ class Helper
     public static function isGitInitialized()
     {
         /** @var Config $grav */
-        $config = Grav::instance()['config'];
+        $config = Grav::instance()['config']->get('plugins.git-sync');
         $repositoryPath = isset($config['local_repository']) && $config['local_repository'] ? $config['local_repository'] : USER_DIR;
         return file_exists(rtrim($repositoryPath, '/') . '/.git');
     }
