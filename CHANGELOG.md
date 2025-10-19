@@ -1,3 +1,12 @@
+# v3.0.0
+## 10/19/2025
+
+1. [](#improved)
+    * Grav 1.8 support
+    * Use `{$var}` instead of `${var}` causing deprecation notices
+    * Prevent accepting webhooks when they are disabled in config [#216](https://github.com/trilbymedia/grav-plugin-git-sync/issues/216)
+    * Updated FAQ link to discussion
+
 # v2.3.2
 ## 06/03/2021
 
