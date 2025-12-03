@@ -37,6 +37,15 @@ form:
       validate:
         type: bool
 
+    sync.direction:
+      type: select
+      label: Sync direction
+      size: medium
+      default: both
+      options:
+        pull: One-way (Pull only)
+        both: Both-ways (Pull and Push)
+
     folders:
       type: select
       multiple: true
