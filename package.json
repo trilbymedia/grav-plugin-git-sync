@@ -1,6 +1,6 @@
 {
   "name": "trilby-grav-plugin-gitsync",
-  "version": "2.1.2",
+  "version": "2.1.0",
   "description": "Git Sync Grav Plugin",
   "main": "app/main.js",
   "scripts": {
