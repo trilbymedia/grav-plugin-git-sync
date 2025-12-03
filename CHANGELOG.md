@@ -1,3 +1,12 @@
+# v3.1.0
+## 12/03/2025
+
+1. [](#new)
+    * Added sync direction configuration to enable one-way (pull only) synchronization [#224](https://github.com/trilbymedia/grav-plugin-git-sync/pull/224)
+1. [](#improved)
+    * Fixed git pull command for modern git versions by adding `--ff` flag [#246](https://github.com/trilbymedia/grav-plugin-git-sync/pull/246)
+    * Removed unnecessary `config->reload()` call in `onAdminAfterSave` event
+
 # v3.0.0
 ## 10/19/2025
 
