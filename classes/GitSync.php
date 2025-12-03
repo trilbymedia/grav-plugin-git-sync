@@ -374,7 +374,7 @@ class GitSync extends Git
             $unrelated_histories = '';
         }
 
-        return $this->execute("pull {$unrelated_histories} -X theirs {$name} {$branch}");
+        return $this->execute("pull {$unrelated_histories} --ff -X theirs {$name} {$branch}");
     }
 
     /**

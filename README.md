@@ -88,3 +88,12 @@ Example: private_key: `/home/www-data/.ssh/id_rsa`
 # Sponsored by
 
 This plugin could not have been realized without the sponsorship of [HibbittsDesign.org](http://www.hibbittsdesign.org) and the development of [Trilby Media](http://trilby.media).
+
+# Changelog
+25-12-02 Added option --ff to git pull command to fix an issue with modern git versions. Git claims that there is no default merging strategy. 
+   ```You have divergent branches and need to specify how to reconcile them. 
+      You can do so by running one of the following commands sometime before
+      your next pull: 
+         git config pull.rebase false
+         git config pull.rebase true ```
+    This applies to initial setup mostly but does not harm anyways.
