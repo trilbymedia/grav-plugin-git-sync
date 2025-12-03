@@ -386,7 +386,7 @@
                     {% endif %}
 
                     {% for folder in settings.folders if '/' in folder %}
-                        {% if loop.index0 == 0%}<hr />{% endif %}
+                        {% if loop.index0 == 0 %}<hr />{% endif %}
                         <label>
                             <input type="checkbox" value="{{ folder }}" name="gitsync[folders]" checked />
                             <span>{{ folder }}</span>
