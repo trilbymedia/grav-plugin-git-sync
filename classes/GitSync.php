@@ -126,19 +126,171 @@ class GitSync extends Git
 
     /**
      * @return bool
-     */
+     */    
     public function initializeRepository()
     {
+    
         if (!Helper::isGitInitialized()) {
+
             $branch = $this->getRemote('branch', null);
             $local_branch = $this->getConfig('branch', $branch);
+
+            // Create the .git folder
             $this->execute('init');
-            $this->execute('checkout -b ' . $local_branch, true);
+
+            // Add the repo as a remote upstream
+            $this->remoteAddUpstream(true);
+
+            // Fetch from the upstream (get info from the source of truth)
+            $this->fetchUpstream();
+
+            // Save untracked files
+            $this->saveUntrackedFiles();
+
+            // Check out the appropriate branch then set upstream to that branch
+            $this->execute('checkout -b ' . $local_branch);
+            
+            // Integrate fetched updates, minus untracked files, into the local branch
+            $this->pullUpstream();
+
+            // Restore the untracked files if there are any, crossing fingers that there are no conflicts
+            $this->restoreUntrackedFiles();
+
+            // Now that the updates are integrated, add and commit them locally
+            $this->initialAddCommit();
+
+            // Push this initial commit
+            $this->pushUpstream();
+
+            // We are up to date. We can remove upstream and rely on origin
+            $this->removeUpstream();
+    
+            // Check if the 'sparse_checkout' config option is enabled
+            if ($this->getConfig('sparse_checkout', false)) {
+                $this->enableSparseCheckout();
+            }
+
         }
-
-        $this->enableSparseCheckout();
-
+    
         return true;
+    }    
+    
+    private function remoteAddUpstream($authenticated = false) {
+        if (!$this->hasRemote('origin')) {
+            $url = $this->getConfig('repository', null);
+            if ($authenticated) {
+                // You should retrieve the username and password in a secure way
+                $user = $this->user ?? '';
+                $password = $this->password ? Helper::decrypt($this->password) : '';
+                // Perhaps you need to update the remote URL with the credentials here
+                $url = $this->getConfig('repository', null);
+                $url = Helper::prepareRepository($user, $password, $url);
+                // fetch upstream with credentials
+                $this->execute('remote add upstream  '.$url);
+            } else {
+                $this->grav['log']->error('Authentication needed');
+            }
+        }
+    }
+
+    private function fetchUpstream() {
+        $branch = $this->getRemote('branch', null);
+        $local_branch = $this->getConfig('branch', $branch);
+        $this->execute('fetch upstream '. $local_branch);
+    }
+
+    private function saveUntrackedFiles() {
+        $untrackedFiles = $this->execute('ls-files --others --exclude-standard');
+        if (!empty($untrackedFiles)) {
+            $this->backupUntrackedFiles($untrackedFiles);
+        }
+    }
+
+    private function backupUntrackedFiles($untrackedFiles) {
+        $backupDirectory = 'tmp/git-sync/';
+        $userDirectory = 'user/'; // Set the correct directory where the files reside
+    
+        if (!is_dir($backupDirectory) && !mkdir($backupDirectory, 0777, true) && !is_dir($backupDirectory)) {
+            throw new \Exception("Unable to create directory: " . $backupDirectory);
+        }
+    
+        foreach ($untrackedFiles as $file) {
+            $sourcePath = realpath($userDirectory . $file); // Prepend the /user/ directory to the path
+            if ($sourcePath === false) {
+                throw new \Exception("Source file does not exist: " . $userDirectory . $file);
+            }
+    
+            // Maintain the directory structure
+            $destinationPath = $backupDirectory . $file;
+            $destinationDir = dirname($destinationPath);
+    
+            // Create the directory structure if it doesn't exist
+            if (!is_dir($destinationDir) && !mkdir($destinationDir, 0777, true)) {
+                throw new \Exception("Unable to create directory: " . $destinationDir);
+            }
+    
+            if (!rename($sourcePath, $destinationPath)) {
+                throw new \Exception("Unable to move file: " . $userDirectory . $file);
+            }
+        }
+    }           
+
+    private function mergeUpstream() {
+        $branch = $this->getRemote('branch', null);
+        $local_branch = $this->getConfig('branch', $branch);
+        $this->execute('merge upstream/'. $local_branch);
+    }
+
+    private function pullUpstream() {
+        $branch = $this->getRemote('branch', null);
+        $local_branch = $this->getConfig('branch', $branch);
+        $this->execute('pull upstream '. $local_branch);
+    }
+
+    private function restoreUntrackedFiles() {
+        $backupDirectory = 'tmp/git-sync/';
+        $userDirectory = 'user/'; // Set the correct directory where the files should be restored
+    
+        // Use rsync to synchronize directories
+        $rsyncCommand = "rsync -av --ignore-existing '$backupDirectory' '$userDirectory'";
+        exec($rsyncCommand, $output, $returnVar);
+    
+        if ($returnVar !== 0) {
+            throw new \Exception("Rsync failed with error code $returnVar");
+        }
+    
+        // After successful rsync, remove the backup directory
+        $this->cleanUpBackupDirectory($backupDirectory);
+    }
+    
+    private function cleanUpBackupDirectory($backupDirectory) {
+        $command = "rm -rf " . escapeshellarg($backupDirectory);
+        exec($command, $output, $returnVar);
+        if ($returnVar !== 0) {
+            throw new \Exception("Failed to remove the backup directory.");
+        }
+    }    
+
+    private function initialAddCommit() {
+        $this->execute('add .');
+        // Check if there are changes to commit
+        $status = $this->execute('status --porcelain');
+        if (!empty($status)) {
+            $commitCommand = '-c user.name="Your Grav Site" -c user.email="sales@happydog.digital" commit -m "Initial merge of the repo and the project"';
+            $this->execute($commitCommand);
+        } else {
+            $this->grav['log']->info('No changes to commit');
+        }
+    }    
+
+    private function pushUpstream() {
+        $branch = $this->getRemote('branch', null);
+        $local_branch = $this->getConfig('branch', $branch);
+        $this->execute('push upstream '. $local_branch);
+    }
+
+    private function removeUpstream() {
+        $this->execute('remote remove upstream');
     }
 
     /**
@@ -348,13 +500,22 @@ class GitSync extends Git
      * @param string|null $branch
      * @return string[]
      */
-    public function fetch($name = null, $branch = null)
+    public function fetch($name = null, $branch = null, $authenticated = false)
     {
         $name = $this->getRemote('name', $name);
         $branch = $this->getRemote('branch', $branch);
-
+        if ($authenticated) {
+            // You should retrieve the username and password in a secure way
+            $user = $this->user ?? '';
+            $password = $this->password ? Helper::decrypt($this->password) : '';
+            // Perhaps you need to update the remote URL with the credentials here
+            $url = $this->getConfig('repository', null);
+            $url = Helper::prepareRepository($user, $password, $url);
+            // Set the remote URL with credentials
+            $this->execute("remote set-url {$name} \"{$url}\"");
+        }
         return $this->execute("fetch {$name} {$branch}");
-    }
+    }    
 
     /**
      * @param string|null $name
@@ -435,19 +596,21 @@ class GitSync extends Git
      */
     public function hasChangesToCommit()
     {
-        $folders = $this->config['folders'];
+        $sparseCheckoutEnabled = isset($this->config['sparseCheckoutEnabled']) && $this->config['sparseCheckoutEnabled'] ? $this->config['sparseCheckoutEnabled'] : false;
+        $folders = $sparseCheckoutEnabled ? $this->config['folders'] : ['']; // If sparse checkout is disabled, check the whole repository
         $paths = [];
-
+    
         foreach ($folders as $folder) {
             $folder = explode('/', $folder);
             $paths[] = array_shift($folder);
         }
-
+    
         $message = 'nothing to commit';
         $output = $this->execute('status ' . implode(' ', $paths));
-
+    
         return strpos($output[count($output) - 1], $message) !== 0;
     }
+    
 
     /**
      * @param string $command
