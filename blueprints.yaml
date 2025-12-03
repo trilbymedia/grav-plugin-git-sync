@@ -1,7 +1,7 @@
 name: Git Sync
 type: plugin
 slug: git-sync
-version: 3.0.0
+version: 3.1.0
 description: Allows to synchronize portions of Grav with Git Repositories (GitHub, BitBucket, GitLab)
 icon: git
 author:
@@ -36,6 +36,15 @@ form:
         0: Disabled
       validate:
         type: bool
+
+    sync.direction:
+      type: select
+      label: Sync direction
+      size: medium
+      default: both
+      options:
+        pull: One-way (Pull only)
+        both: Both-ways (Pull and Push)
 
     folders:
       type: select

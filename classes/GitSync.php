@@ -374,7 +374,7 @@ class GitSync extends Git
             $unrelated_histories = '';
         }
 
-        return $this->execute("pull {$unrelated_histories} -X theirs {$name} {$branch}");
+        return $this->execute("pull {$unrelated_histories} --ff -X theirs {$name} {$branch}");
     }
 
     /**
@@ -404,7 +404,9 @@ class GitSync extends Git
 
         $this->fetch($name, $branch);
         $this->pull($name, $branch);
-        $this->push($name, $branch);
+        if ($this->grav['config']->get('plugins.git-sync.sync.direction', 'both') == 'both') {
+            $this->push($name, $branch);
+        }
 
         $this->addRemote();
 

@@ -385,13 +385,19 @@
                         </label>
                     {% endif %}
 
-                    {% for folder in settings.folders if '/' in folder %}
-                        {% if loop.index0 == 0%}<hr />{% endif %}
-                        <label>
-                            <input type="checkbox" value="{{ folder }}" name="gitsync[folders]" checked />
-                            <span>{{ folder }}</span>
-                            <i class="info-desc fa fa-info-circle"></i>
-                        </label>
+                    {% set first_custom_folder = true %}
+                    {% for folder in settings.folders %}
+                        {% if '/' in folder %}
+                            {% if first_custom_folder %}
+                                <hr />
+                                {% set first_custom_folder = false %}
+                            {% endif %}
+                            <label>
+                                <input type="checkbox" value="{{ folder }}" name="gitsync[folders]" checked />
+                                <span>{{ folder }}</span>
+                                <i class="info-desc fa fa-info-circle"></i>
+                            </label>
+                        {% endif %}
                     {% endfor %}
                 </div>
                 <div class="column">
