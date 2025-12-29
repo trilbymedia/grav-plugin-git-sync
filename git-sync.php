@@ -234,7 +234,8 @@ class GitSyncPlugin extends Plugin
      */
     public function synchronize()
     {
-        if (!Helper::isGitInstalled() || !Helper::isGitInitialized()) {
+        // Skip if git-sync is not properly configured
+        if (!Helper::isGitSyncReady()) {
             return true;
         }
 
@@ -271,7 +272,8 @@ class GitSyncPlugin extends Plugin
      */
     public function reset()
     {
-        if (!Helper::isGitInstalled() || !Helper::isGitInitialized()) {
+        // Skip if git-sync is not properly configured
+        if (!Helper::isGitSyncReady()) {
             return true;
         }
 
@@ -399,12 +401,15 @@ class GitSyncPlugin extends Plugin
             if ($isPluginRoute) {
                 $this->git->setConfig($obj->toArray());
 
-                // initialize git if not done yet
-                $this->git->initializeRepository();
+                // Only initialize repository if properly configured
+                if (Helper::isGitSyncConfigured()) {
+                    // initialize git if not done yet
+                    $this->git->initializeRepository();
 
-                // set committer and remote data
-                $this->git->setUser();
-                $this->git->addRemote();
+                    // set committer and remote data
+                    $this->git->setUser();
+                    $this->git->addRemote();
+                }
             }
         }
 

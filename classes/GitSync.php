@@ -30,7 +30,7 @@ class GitSync extends Git
     public function __construct()
     {
         $this->grav = Grav::instance();
-        $this->config = $this->grav['config']->get('plugins.git-sync');
+        $this->config = $this->grav['config']->get('plugins.git-sync') ?? [];
         $this->repositoryPath = isset($this->config['local_repository']) && $this->config['local_repository'] ? $this->config['local_repository'] : USER_DIR;
 
         parent::__construct($this->repositoryPath);
@@ -76,9 +76,9 @@ class GitSync extends Git
      */
     public function setConfig($config)
     {
-        $this->config = $config;
-        $this->user = $this->config['user'];
-        $this->password = $this->config['password'];
+        $this->config = $config ?? [];
+        $this->user = $this->config['user'] ?? null;
+        $this->password = $this->config['password'] ?? null;
     }
 
     /**
@@ -148,8 +148,9 @@ class GitSync extends Git
      */
     public function setUser($name = null, $email = null)
     {
-        $name = $this->getConfig('git', $name)['name'];
-        $email = $this->getConfig('git', $email)['email'];
+        $gitConfig = $this->getConfig('git', []) ?? [];
+        $name = $name ?: ($gitConfig['name'] ?? 'GitSync');
+        $email = $email ?: ($gitConfig['email'] ?? 'git-sync@trilby.media');
         $privateKey = $this->getGitConfig('private_key', null);
 
         $this->execute("config user.name \"{$name}\"");
@@ -192,7 +193,7 @@ class GitSync extends Git
 
     public function enableSparseCheckout()
     {
-        $folders = $this->config['folders'];
+        $folders = $this->config['folders'] ?? ['pages'];
         $this->execute('config core.sparsecheckout true');
 
         $sparse = [];
@@ -271,7 +272,7 @@ class GitSync extends Git
         // there are no orphan changes left behind
 
         /*
-        $folders = $this->config['folders'];
+        $folders = $this->config['folders'] ?? ['pages'];
         $paths = [];
         foreach ($folders as $folder) {
             $paths[] = $folder;
@@ -315,23 +316,24 @@ class GitSync extends Git
         /** @var string $message */
         $message = str_replace('{{pageRoute}}', $pageRoute, $message);
 
+        $gitConfig = $this->getConfig('git', []) ?? [];
         switch ($authorType) {
             case 'gitsync':
-                $user = $this->getConfig('git', null)['name'];
-                $email = $this->getConfig('git', null)['email'];
+                $user = $gitConfig['name'] ?? 'GitSync';
+                $email = $gitConfig['email'] ?? 'git-sync@trilby.media';
                 break;
             case 'gravuser':
-                $user = $this->grav['session']->user->username;
-                $email = $this->grav['session']->user->email;
+                $user = $this->grav['session']->user->username ?? 'GitSync';
+                $email = $this->grav['session']->user->email ?? 'git-sync@trilby.media';
                 break;
             case 'gravfull':
-                $user = $this->grav['session']->user->fullname;
-                $email = $this->grav['session']->user->email;
+                $user = $this->grav['session']->user->fullname ?? 'GitSync';
+                $email = $this->grav['session']->user->email ?? 'git-sync@trilby.media';
                 break;
             case 'gituser':
             default:
-                $user = $this->user;
-                $email = $this->getConfig('git', null)['email'];
+                $user = $this->user ?? 'GitSync';
+                $email = $gitConfig['email'] ?? 'git-sync@trilby.media';
                 break;
         }
 
@@ -437,7 +439,7 @@ class GitSync extends Git
      */
     public function hasChangesToCommit()
     {
-        $folders = $this->config['folders'];
+        $folders = $this->config['folders'] ?? ['pages'];
         $paths = [];
 
         foreach ($folders as $folder) {
