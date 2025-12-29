@@ -1,3 +1,11 @@
+# v3.2.0
+## 12/29/2025
+
+1. [](#improved)
+    * Improved PHP 8.4 compatibility
+1. [](#bugfix)
+    * Fix issue with saving reporting problems with `Folders`.
+
 # v3.1.0
 ## 12/03/2025
 
