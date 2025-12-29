@@ -17,6 +17,28 @@ class Helper
     const GIT_REGEX = '/(?:git|ssh|https?|git@[-\w.]+):(\/\/)?(.*?)(\.git)(\/?|\#[-\d\w._]+?)$/';
 
     /**
+     * Checks if git-sync is properly configured with a repository URL
+     *
+     * @return bool
+     */
+    public static function isGitSyncConfigured()
+    {
+        $config = Grav::instance()['config']->get('plugins.git-sync');
+        $repository = $config['repository'] ?? null;
+        return !empty($repository);
+    }
+
+    /**
+     * Checks if git-sync is ready to use (installed, configured, and initialized)
+     *
+     * @return bool
+     */
+    public static function isGitSyncReady()
+    {
+        return static::isGitInstalled() && static::isGitSyncConfigured() && static::isGitInitialized();
+    }
+
+    /**
      * Checks if the user/ folder is already initialized
      *
      * @return bool
