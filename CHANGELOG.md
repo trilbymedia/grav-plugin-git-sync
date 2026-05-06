@@ -1,3 +1,15 @@
+# v3.4.0
+## 05/06/2026
+
+1. [](#new)
+    * Added a dedicated Git Sync page in Admin2 with a sidebar entry and Wizard / Synchronize / Reset Local Copy / Save buttons in the page header.
+    * Added a step-by-step setup Wizard in Admin2 that walks you through hosting service, repository, webhook and folders, with a one-click button to verify your credentials and branch.
+    * Added a quick Synchronize button to the Admin2 toolbar that's available everywhere once Git Sync is configured.
+    * Added a proper password input for the Git Password / Token field in Admin2 with a show / hide toggle and the same "securely stored" placeholder you're used to.
+1. [](#improved)
+    * The plugin's entry under Admin2 → Plugins now shows just the enable / disable toggle and a pointer to the dedicated Git Sync page, so you don't see the same form twice.
+    * Synchronize and Reset Local Copy keep the rest of Admin2 responsive while they're running.
+
 # v3.2.1
 ## 05/01/2026
 

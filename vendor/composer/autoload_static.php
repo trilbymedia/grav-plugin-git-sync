@@ -7,27 +7,27 @@ namespace Composer\Autoload;
 class ComposerStaticInitc058e1b5c686df0909ec1cc39bb5d854
 {
     public static $prefixLengthsPsr4 = array (
-        'G' => 
+        'G' =>
         array (
             'Grav\\Plugin\\GitSync\\' => 20,
             'Grav\\Plugin\\Console\\' => 20,
         ),
-        'D' => 
+        'D' =>
         array (
             'Defuse\\Crypto\\' => 14,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'Grav\\Plugin\\GitSync\\' => 
+        'Grav\\Plugin\\GitSync\\' =>
         array (
             0 => __DIR__ . '/../..' . '/classes',
         ),
-        'Grav\\Plugin\\Console\\' => 
+        'Grav\\Plugin\\Console\\' =>
         array (
             0 => __DIR__ . '/../..' . '/cli',
         ),
-        'Defuse\\Crypto\\' => 
+        'Defuse\\Crypto\\' =>
         array (
             0 => __DIR__ . '/..' . '/defuse/php-encryption/src',
         ),

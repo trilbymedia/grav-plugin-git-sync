@@ -9,6 +9,8 @@ use Grav\Common\Grav;
 use Grav\Common\Page\Interfaces\PageInterface;
 use Grav\Common\Plugin;
 use Grav\Common\Scheduler\Scheduler;
+use Grav\Events\PermissionsRegisterEvent;
+use Grav\Framework\Acl\PermissionsReader;
 use Grav\Plugin\GitSync\AdminController;
 use Grav\Plugin\GitSync\GitSync;
 use Grav\Plugin\GitSync\Helper;
@@ -38,7 +40,19 @@ class GitSyncPlugin extends Plugin
             ],
             'onPageInitialized'      => ['onPageInitialized', 0],
             'onFormProcessed'        => ['onFormProcessed', 0],
-            'onSchedulerInitialized' => ['onSchedulerInitialized', 0]
+            'onSchedulerInitialized' => ['onSchedulerInitialized', 0],
+
+            // Admin-Next (API plugin) integration
+            'onApiRegisterRoutes'    => ['onApiRegisterRoutes', 0],
+            'onApiSidebarItems'      => ['onApiSidebarItems', 0],
+            'onApiMenubarItems'      => ['onApiMenubarItems', 0],
+            'onApiMenubarAction'     => ['onApiMenubarAction', 0],
+            'onApiPluginPageInfo'    => ['onApiPluginPageInfo', 0],
+            'onApiBlueprintResolved' => ['onApiBlueprintResolved', 0],
+            'onApiFloatingWidgets'   => ['onApiFloatingWidgets', 0],
+            PermissionsRegisterEvent::class => [
+                ['onRegisterPermissions', 100],
+            ],
         ];
     }
 
@@ -216,6 +230,228 @@ class GitSyncPlugin extends Plugin
 
             $this->grav['twig']->plugins_quick_tray['GitSync'] = $options;
         }
+    }
+
+    public function onApiRegisterRoutes(Event $event): void
+    {
+        $routes = $event['routes'];
+        $controller = \Grav\Plugin\GitSync\Api\GitSyncApiController::class;
+
+        $routes->group('/git-sync', function ($group) use ($controller) {
+            $group->get('/data', [$controller, 'data']);
+            $group->patch('/data', [$controller, 'save']);
+            $group->post('/sync', [$controller, 'sync']);
+            $group->post('/reset', [$controller, 'reset']);
+            $group->post('/test-connection', [$controller, 'testConnection']);
+            $group->get('/wizard/state', [$controller, 'wizardState']);
+        });
+    }
+
+    public function onApiSidebarItems(Event $event): void
+    {
+        $items = $event['items'] ?? [];
+        $items[] = [
+            'id'       => 'git-sync',
+            'plugin'   => 'git-sync',
+            'label'    => 'Git Sync',
+            'icon'     => 'fa-code-branch',
+            'route'    => '/plugin/git-sync',
+            'priority' => 5,
+        ];
+        $event['items'] = $items;
+    }
+
+    public function onApiMenubarItems(Event $event): void
+    {
+        if (!Helper::isGitInstalled() || !Helper::isGitSyncReady()) {
+            return;
+        }
+
+        $items = $event['items'] ?? [];
+        $items[] = [
+            'id'     => 'git-sync-quick',
+            'plugin' => 'git-sync',
+            'label'  => 'Synchronize Git Sync',
+            'icon'   => 'fa-code-branch',
+            'action' => 'sync',
+        ];
+        $event['items'] = $items;
+    }
+
+    public function onApiMenubarAction(Event $event): void
+    {
+        if ($event['plugin'] !== 'git-sync') {
+            return;
+        }
+
+        if ($event['action'] === 'sync') {
+            // Release the session lock so the rest of admin-next stays
+            // responsive while git pull/push runs over the network.
+            @set_time_limit(0);
+            @session_write_close();
+            try {
+                $this->synchronize();
+                $event['result'] = [
+                    'status'  => 'success',
+                    'message' => 'GitSync has successfully synchronized with the repository.',
+                ];
+            } catch (\Throwable $e) {
+                $event['result'] = [
+                    'status'  => 'error',
+                    'message' => Helper::preventReadablePassword($e->getMessage(), $this->git ? $this->git->getPassword() ?? '' : ''),
+                ];
+            }
+        }
+    }
+
+    public function onApiPluginPageInfo(Event $event): void
+    {
+        if ($event['plugin'] !== 'git-sync') {
+            return;
+        }
+
+        $event['definition'] = [
+            'id'            => 'git-sync',
+            'plugin'        => 'git-sync',
+            'title'         => 'Git Sync',
+            'icon'          => 'fa-code-branch',
+            'page_type'     => 'blueprint',
+            'blueprint'     => 'git-sync',
+            'data_endpoint' => '/git-sync/data',
+            'save_endpoint' => '/git-sync/data',
+            'actions'       => [
+                [
+                    'id'    => 'wizard',
+                    'label' => 'Wizard',
+                    'icon'  => 'fa-wand-magic-sparkles',
+                    // No endpoint — admin-next dispatches grav:plugin-page-action
+                    // and the auto-loaded git-sync widget script catches it.
+                ],
+                [
+                    'id'       => 'sync',
+                    'label'    => 'Synchronize',
+                    'icon'     => 'fa-cloud-arrow-up',
+                    'endpoint' => '/git-sync/sync',
+                ],
+                [
+                    'id'       => 'reset',
+                    'label'    => 'Reset Local Copy',
+                    'icon'     => 'fa-clock-rotate-left',
+                    'endpoint' => '/git-sync/reset',
+                    'confirm'  => 'Discard all local changes and re-pull from the remote? Any uncommitted edits will be lost.',
+                ],
+                [
+                    'id'      => 'save',
+                    'label'   => 'Save',
+                    'icon'    => 'fa-check',
+                    'primary' => true,
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Strip admin-classic-only fields from the blueprint sent to admin-next
+     * and annotate the enc-password field with current stored/encrypted state
+     * so its custom component can render the right placeholder.
+     *
+     * The wizard / sync / reset buttons are now header actions; the in-form
+     * `_wizard` field and its surrounding `Actions` section have nothing to
+     * render in admin-next. The YAML stays intact for admin-classic.
+     */
+    public function onApiBlueprintResolved(Event $event): void
+    {
+        $context = $event['context'] ?? null;
+        if ($context !== 'plugin' && $context !== 'plugin-page') {
+            return;
+        }
+        if (($event['plugin'] ?? null) !== 'git-sync') {
+            return;
+        }
+
+        // Generic Plugins → Git Sync detail page collapses to just an
+        // enable / disable toggle plus a pointer to the dedicated page.
+        // The full form + Wizard / Sync / Reset actions live at
+        // /admin/plugin/git-sync (the sidebar entry), so the two pages
+        // don't overlap.
+        if ($context === 'plugin') {
+            $event['fields'] = [
+                [
+                    'name'     => 'admin_next_notice',
+                    'type'     => 'display',
+                    'markdown' => true,
+                    'content'  => "**Git Sync** has its own admin page with the full configuration form, the setup Wizard, and the Synchronize / Reset actions. Open it from the **Git Sync** entry in the sidebar.",
+                ],
+                [
+                    'name'      => 'enabled',
+                    'type'      => 'toggle',
+                    'label'     => 'Plugin Status',
+                    'highlight' => 1,
+                    'default'   => 0,
+                    'options'   => [
+                        ['value' => '1', 'label' => 'Enabled'],
+                        ['value' => '0', 'label' => 'Disabled'],
+                    ],
+                    'validate'  => ['type' => 'bool'],
+                ],
+            ];
+            return;
+        }
+
+        // Dedicated plugin page (context: plugin-page) — strip the
+        // admin-classic-only wizard launcher + its Actions section, and
+        // annotate the password field with current storage state for the
+        // enc-password component.
+        $stored = (string) ($this->config->get('plugins.git-sync.password') ?? '');
+        $isStored = $stored !== '';
+        $isEncrypted = $isStored && str_starts_with($stored, 'gitsync-');
+
+        $fields = $event['fields'];
+        $filtered = [];
+        foreach ($fields as $field) {
+            $name = $field['name'] ?? '';
+            $type = $field['type'] ?? '';
+
+            if ($name === 'Actions' || $name === '_wizard' || $type === 'git-wizard') {
+                continue;
+            }
+
+            if ($name === 'password') {
+                $field['password_stored'] = $isStored;
+                $field['password_encrypted'] = $isEncrypted;
+            }
+
+            $filtered[] = $field;
+        }
+        $event['fields'] = $filtered;
+    }
+
+    /**
+     * Register the wizard host as an auto-loaded floating widget with no FAB.
+     *
+     * The widget panel is never opened by the user — the script just needs to
+     * be loaded so its top-level event listener can catch the `wizard` action
+     * dispatched from the plugin page header and render the modal as a portal.
+     */
+    public function onApiFloatingWidgets(Event $event): void
+    {
+        $widgets = $event['widgets'] ?? [];
+        $widgets[] = [
+            'id'       => 'git-sync',
+            'plugin'   => 'git-sync',
+            'label'    => 'Git Sync Wizard',
+            'icon'     => 'fa-wand-magic-sparkles',
+            'autoLoad' => true,
+            'showFab'  => false,
+        ];
+        $event['widgets'] = $widgets;
+    }
+
+    public function onRegisterPermissions(PermissionsRegisterEvent $event): void
+    {
+        $permissions = $event->permissions;
+        $actions = PermissionsReader::fromYaml('plugin://git-sync/permissions.yaml');
+        $permissions->addActions($actions);
     }
 
     public function init()
