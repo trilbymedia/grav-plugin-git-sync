@@ -322,10 +322,19 @@ class GitSyncApiController extends AbstractApiController
         $cfg = (array) $this->config->get('plugins.git-sync', []);
         $password = (string) ($cfg['password'] ?? '');
 
+        // Compute the public site URL the way Twig admin-classic does it
+        // (`uri.base ~ uri.rootUrl`). The browser-side `window.location.origin`
+        // alone misses Grav installs that live in a sub-folder, leaving the
+        // wizard's webhook URL preview wrong. Trailing slash trimmed so the
+        // client can append the webhook path cleanly.
+        $uri = $this->grav['uri'];
+        $frontendUrl = rtrim($uri->base() . $uri->rootUrl(), '/');
+
         return ApiResponse::create([
             'git_installed'   => (bool) Helper::isGitInstalled(),
             'git_initialized' => (bool) Helper::isGitInitialized(),
             'configured'      => (bool) Helper::isGitSyncConfigured(),
+            'frontend_url'    => $frontendUrl,
             'settings'        => [
                 'repository'      => (string) ($cfg['repository'] ?? ''),
                 'no_user'         => (bool) ($cfg['no_user'] ?? false),

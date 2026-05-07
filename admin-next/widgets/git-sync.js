@@ -78,6 +78,7 @@ class WizardModal {
         this.step = 0;
         this.maxStep = 4;
         this.state = null;
+        this.frontendUrl = '';
         this.draft = {
             service:         '',
             no_user:         false,
@@ -118,6 +119,9 @@ class WizardModal {
         try {
             const state = await apiCall('GET', '/git-sync/wizard/state');
             this.state = state;
+            // Server-derived public site URL (Uri::base + Uri::rootUrl) so
+            // that Grav installs in a sub-folder render the right webhook URL.
+            this.frontendUrl = state.frontend_url || window.location.origin;
             // Pre-fill from saved settings
             const s = state.settings || {};
             if (s.repository) {
@@ -574,7 +578,7 @@ class WizardModal {
     }
 
     _step3() {
-        const frontendUrl = window.location.origin;
+        const frontendUrl = this.frontendUrl || window.location.origin;
         return `
             <p>A webhook lets the remote repository tell your site about pushes so changes show up immediately. Set the URL below in the repo's webhook settings on your git host.</p>
             <label class="field">

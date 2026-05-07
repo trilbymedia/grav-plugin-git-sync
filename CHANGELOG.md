@@ -1,3 +1,10 @@
+# v3.4.1
+## 05/07/2026
+
+1. [](#bugfix)
+    * Fixed automatic sync not running after page save / delete / media changes in Admin2 [#250](https://github.com/trilbymedia/grav-plugin-git-sync/issues/250).
+    * Fixed the Wizard's webhook URL preview leaving out the install sub-folder when Grav is hosted under a path [#249](https://github.com/trilbymedia/grav-plugin-git-sync/issues/249).
+
 # v3.4.0
 ## 05/06/2026
 

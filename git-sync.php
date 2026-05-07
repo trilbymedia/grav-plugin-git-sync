@@ -90,17 +90,30 @@ class GitSyncPlugin extends Plugin
         $this->enable(['gitsync' => ['synchronize', 0]]);
         $this->init();
 
+        // Auto-sync triggers — page save / delete / media events.
+        //
+        // These need to be subscribed regardless of context because the API
+        // plugin (admin-next backend) registers its AdminProxy AFTER
+        // onPluginsInitialized has already fired, so an isAdmin() check
+        // at boot misses every API-driven save / delete / media event.
+        // The handlers themselves gate internally on object type and
+        // admin path, and the events simply never fire on the frontend
+        // or in CLI, so registering them globally is safe.
+        $this->enable([
+            'onAdminSave'          => ['onAdminSave', 0],
+            'onAdminAfterSave'     => ['onAdminAfterSave', 0],
+            'onAdminAfterSaveAs'   => ['onAdminAfterSaveAs', 0],
+            'onAdminAfterDelete'   => ['onAdminAfterDelete', 0],
+            'onAdminAfterAddMedia' => ['onAdminAfterMedia', 0],
+            'onAdminAfterDelMedia' => ['onAdminAfterMedia', 0],
+        ]);
+
+        // Admin-classic-only subs (Twig assets, sidebar entry, quick-tray button).
         if ($this->isAdmin()) {
             $this->enable([
                 'onTwigTemplatePaths'  => ['onTwigTemplatePaths', 0],
                 'onTwigSiteVariables'  => ['onTwigSiteVariables', 0],
                 'onAdminMenu'          => ['onAdminMenu', 0],
-                'onAdminSave'          => ['onAdminSave', 0],
-                'onAdminAfterSave'     => ['onAdminAfterSave', 0],
-                'onAdminAfterSaveAs'   => ['onAdminAfterSaveAs', 0],
-                'onAdminAfterDelete'   => ['onAdminAfterDelete', 0],
-                'onAdminAfterAddMedia' => ['onAdminAfterMedia', 0],
-                'onAdminAfterDelMedia' => ['onAdminAfterMedia', 0],
             ]);
 
             return;
