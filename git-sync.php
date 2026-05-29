@@ -264,12 +264,15 @@ class GitSyncPlugin extends Plugin
     {
         $items = $event['items'] ?? [];
         $items[] = [
-            'id'       => 'git-sync',
-            'plugin'   => 'git-sync',
-            'label'    => 'Git Sync',
-            'icon'     => 'fa-code-branch',
-            'route'    => '/plugin/git-sync',
-            'priority' => 5,
+            'id'        => 'git-sync',
+            'plugin'    => 'git-sync',
+            'label'     => 'Git Sync',
+            'icon'      => 'fa-code-branch',
+            'route'     => '/plugin/git-sync',
+            'priority'  => 5,
+            // Match the read-level any-of check in GitSyncApiController:
+            // anyone with read / write / admin (or the parent) sees the item.
+            'authorize' => ['api.git-sync', 'api.git-sync.read', 'api.git-sync.write', 'api.git-sync.admin'],
         ];
         $event['items'] = $items;
     }
@@ -282,11 +285,14 @@ class GitSyncPlugin extends Plugin
 
         $items = $event['items'] ?? [];
         $items[] = [
-            'id'     => 'git-sync-quick',
-            'plugin' => 'git-sync',
-            'label'  => 'Synchronize Git Sync',
-            'icon'   => 'fa-code-branch',
-            'action' => 'sync',
+            'id'        => 'git-sync-quick',
+            'plugin'    => 'git-sync',
+            'label'     => 'Synchronize Git Sync',
+            'icon'      => 'fa-code-branch',
+            'action'    => 'sync',
+            // Sync is a write action — only show the menubar button to users
+            // who can actually run it.
+            'authorize' => ['api.git-sync', 'api.git-sync.write', 'api.git-sync.admin'],
         ];
         $event['items'] = $items;
     }

@@ -1,3 +1,9 @@
+# v3.4.2
+## 05/29/2026
+
+1. [](#bugfix)
+    * **The Git Sync sidebar entry and the toolbar Synchronize button are now hidden from users who lack any Git Sync permission**, matching how admin-classic gates the same menu. The items only appear for users with one of `api.git-sync`, `api.git-sync.read`, `api.git-sync.write`, or `api.git-sync.admin` (or super-admins). Requires grav-plugin-api ≥ 1.0.0-rc.11. Fixes [getgrav/grav-plugin-admin2#23](https://github.com/getgrav/grav-plugin-admin2/issues/23).
+
 # v3.4.1
 ## 05/07/2026
 
