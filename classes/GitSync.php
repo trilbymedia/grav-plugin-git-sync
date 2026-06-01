@@ -149,8 +149,11 @@ class GitSync extends Git
     public function setUser($name = null, $email = null)
     {
         $gitConfig = $this->getConfig('git', []) ?? [];
-        $name = $name ?: ($gitConfig['name'] ?? 'GitSync');
-        $email = $email ?: ($gitConfig['email'] ?? 'git-sync@trilby.media');
+        // Fall back to defaults when the config value is missing OR an empty
+        // string — `??` alone leaves a blank name/email in place, which makes
+        // git reject the commit with "fatal: empty ident name ... not allowed".
+        $name = $name ?: (($gitConfig['name'] ?? '') ?: 'GitSync');
+        $email = $email ?: (($gitConfig['email'] ?? '') ?: 'git-sync@trilby.media');
         $privateKey = $this->getGitConfig('private_key', null);
 
         $this->execute("config user.name \"{$name}\"");
@@ -336,6 +339,12 @@ class GitSync extends Git
                 $email = $gitConfig['email'] ?? 'git-sync@trilby.media';
                 break;
         }
+
+        // Guard against empty values from any source (e.g. a Grav user with no
+        // full name set, or a blank committer field) — an empty author name
+        // triggers git's "fatal: empty ident name ... not allowed".
+        $user = $user ?: 'GitSync';
+        $email = $email ?: 'git-sync@trilby.media';
 
         $author = $user . ' <' . $email . '>';
         $author = '--author="' . $author . '"';
