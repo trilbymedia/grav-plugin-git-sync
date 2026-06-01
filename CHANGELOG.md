@@ -1,3 +1,9 @@
+# v3.4.3
+## 06/01/2026
+
+1. [](#bugfix)
+    * Fixed commits failing with `fatal: empty ident name (for <…>) not allowed` when the committer name resolved to an empty string — for example a blank **Committer Name** field, or "Use Grav User Full Name" selected for an admin account with no full name set. Blank names/emails now fall back to the `GitSync` / `git-sync@trilby.media` defaults [#249](https://github.com/trilbymedia/grav-plugin-git-sync/issues/249).
+
 # v3.4.2
 ## 05/29/2026
 
