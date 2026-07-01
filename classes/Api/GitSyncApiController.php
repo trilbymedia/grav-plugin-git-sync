@@ -82,7 +82,7 @@ class GitSyncApiController extends AbstractApiController
             'webhook'           => (string) ($cfg['webhook'] ?? ''),
             'webhook_enabled'   => (bool) ($cfg['webhook_enabled'] ?? false),
             'webhook_secret'    => (string) ($cfg['webhook_secret'] ?? ''),
-            'branch'            => (string) ($cfg['branch'] ?? 'master'),
+            'branch'            => (string) ($cfg['branch'] ?? 'main'),
             'logging'           => (bool) ($cfg['logging'] ?? false),
             'sync'              => [
                 'direction'   => (string) ($sync['direction'] ?? 'both'),
@@ -94,7 +94,7 @@ class GitSyncApiController extends AbstractApiController
             ],
             'remote'            => [
                 'name'   => (string) ($remote['name'] ?? 'origin'),
-                'branch' => (string) ($remote['branch'] ?? 'master'),
+                'branch' => (string) ($remote['branch'] ?? 'main'),
             ],
             'git'               => [
                 'author'      => (string) ($git['author'] ?? 'gituser'),

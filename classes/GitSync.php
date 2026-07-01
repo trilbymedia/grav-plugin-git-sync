@@ -176,22 +176,15 @@ class GitSync extends Git
     {
         $name = $this->getRemote('name', $name);
 
-        try {
-            /** @var string $version */
-            $version = Helper::isGitInstalled(true);
-            // remote get-url 'name' supported from 2.7.0 and above
-            if (version_compare($version, '2.7.0', '>=')) {
-                $command = "remote get-url \"{$name}\"";
-            } else {
-                $command = "config --get remote.{$name}.url";
-            }
+        // List the configured remotes and check for membership. `git remote`
+        // exits 0 even when there are none, so this stays a genuine existence
+        // check. The previous approach ran `remote get-url <name>` non-quiet and
+        // relied on the resulting error being thrown and caught — which, with
+        // logging enabled, wrote a misleading "error: No such remote" line every
+        // time a remote simply hadn't been added yet.
+        $remotes = array_map('trim', $this->execute('remote', true));
 
-            $this->execute($command);
-        } catch (\Exception $e) {
-            return false;
-        }
-
-        return true;
+        return in_array($name, $remotes, true);
     }
 
     public function enableSparseCheckout()
