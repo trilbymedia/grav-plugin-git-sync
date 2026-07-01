@@ -1,7 +1,7 @@
 name: Git Sync
 type: plugin
 slug: git-sync
-version: 3.4.3
+version: 3.4.4
 description: Allows to synchronize portions of Grav with Git Repositories (GitHub, BitBucket, GitLab)
 icon: git
 author:
@@ -203,9 +203,9 @@ form:
 
     branch:
       type: text
-      default: master
+      default: main
       label: Local Branch
-      placeholder: master
+      placeholder: main
 
     remote.name:
       type: text
@@ -215,9 +215,9 @@ form:
 
     remote.branch:
       type: text
-      default: master
+      default: main
       label: Remote Branch
-      placeholder: master
+      placeholder: main
 
     git.author:
       type: select

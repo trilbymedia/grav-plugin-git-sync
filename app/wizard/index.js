@@ -9,7 +9,7 @@ const GIT_REGEX = /(?:git|ssh|https?|git@[-\w.]+):(\/\/)?(.*?)(\.git)(\/?|\#[-\d
 const WIZARD = $('[data-remodal-id="wizard"]');
 const RESET_LOCAL = $('[data-remodal-id="reset-local"]');
 const SERVICES = { 'github': 'github.com', 'bitbucket': 'bitbucket.org', 'gitlab': 'gitlab.com', 'allothers': 'allothers.repo' };
-const BRANCHES = { 'github': 'main', 'bitbucket': 'master', 'gitlab': 'master', 'allothers': 'master' };
+const BRANCHES = { 'github': 'main', 'bitbucket': 'main', 'gitlab': 'main', 'allothers': 'main' };
 const TEMPLATES = {
     REPO_URL: 'https://{placeholder}/getgrav/grav.git'
 };

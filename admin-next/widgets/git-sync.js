@@ -54,9 +54,9 @@ async function apiCall(method, path, body) {
 
 const SERVICES = {
     github:    { host: 'github.com',     branch: 'main',    create: 'https://github.com/join?source=header-home' },
-    bitbucket: { host: 'bitbucket.org',  branch: 'master',  create: 'https://bitbucket.org/account/signup/' },
-    gitlab:    { host: 'gitlab.com',     branch: 'master',  create: 'https://gitlab.com/users/sign_up' },
-    allothers: { host: 'allothers.repo', branch: 'master',  create: null },
+    bitbucket: { host: 'bitbucket.org',  branch: 'main',    create: 'https://bitbucket.org/account/signup/' },
+    gitlab:    { host: 'gitlab.com',     branch: 'main',    create: 'https://gitlab.com/users/sign_up' },
+    allothers: { host: 'allothers.repo', branch: 'main',    create: null },
 };
 
 const GIT_REGEX = /(?:git|ssh|https?|git@[-\w.]+):(\/\/)?(.*?)(\.git)(\/?|#[-\d\w._]+?)$/;

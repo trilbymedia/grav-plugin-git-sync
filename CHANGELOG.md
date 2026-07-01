@@ -1,3 +1,10 @@
+# v3.4.4
+## 06/30/2026
+
+1. [](#bugfix)
+    * The default branch is now `main` instead of `master` throughout — the setup Wizard (every hosting service, including "All others"), the Local Branch / Remote Branch settings fields, and the API defaults — matching the current default branch on GitHub, modern GitLab (14.0+), and Bitbucket Cloud. Previously the Wizard silently pre-filled `master` for GitLab and Bitbucket, which caused `git fetch origin master` to fail with `couldn't find remote ref master` on a freshly created repo [#251](https://github.com/trilbymedia/grav-plugin-git-sync/issues/251).
+    * `hasRemote()` now performs a genuine, quiet existence check (`git remote`) rather than running `remote get-url <name>` and relying on a thrown error. With command logging enabled this no longer writes a misleading `error: No such remote` line every time a remote hasn't been added yet.
+
 # v3.4.3
 ## 06/01/2026
 
