@@ -30,7 +30,7 @@ class GitSync extends Git
     public function __construct()
     {
         $this->grav = Grav::instance();
-        $this->config = $this->grav['config']->get('plugins.git-sync');
+        $this->config = $this->grav['config']->get('plugins.git-sync') ?? [];
         $this->repositoryPath = isset($this->config['local_repository']) && $this->config['local_repository'] ? $this->config['local_repository'] : USER_DIR;
 
         parent::__construct($this->repositoryPath);
@@ -76,9 +76,9 @@ class GitSync extends Git
      */
     public function setConfig($config)
     {
-        $this->config = $config;
-        $this->user = $this->config['user'];
-        $this->password = $this->config['password'];
+        $this->config = $config ?? [];
+        $this->user = $this->config['user'] ?? null;
+        $this->password = $this->config['password'] ?? null;
     }
 
     /**
@@ -148,8 +148,12 @@ class GitSync extends Git
      */
     public function setUser($name = null, $email = null)
     {
-        $name = $this->getConfig('git', $name)['name'];
-        $email = $this->getConfig('git', $email)['email'];
+        $gitConfig = $this->getConfig('git', []) ?? [];
+        // Fall back to defaults when the config value is missing OR an empty
+        // string — `??` alone leaves a blank name/email in place, which makes
+        // git reject the commit with "fatal: empty ident name ... not allowed".
+        $name = $name ?: (($gitConfig['name'] ?? '') ?: 'GitSync');
+        $email = $email ?: (($gitConfig['email'] ?? '') ?: 'git-sync@trilby.media');
         $privateKey = $this->getGitConfig('private_key', null);
 
         $this->execute("config user.name \"{$name}\"");
@@ -172,27 +176,20 @@ class GitSync extends Git
     {
         $name = $this->getRemote('name', $name);
 
-        try {
-            /** @var string $version */
-            $version = Helper::isGitInstalled(true);
-            // remote get-url 'name' supported from 2.7.0 and above
-            if (version_compare($version, '2.7.0', '>=')) {
-                $command = "remote get-url \"{$name}\"";
-            } else {
-                $command = "config --get remote.{$name}.url";
-            }
+        // List the configured remotes and check for membership. `git remote`
+        // exits 0 even when there are none, so this stays a genuine existence
+        // check. The previous approach ran `remote get-url <name>` non-quiet and
+        // relied on the resulting error being thrown and caught — which, with
+        // logging enabled, wrote a misleading "error: No such remote" line every
+        // time a remote simply hadn't been added yet.
+        $remotes = array_map('trim', $this->execute('remote', true));
 
-            $this->execute($command);
-        } catch (\Exception $e) {
-            return false;
-        }
-
-        return true;
+        return in_array($name, $remotes, true);
     }
 
     public function enableSparseCheckout()
     {
-        $folders = $this->config['folders'];
+        $folders = $this->config['folders'] ?? ['pages'];
         $this->execute('config core.sparsecheckout true');
 
         $sparse = [];
@@ -271,7 +268,7 @@ class GitSync extends Git
         // there are no orphan changes left behind
 
         /*
-        $folders = $this->config['folders'];
+        $folders = $this->config['folders'] ?? ['pages'];
         $paths = [];
         foreach ($folders as $folder) {
             $paths[] = $folder;
@@ -315,25 +312,32 @@ class GitSync extends Git
         /** @var string $message */
         $message = str_replace('{{pageRoute}}', $pageRoute, $message);
 
+        $gitConfig = $this->getConfig('git', []) ?? [];
         switch ($authorType) {
             case 'gitsync':
-                $user = $this->getConfig('git', null)['name'];
-                $email = $this->getConfig('git', null)['email'];
+                $user = $gitConfig['name'] ?? 'GitSync';
+                $email = $gitConfig['email'] ?? 'git-sync@trilby.media';
                 break;
             case 'gravuser':
-                $user = $this->grav['session']->user->username;
-                $email = $this->grav['session']->user->email;
+                $user = $this->grav['session']->user->username ?? 'GitSync';
+                $email = $this->grav['session']->user->email ?? 'git-sync@trilby.media';
                 break;
             case 'gravfull':
-                $user = $this->grav['session']->user->fullname;
-                $email = $this->grav['session']->user->email;
+                $user = $this->grav['session']->user->fullname ?? 'GitSync';
+                $email = $this->grav['session']->user->email ?? 'git-sync@trilby.media';
                 break;
             case 'gituser':
             default:
-                $user = $this->user;
-                $email = $this->getConfig('git', null)['email'];
+                $user = $this->user ?? 'GitSync';
+                $email = $gitConfig['email'] ?? 'git-sync@trilby.media';
                 break;
         }
+
+        // Guard against empty values from any source (e.g. a Grav user with no
+        // full name set, or a blank committer field) — an empty author name
+        // triggers git's "fatal: empty ident name ... not allowed".
+        $user = $user ?: 'GitSync';
+        $email = $email ?: 'git-sync@trilby.media';
 
         $author = $user . ' <' . $email . '>';
         $author = '--author="' . $author . '"';
@@ -374,7 +378,7 @@ class GitSync extends Git
             $unrelated_histories = '';
         }
 
-        return $this->execute("pull {$unrelated_histories} -X theirs {$name} {$branch}");
+        return $this->execute("pull {$unrelated_histories} --ff -X theirs {$name} {$branch}");
     }
 
     /**
@@ -404,7 +408,9 @@ class GitSync extends Git
 
         $this->fetch($name, $branch);
         $this->pull($name, $branch);
-        $this->push($name, $branch);
+        if ($this->grav['config']->get('plugins.git-sync.sync.direction', 'both') == 'both') {
+            $this->push($name, $branch);
+        }
 
         $this->addRemote();
 
@@ -435,7 +441,7 @@ class GitSync extends Git
      */
     public function hasChangesToCommit()
     {
-        $folders = $this->config['folders'];
+        $folders = $this->config['folders'] ?? ['pages'];
         $paths = [];
 
         foreach ($folders as $folder) {
@@ -502,6 +508,8 @@ class GitSync extends Git
 
             throw new \RuntimeException($message);
         }
+
+        return 0;
     }
 
     /**

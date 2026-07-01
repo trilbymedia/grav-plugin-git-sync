@@ -1,0 +1,18 @@
+actions:
+    api.git-sync:
+        type: action
+        label: Git Sync
+        description: Permissions for the Git Sync plugin via the admin-next API.
+        actions:
+            api.git-sync.admin:
+                type: action
+                label: Admin
+                description: Full administrative access to Git Sync (read, write, run actions).
+            api.git-sync.write:
+                type: action
+                label: Write
+                description: Save settings, run synchronize / reset / test-connection.
+            api.git-sync.read:
+                type: action
+                label: Read
+                description: View Git Sync configuration and wizard state.

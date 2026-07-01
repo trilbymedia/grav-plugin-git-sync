@@ -1,7 +1,7 @@
 name: Git Sync
 type: plugin
 slug: git-sync
-version: 2.3.2
+version: 3.4.4
 description: Allows to synchronize portions of Grav with Git Repositories (GitHub, BitBucket, GitLab)
 icon: git
 author:
@@ -14,9 +14,12 @@ issues: https://github.com/trilbymedia/grav-plugin-git-sync/issues
 docs: https://github.com/trilbymedia/grav-plugin-git-sync
 license: MIT
 
+compatibility:
+  grav: ["1.7", "2.0"]
+
 dependencies:
-- { name: grav, version: '>=1.6.0' }
-- { name: form, version: '>=2.16.3' }
+  - { name: grav, version: ">=1.7.0" }
+  - { name: form, version: ">=3.0.0" }
 
 form:
   validation: strict
@@ -36,6 +39,15 @@ form:
         0: Disabled
       validate:
         type: bool
+
+    sync.direction:
+      type: select
+      label: Sync direction
+      size: medium
+      default: both
+      options:
+        pull: One-way (Pull only)
+        both: Both-ways (Pull and Push)
 
     folders:
       type: select
@@ -119,7 +131,7 @@ form:
       type: cron
       label: Run Sync at
       help: When should the Scheduler run the automatic GitSync synchronization job
-      default: '0 12,23 * * *'
+      default: "0 12,23 * * *"
 
     Repo:
       type: section
@@ -191,9 +203,9 @@ form:
 
     branch:
       type: text
-      default: master
+      default: main
       label: Local Branch
-      placeholder: master
+      placeholder: main
 
     remote.name:
       type: text
@@ -203,9 +215,9 @@ form:
 
     remote.branch:
       type: text
-      default: master
+      default: main
       label: Remote Branch
-      placeholder: master
+      placeholder: main
 
     git.author:
       type: select

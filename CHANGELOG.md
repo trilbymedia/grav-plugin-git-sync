@@ -1,3 +1,73 @@
+# v3.4.4
+## 06/30/2026
+
+1. [](#bugfix)
+    * The default branch is now `main` instead of `master` throughout — the setup Wizard (every hosting service, including "All others"), the Local Branch / Remote Branch settings fields, and the API defaults — matching the current default branch on GitHub, modern GitLab (14.0+), and Bitbucket Cloud. Previously the Wizard silently pre-filled `master` for GitLab and Bitbucket, which caused `git fetch origin master` to fail with `couldn't find remote ref master` on a freshly created repo [#251](https://github.com/trilbymedia/grav-plugin-git-sync/issues/251).
+    * `hasRemote()` now performs a genuine, quiet existence check (`git remote`) rather than running `remote get-url <name>` and relying on a thrown error. With command logging enabled this no longer writes a misleading `error: No such remote` line every time a remote hasn't been added yet.
+
+# v3.4.3
+## 06/01/2026
+
+1. [](#bugfix)
+    * Fixed commits failing with `fatal: empty ident name (for <…>) not allowed` when the committer name resolved to an empty string — for example a blank **Committer Name** field, or "Use Grav User Full Name" selected for an admin account with no full name set. Blank names/emails now fall back to the `GitSync` / `git-sync@trilby.media` defaults [#249](https://github.com/trilbymedia/grav-plugin-git-sync/issues/249).
+
+# v3.4.2
+## 05/29/2026
+
+1. [](#bugfix)
+    * **The Git Sync sidebar entry and the toolbar Synchronize button are now hidden from users who lack any Git Sync permission**, matching how admin-classic gates the same menu. The items only appear for users with one of `api.git-sync`, `api.git-sync.read`, `api.git-sync.write`, or `api.git-sync.admin` (or super-admins). Requires grav-plugin-api ≥ 1.0.0-rc.11. Fixes [getgrav/grav-plugin-admin2#23](https://github.com/getgrav/grav-plugin-admin2/issues/23).
+
+# v3.4.1
+## 05/07/2026
+
+1. [](#bugfix)
+    * Fixed automatic sync not running after page save / delete / media changes in Admin2 [#250](https://github.com/trilbymedia/grav-plugin-git-sync/issues/250).
+    * Fixed the Wizard's webhook URL preview leaving out the install sub-folder when Grav is hosted under a path [#249](https://github.com/trilbymedia/grav-plugin-git-sync/issues/249).
+
+# v3.4.0
+## 05/06/2026
+
+1. [](#new)
+    * Added a dedicated Git Sync page in Admin2 with a sidebar entry and Wizard / Synchronize / Reset Local Copy / Save buttons in the page header.
+    * Added a step-by-step setup Wizard in Admin2 that walks you through hosting service, repository, webhook and folders, with a one-click button to verify your credentials and branch.
+    * Added a quick Synchronize button to the Admin2 toolbar that's available everywhere once Git Sync is configured.
+    * Added a proper password input for the Git Password / Token field in Admin2 with a show / hide toggle and the same "securely stored" placeholder you're used to.
+1. [](#improved)
+    * The plugin's entry under Admin2 → Plugins now shows just the enable / disable toggle and a pointer to the dedicated Git Sync page, so you don't see the same form twice.
+    * Synchronize and Reset Local Copy keep the rest of Admin2 responsive while they're running.
+
+# v3.2.1
+## 05/01/2026
+
+1. [](#improved)
+    * Added 1.7|2.0 compatibility flags
+
+# v3.2.0
+## 12/29/2025
+
+1. [](#improved)
+    * Improved PHP 8.4 compatibility
+1. [](#bugfix)
+    * Fix issue with saving reporting problems with `Folders`.
+
+# v3.1.0
+## 12/03/2025
+
+1. [](#new)
+    * Added sync direction configuration to enable one-way (pull only) synchronization [#224](https://github.com/trilbymedia/grav-plugin-git-sync/pull/224)
+1. [](#improved)
+    * Fixed git pull command for modern git versions by adding `--ff` flag [#246](https://github.com/trilbymedia/grav-plugin-git-sync/pull/246)
+    * Removed unnecessary `config->reload()` call in `onAdminAfterSave` event
+
+# v3.0.0
+## 10/19/2025
+
+1. [](#improved)
+    * Grav 1.8 support
+    * Use `{$var}` instead of `${var}` causing deprecation notices
+    * Prevent accepting webhooks when they are disabled in config [#216](https://github.com/trilbymedia/grav-plugin-git-sync/issues/216)
+    * Updated FAQ link to discussion
+
 # v2.3.2
 ## 06/03/2021
 
