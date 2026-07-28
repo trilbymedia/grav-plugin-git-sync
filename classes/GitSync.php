@@ -2,7 +2,9 @@
 namespace Grav\Plugin\GitSync;
 
 use Grav\Common\Grav;
+use Grav\Common\Page\Interfaces\PageInterface;
 use Grav\Common\Plugin;
+use Grav\Common\User\Interfaces\UserInterface;
 use Grav\Common\Utils;
 use http\Exception\RuntimeException;
 use RocketTheme\Toolbox\File\File;
@@ -21,6 +23,8 @@ class GitSync extends Git
     protected $config;
     /** @var string */
     protected $repositoryPath;
+    /** @var PageInterface|null Page behind the change being committed, if any */
+    protected $page;
 
     /** @var string|null */
     private $user;
@@ -285,6 +289,88 @@ class GitSync extends Git
     }
 
     /**
+     * Remember the page behind the current save / delete / media change so the
+     * commit message placeholders can be filled from the object itself.
+     *
+     * Admin-classic submits a page save as a form POST (`data[header][title]`,
+     * `data[route]`), but admin-next saves through the API plugin with a JSON
+     * body in a completely different shape, so scraping the request alone
+     * yields "NO TITLE FOUND" / "NO ROUTE FOUND" (#254). Every save/delete/media
+     * event carries the page object regardless of which admin fired it.
+     *
+     * @param PageInterface|object|null $page
+     */
+    public function setPage($page = null): void
+    {
+        $this->page = $page instanceof PageInterface ? $page : null;
+    }
+
+    /**
+     * Title and route of the page being committed, if it can be determined.
+     *
+     * Prefers the page object captured from the save event, then falls back to
+     * the request body — admin-classic's `data.*` shape first, then the flat
+     * keys the API plugin's page endpoints use.
+     *
+     * @return array{0: string|null, 1: string|null}
+     */
+    protected function getPageContext(): array
+    {
+        $title = null;
+        $route = null;
+
+        if ($this->page !== null) {
+            $title = $this->page->title();
+            $route = $this->page->rawRoute() ?: $this->page->route();
+        }
+
+        if (!$title || !$route) {
+            $uri = $this->grav['uri'];
+            $title = $title ?: ($uri->post('data.header.title') ?: $uri->post('header.title') ?: $uri->post('title'));
+            $route = $route ?: ($uri->post('data.route') ?: $uri->post('route'));
+        }
+
+        return [is_string($title) ? $title : null, is_string($route) ? $route : null];
+    }
+
+    /**
+     * The Grav user behind the current change, for the `gravuser` / `gravfull`
+     * committer options.
+     *
+     * Under admin-next the request is authenticated by the API plugin (API key,
+     * JWT or session passthrough) and the resulting account hangs off the admin
+     * proxy — it is not necessarily on the session, and `$grav['user']` may
+     * still be the guest. Try each source in turn and take the first one that
+     * actually names a user.
+     *
+     * @return UserInterface|null
+     */
+    protected function getGravUser()
+    {
+        $candidates = [];
+
+        $admin = $this->grav['admin'] ?? null;
+        if ($admin !== null && isset($admin->user)) {
+            $candidates[] = $admin->user;
+        }
+
+        $session = isset($this->grav['session']) ? $this->grav['session'] : null;
+        if ($session !== null && isset($session->user)) {
+            $candidates[] = $session->user;
+        }
+
+        $candidates[] = $this->grav['user'] ?? null;
+
+        foreach ($candidates as $candidate) {
+            if ($candidate instanceof UserInterface && ($candidate->username ?? '') !== '') {
+                return $candidate;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * @param string $message
      * @return string[]
      */
@@ -299,10 +385,7 @@ class GitSync extends Git
         $config = $this->getConfig('git', null);
         $message = $config['message'] ?? $message;
 
-        // get Page Title and Route from Post
-        $uri = $this->grav['uri'];
-        $page_title = $uri->post('data.header.title');
-        $page_route = $uri->post('data.route');
+        [$page_title, $page_route] = $this->getPageContext();
 
         $pageTitle = $page_title ?: 'NO TITLE FOUND';
         $pageRoute = $page_route ?: 'NO ROUTE FOUND';
@@ -319,12 +402,14 @@ class GitSync extends Git
                 $email = $gitConfig['email'] ?? 'git-sync@trilby.media';
                 break;
             case 'gravuser':
-                $user = $this->grav['session']->user->username ?? 'GitSync';
-                $email = $this->grav['session']->user->email ?? 'git-sync@trilby.media';
+                $gravUser = $this->getGravUser();
+                $user = $gravUser->username ?? 'GitSync';
+                $email = $gravUser->email ?? 'git-sync@trilby.media';
                 break;
             case 'gravfull':
-                $user = $this->grav['session']->user->fullname ?? 'GitSync';
-                $email = $this->grav['session']->user->email ?? 'git-sync@trilby.media';
+                $gravUser = $this->getGravUser();
+                $user = $gravUser->fullname ?? 'GitSync';
+                $email = $gravUser->email ?? 'git-sync@trilby.media';
                 break;
             case 'gituser':
             default:
