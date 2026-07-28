@@ -643,6 +643,10 @@ class GitSyncPlugin extends Plugin
             return;
         }
 
+        // Hand the page to GitSync so {{pageTitle}} / {{pageRoute}} resolve from
+        // the object rather than from a scraped admin-classic form POST (#254).
+        $this->git->setPage($obj);
+
         if ($obj instanceof Data) {
             $folders = $this->git->getConfig('folders', $event['object']->get('folders', []));
             $data_type = preg_replace('#^/' . preg_quote($adminPath, '#') . '/#', '', $uriPath);
@@ -679,18 +683,20 @@ class GitSyncPlugin extends Plugin
         }
     }
 
-    public function onAdminAfterDelete()
+    public function onAdminAfterDelete(Event $event)
     {
         if ($this->grav['config']->get('plugins.git-sync.sync.on_delete', true))
         {
+            $this->git->setPage($event['object'] ?? null);
             $this->synchronize();
         }
     }
 
-    public function onAdminAfterMedia()
+    public function onAdminAfterMedia(Event $event)
     {
         if ($this->grav['config']->get('plugins.git-sync.sync.on_media', true))
         {
+            $this->git->setPage($event['object'] ?? null);
             $this->synchronize();
         }
     }

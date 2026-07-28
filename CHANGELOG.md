@@ -1,3 +1,11 @@
+# v3.4.5
+## 07/28/2026
+
+1. [](#bugfix)
+    * Fixed `{{pageTitle}}` and `{{pageRoute}}` in the commit message coming out as `NO TITLE FOUND` / `NO ROUTE FOUND` when saving from Admin Next [#254](https://github.com/trilbymedia/grav-plugin-git-sync/issues/254).
+    * Fixed the committer falling back to `GitSync` instead of the logged-in account when "Use Grav User Name" or "Use Grav User Full Name" is selected and the save comes from Admin Next.
+    * Page title and route are now also picked up on delete and media changes, not just page saves.
+
 # v3.4.4
 ## 06/30/2026
 
