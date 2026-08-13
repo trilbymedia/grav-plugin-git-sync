@@ -601,12 +601,10 @@ class GitSyncPlugin extends Plugin
      */
     public function onAdminSave(Event $event)
     {
-        $obj           = $event['object'];
-        $adminPath 	   = trim($this->grav['admin']->base, '/');
-        $isPluginRoute = $this->grav['uri']->path() === "/$adminPath/plugins/" . $this->name;
+        $obj = $event['object'];
 
         if ($obj instanceof Data) {
-            if (!$isPluginRoute || !Helper::isGitInstalled()) {
+            if (!$this->isPluginConfig($obj) || !Helper::isGitInstalled()) {
                 return true;
             }
 
@@ -634,10 +632,7 @@ class GitSyncPlugin extends Plugin
      */
     public function onAdminAfterSave(Event $event)
     {
-        $obj           = $event['object'];
-        $adminPath	   = trim($this->grav['admin']->base, '/');
-        $uriPath       = $this->grav['uri']->path();
-        $isPluginRoute = $uriPath === "/$adminPath/plugins/" . $this->name;
+        $obj = $event['object'];
 
         if ($obj instanceof PageInterface && !$this->grav['config']->get('plugins.git-sync.sync.on_save', true)) {
             return;
@@ -648,10 +643,9 @@ class GitSyncPlugin extends Plugin
         $this->git->setPage($obj);
 
         if ($obj instanceof Data) {
+            $isPluginRoute = $this->isPluginConfig($obj);
             $folders = $this->git->getConfig('folders', $event['object']->get('folders', []));
-            $data_type = preg_replace('#^/' . preg_quote($adminPath, '#') . '/#', '', $uriPath);
-            $data_type = explode('/', $data_type);
-            $data_type = array_shift($data_type);
+            $data_type = $this->getDataType($obj);
 
             if (null === $data_type || !Helper::isGitInstalled() || (!$isPluginRoute && !in_array($this->getFolderMapping($data_type), $folders, true))) {
                 return;
@@ -711,6 +705,100 @@ class GitSyncPlugin extends Plugin
         if ($action === 'gitsync') {
             $this->synchronize();
         }
+    }
+
+    /**
+     * Admin base route, or an empty string when there isn't one.
+     *
+     * Admin Next talks to the site over `/api/*`, where `$grav['admin']` is
+     * either absent or a proxy with an empty base, so nothing route-shaped can
+     * be derived from it.
+     *
+     * @return string
+     */
+    private function getAdminBase()
+    {
+        $admin = $this->grav['admin'] ?? null;
+
+        return $admin && isset($admin->base) ? trim((string) $admin->base, '/') : '';
+    }
+
+    /**
+     * Whether the object being saved is this plugin's own settings.
+     *
+     * Admin-classic recognises that from the URL of the settings page. Admin
+     * Next saves through `/api/v1/config/plugins/git-sync` instead, so match on
+     * the config file the object was loaded from and keep the route check as
+     * the fallback.
+     *
+     * @param mixed $obj
+     * @return bool
+     */
+    private function isPluginConfig($obj)
+    {
+        if (!$obj instanceof Data) {
+            return false;
+        }
+
+        $file = $obj->file();
+        if ($file && method_exists($file, 'filename')) {
+            $suffix = '/plugins/' . $this->name . '.yaml';
+            $filename = str_replace('\\', '/', (string) $file->filename());
+            if (substr($filename, -strlen($suffix)) === $suffix) {
+                return true;
+            }
+        }
+
+        $base = $this->getAdminBase();
+
+        return $base !== '' && $this->grav['uri']->path() === "/$base/plugins/" . $this->name;
+    }
+
+    /**
+     * Which area of the site a settings object belongs to — 'config',
+     * 'plugins', 'themes', 'user' or 'data' — so `getFolderMapping()` can say
+     * whether the save touched a folder GitSync is tracking.
+     *
+     * Admin-classic reads this off the admin URL. Without one, fall back to the
+     * file that was written, which carries the same distinction:
+     * `user/config/plugins/x.yaml` is a plugin save, `user/config/site.yaml` a
+     * config save, `user/accounts/bob.yaml` an account save.
+     *
+     * @param mixed $obj
+     * @return string|null
+     */
+    private function getDataType($obj)
+    {
+        $base = $this->getAdminBase();
+        if ($base !== '') {
+            $data_type = preg_replace('#^/' . preg_quote($base, '#') . '/#', '', $this->grav['uri']->path());
+            $data_type = explode('/', $data_type);
+
+            return array_shift($data_type);
+        }
+
+        $file = $obj instanceof Data ? $obj->file() : null;
+        if (!$file || !method_exists($file, 'filename')) {
+            return null;
+        }
+
+        $user_dir = rtrim(str_replace('\\', '/', USER_DIR), '/') . '/';
+        $filename = str_replace('\\', '/', (string) $file->filename());
+        if (strpos($filename, $user_dir) !== 0) {
+            return null;
+        }
+
+        $parts = explode('/', substr($filename, strlen($user_dir)));
+        $top = array_shift($parts);
+
+        // Plugin and theme settings both live under `user/config`, but
+        // admin-classic calls them 'plugins' and 'themes' — keep that so the
+        // folder mapping behaves identically either side.
+        if ($top === 'config' && $parts && in_array($parts[0], ['plugins', 'themes'], true)) {
+            return $parts[0];
+        }
+
+        return $top === 'accounts' ? 'user' : $top;
     }
 
     /**
