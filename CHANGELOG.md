@@ -1,3 +1,10 @@
+# v3.4.6
+## 08/13/2026
+
+1. [](#bugfix)
+    * Fixed Git Sync's own settings never being recognised when saved from Admin Next, which left the repository password stored unencrypted and skipped remote/committer setup on the initial save [#255](https://github.com/trilbymedia/grav-plugin-git-sync/issues/255).
+    * Fixed saves to config, accounts, themes and other data areas not matching the tracked folder list when they come from Admin Next, so those changes are now committed like their admin-classic equivalents.
+
 # v3.4.5
 ## 07/28/2026
 
