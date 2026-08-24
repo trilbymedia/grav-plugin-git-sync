@@ -191,9 +191,94 @@ class GitSync extends Git
         return in_array($name, $remotes, true);
     }
 
+    /**
+     * Stop tracking folders that are no longer in the sync list, leaving them
+     * untouched on disk.
+     *
+     * The repository root is `user/` (see `$repositoryPath`), and sparse-checkout
+     * is what narrows the working tree down to the configured folders. A path
+     * still recorded in HEAD but no longer matched by the sparse patterns is one
+     * git considers "must not exist in the working tree", so the next `pull` or
+     * `reset --hard HEAD` deletes it from disk — the folder itself included.
+     * Removing `pages` from the sync list therefore wiped `user/pages` off the
+     * filesystem and took the site down with it (#257).
+     *
+     * Dropping those paths from the index first puts them out of git's reach, so
+     * no later sync or reset can touch them.
+     *
+     * @param array $folders the folders that should remain tracked
+     * @return void
+     */
+    protected function pruneUnsyncedFolders(array $folders)
+    {
+        // Nothing is tracked before the first commit. This has to be checked
+        // separately rather than by looking for empty `ls-tree` output, because
+        // `execute()` folds stderr into its return value -- on a repository with
+        // no commits `ls-tree` yields "fatal: Not a valid object name HEAD",
+        // which would otherwise read as a tracked folder called exactly that.
+        // `rev-parse --quiet` prints nothing at all when HEAD is unborn.
+        if (!array_filter(array_map('trim', $this->execute('rev-parse --quiet --verify HEAD', true)))) {
+            return;
+        }
+
+        // Top-level trees recorded in HEAD. HEAD rather than the index because
+        // that is what `reset --hard` rebuilds the working tree from, and
+        // top-level only because that is the granularity `folders:` works at --
+        // listing every tracked file would mean reading the whole page tree.
+        $tracked = array_filter(array_map('trim', $this->execute('ls-tree -d --name-only HEAD', true)));
+        if (!$tracked) {
+            return;
+        }
+
+        // A nested entry such as `pages/blog` keeps the whole `pages` tree in
+        // play, so compare on the first path segment.
+        $keep = [];
+        foreach ($folders as $folder) {
+            $folder = trim(str_replace('\\', '/', (string) $folder), '/');
+            if ($folder !== '') {
+                $keep[explode('/', $folder)[0]] = true;
+            }
+        }
+
+        $stale = array_values(array_filter($tracked, static function ($folder) use ($keep) {
+            return !isset($keep[$folder]);
+        }));
+
+        if (!$stale) {
+            return;
+        }
+
+        foreach ($stale as $folder) {
+            $this->execute('rm -r --cached --ignore-unmatch ' . escapeshellarg($folder), true);
+        }
+
+        // The removal has to be committed: `reset --hard HEAD` rebuilds the index
+        // from HEAD, so a merely staged removal would protect nothing. The
+        // committer is pinned inline because `setUser()` has not necessarily run
+        // yet at this point in the save. Same fallbacks as `setUser()`, empty
+        // string included -- git rejects a commit with a blank ident.
+        $gitConfig = $this->getConfig('git', []) ?? [];
+        $name = ($gitConfig['name'] ?? '') ?: 'GitSync';
+        $email = ($gitConfig['email'] ?? '') ?: 'git-sync@trilby.media';
+        $message = '(Grav GitSync) Stopped tracking ' . implode(', ', $stale)
+            . ' after removal from the sync list';
+
+        $this->execute(
+            '-c ' . escapeshellarg('user.name=' . $name)
+            . ' -c ' . escapeshellarg('user.email=' . $email)
+            . ' commit -m ' . escapeshellarg($message),
+            true
+        );
+    }
+
     public function enableSparseCheckout()
     {
         $folders = $this->config['folders'] ?? ['pages'];
+
+        // Must run before the new patterns are written, while HEAD still
+        // reflects what the previous folder list was tracking.
+        $this->pruneUnsyncedFolders($folders);
+
         $this->execute('config core.sparsecheckout true');
 
         $sparse = [];

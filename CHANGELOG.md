@@ -1,3 +1,9 @@
+# v3.4.7
+## 08/24/2026
+
+1. [](#bugfix)
+    * Fixed content being deleted from disk when a folder was removed from the sync list. Git Sync now stops tracking that folder properly, so a reset, a sync or a webhook pull leaves it alone instead of clearing it out [#257](https://github.com/trilbymedia/grav-plugin-git-sync/issues/257).
+
 # v3.4.6
 ## 08/13/2026
 
