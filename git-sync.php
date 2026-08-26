@@ -399,17 +399,20 @@ class GitSyncPlugin extends Plugin
                     'name'     => 'admin_next_notice',
                     'type'     => 'display',
                     'markdown' => true,
-                    'content'  => "**Git Sync** has its own admin page with the full configuration form, the setup Wizard, and the Synchronize / Reset actions. Open it from the **Git Sync** entry in the sidebar.",
+                    'content'  => $this->adminString(
+                        'ADMIN_NEXT_NOTICE',
+                        '**Git Sync** has its own admin page with the full configuration form, the setup Wizard, and the Synchronize / Reset actions. Open it from the **Git Sync** entry in the sidebar.'
+                    ),
                 ],
                 [
                     'name'      => 'enabled',
                     'type'      => 'toggle',
-                    'label'     => 'Plugin Status',
+                    'label'     => $this->adminString('PLUGIN_STATUS', 'Plugin Status'),
                     'highlight' => 1,
                     'default'   => 0,
                     'options'   => [
-                        ['value' => '1', 'label' => 'Enabled'],
-                        ['value' => '0', 'label' => 'Disabled'],
+                        ['value' => '1', 'label' => $this->adminString('ENABLED', 'Enabled')],
+                        ['value' => '0', 'label' => $this->adminString('DISABLED', 'Disabled')],
                     ],
                     'validate'  => ['type' => 'bool'],
                 ],
@@ -841,4 +844,25 @@ class GitSyncPlugin extends Plugin
 
         return bin2hex($bytes);
     }
+
+    /**
+     * Translate a plugin string for fields handed to the admin through an event.
+     *
+     * Fields supplied via onApiBlueprintResolved are injected after the API has
+     * already translated the blueprint, so they never pass through its label
+     * lookup and a bare `PLUGIN_*` key would reach the UI raw. Resolve them here
+     * instead, and fall back to the English source if the key does not resolve.
+     *
+     * @param string $key Key within the PLUGIN_GIT_SYNC namespace.
+     * @param string $fallback English text to use when the key does not resolve.
+     * @return string
+     */
+    protected function adminString(string $key, string $fallback): string
+    {
+        $lookup = 'PLUGIN_GIT_SYNC.' . $key;
+        $translated = $this->grav['language']->translate([$lookup]);
+
+        return ($translated === '' || $translated === $lookup) ? $fallback : $translated;
+    }
+
 }

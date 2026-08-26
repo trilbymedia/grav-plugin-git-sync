@@ -1,4 +1,8 @@
 PLUGIN_GIT_SYNC:
+  ADMIN_NEXT_NOTICE: '**Git Sync** has its own admin page with the full configuration form, the setup Wizard, and the Synchronize / Reset actions. Open it from the **Git Sync** entry in the sidebar.'
+  PLUGIN_STATUS: 'Plugin Status'
+  ENABLED: 'Enabled'
+  DISABLED: 'Disabled'
   BASIC_TITLE: 'Basic Settings'
   SYNC_DIRECTION: 'Sync direction'
   SYNC_DIRECTION_PULL: 'One-way (Pull only)'
@@ -76,11 +80,15 @@ PLUGIN_GIT_SYNC:
   LOGGING: 'Log Git Commands'
   LOGGING_HELP: 'Logs git commands. Useful to debug and troubleshoot git execution'
   ACTIONS_TITLE: 'Actions'
-  WIZARD: 'Text Variable'
-  WIZARD_HELP: 'Text to add to the top of a page'
+  WIZARD: 'Configuration Wizard'
+  WIZARD_HELP: 'Launch the Git Sync setup wizard'
 
 ICU:
   PLUGIN_GIT_SYNC:
+    ADMIN_NEXT_NOTICE: '**Git Sync** has its own admin page with the full configuration form, the setup Wizard, and the Synchronize / Reset actions. Open it from the **Git Sync** entry in the sidebar.'
+    PLUGIN_STATUS: 'Plugin Status'
+    ENABLED: 'Enabled'
+    DISABLED: 'Disabled'
     BASIC_TITLE: 'Basic Settings'
     SYNC_DIRECTION: 'Sync direction'
     SYNC_DIRECTION_PULL: 'One-way (Pull only)'
@@ -158,5 +166,5 @@ ICU:
     LOGGING: 'Log Git Commands'
     LOGGING_HELP: 'Logs git commands. Useful to debug and troubleshoot git execution'
     ACTIONS_TITLE: 'Actions'
-    WIZARD: 'Text Variable'
-    WIZARD_HELP: 'Text to add to the top of a page'
+    WIZARD: 'Configuration Wizard'
+    WIZARD_HELP: 'Launch the Git Sync setup wizard'

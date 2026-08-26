@@ -1,3 +1,12 @@
+# v3.4.8
+## 08/26/2026
+
+1. [](#new)
+    * The plugin's settings can now be translated, and ship in English and Spanish. They render translated in both the Grav 1.7 admin and Admin 2. Thanks to @pmoreno-rodriguez for the translations [#258](https://github.com/trilbymedia/grav-plugin-git-sync/pull/258).
+
+1. [](#bugfix)
+    * The Git Sync panel on the Plugins page now uses the site's language instead of always showing English.
+
 # v3.4.7
 ## 08/24/2026
 
