@@ -1,7 +1,7 @@
 name: Git Sync
 type: plugin
 slug: git-sync
-version: 3.4.7
+version: 3.4.8
 description: Allows to synchronize portions of Grav with Git Repositories (GitHub, BitBucket, GitLab)
 icon: git
 author:
@@ -26,35 +26,35 @@ form:
   fields:
     Basic:
       type: section
-      title: Basic Settings
+      title: PLUGIN_GIT_SYNC.BASIC_TITLE
       underline: true
 
     enabled:
       type: toggle
-      label: Plugin Status
+      label: PLUGIN_ADMIN.PLUGIN_STATUS
       highlight: 1
       default: 0
       options:
-        1: Enabled
-        0: Disabled
+        1: PLUGIN_ADMIN.ENABLED
+        0: PLUGIN_ADMIN.DISABLED
       validate:
         type: bool
 
     sync.direction:
       type: select
-      label: Sync direction
+      label: PLUGIN_GIT_SYNC.SYNC_DIRECTION
       size: medium
       default: both
       options:
-        pull: One-way (Pull only)
-        both: Both-ways (Pull and Push)
+        pull: PLUGIN_GIT_SYNC.SYNC_DIRECTION_PULL
+        both: PLUGIN_GIT_SYNC.SYNC_DIRECTION_BOTH
 
     folders:
       type: select
       multiple: true
-      label: Folders to Sync
+      label: PLUGIN_GIT_SYNC.FOLDERS
       classes: fancy
-      description: Removing folders after they have been synced may cause undesired results.
+      description: PLUGIN_GIT_SYNC.FOLDERS_DESCRIPTION
       default:
         - pages
       options:
@@ -70,19 +70,18 @@ form:
 
     Sync:
       type: section
-      title: Automatic Synchronization Settings
+      title: PLUGIN_GIT_SYNC.AUTOMATIC_SYNC_TITLE
       underline: true
 
     SyncNotice:
       type: hidden
       markdown: true
-      text: |
-        ! To improve the speed of saving pages you can disable automatic sync. Then, changes to a page will not be sent to the remote repository on every save. To sync your changes to the repository tap the GitSync button (<i class="fa fa-git"></i>) in the top left of the Administration Panel, or use the below Scheduler option to add the GitSync Syncronization Job to the Scheduler (<strong>Grav 1.6 required</strong>).
+      text: PLUGIN_GIT_SYNC.SYNC_NOTICE
 
     sync.on_save:
       type: toggle
-      label: Sync on Page Save
-      help: Sync with the remote directory when a page is saved through the admin
+      label: PLUGIN_GIT_SYNC.SYNC_ON_SAVE
+      help: PLUGIN_GIT_SYNC.SYNC_ON_SAVE_HELP
       default: 1
       highlight: 1
       options:
@@ -93,8 +92,8 @@ form:
 
     sync.on_delete:
       type: toggle
-      label: Sync on Page Delete
-      help: Sync with the remote directory when a page is deleted through the admin
+      label: PLUGIN_GIT_SYNC.SYNC_ON_DELETE
+      help: PLUGIN_GIT_SYNC.SYNC_ON_DELETE_HELP
       default: 1
       highlight: 1
       options:
@@ -105,8 +104,8 @@ form:
 
     sync.on_media:
       type: toggle
-      label: Sync on Media Changes
-      help: Sync with the remote directory when a media is uploaded or deleted through the admin immediately (instead of only syncing when the page is saved)
+      label: PLUGIN_GIT_SYNC.SYNC_ON_MEDIA
+      help: PLUGIN_GIT_SYNC.SYNC_ON_MEDIA_HELP
       default: 1
       highlight: 1
       options:
@@ -117,8 +116,8 @@ form:
 
     sync.cron_enable:
       type: toggle
-      label: Add Sync to Scheduler
-      help: Add GitSync Job to the Scheduler so it can automatically perform synchronization at the given time
+      label: PLUGIN_GIT_SYNC.SYNC_CRON_ENABLE
+      help: PLUGIN_GIT_SYNC.SYNC_CRON_ENABLE_HELP
       default: 0
       highlight: 1
       options:
@@ -129,160 +128,151 @@ form:
 
     sync.cron_at:
       type: cron
-      label: Run Sync at
-      help: When should the Scheduler run the automatic GitSync synchronization job
+      label: PLUGIN_GIT_SYNC.SYNC_CRON_AT
+      help: PLUGIN_GIT_SYNC.SYNC_CRON_AT_HELP
       default: "0 12,23 * * *"
 
     Repo:
       type: section
-      title: Git Repository Settings
+      title: PLUGIN_GIT_SYNC.REPOSITORY_TITLE
       underline: true
 
     local_repository:
       type: hidden
       multiple: false
       size: medium
-      label: Local Repository Path
+      label: PLUGIN_GIT_SYNC.LOCAL_REPOSITORY
 
     repository:
       type: text
-      label: Git Repository
-      placeholder: https://github.com/user/repository.git
+      label: PLUGIN_GIT_SYNC.GIT_REPOSITORY
+      placeholder: PLUGIN_GIT_SYNC.GIT_REPOSITORY_PLACEHOLDER
 
     no_user:
       type: toggle
-      label: User not required
+      label: PLUGIN_GIT_SYNC.NO_USER
       highlight: 0
       default: 0
       options:
-        1: Enabled
-        0: Disabled
-      description: With this setting enabled, the user can be left blank and it will be ignored from the authentication. Useful when only needing access tokens `token@host` rather than `user:password@host`
+        1: PLUGIN_ADMIN.ENABLED
+        0: PLUGIN_ADMIN.DISABLED
+      description: PLUGIN_GIT_SYNC.NO_USER_DESCRIPTION
 
     user:
       type: text
-      label: Git User
-      placeholder: Username, not email
+      label: PLUGIN_GIT_SYNC.GIT_USER
+      placeholder: PLUGIN_GIT_SYNC.GIT_USER_PLACEHOLDER
       autocomplete: off
 
     password:
       type: enc-password
-      label: Git Password or Token
-      placeholder: Your Git Password or Token
-      description: Enter your password or token to encrypt and securely store it, then save the settings. It will not show up here for security reasons.
+      label: PLUGIN_GIT_SYNC.GIT_PASSWORD
+      placeholder: PLUGIN_GIT_SYNC.GIT_PASSWORD_PLACEHOLDER
+      description: PLUGIN_GIT_SYNC.GIT_PASSWORD_DESCRIPTION
       autocomplete: off
 
     webhook:
       type: text
-      label: Repository Web Hook URL
-      placeholder: /_git-sync
+      label: PLUGIN_GIT_SYNC.WEBHOOK
+      placeholder: PLUGIN_GIT_SYNC.WEBHOOK_PLACEHOLDER
       data-default@: '\Grav\Plugin\GitSyncPlugin::generateRandomWebhook'
 
     webhook_enabled:
       type: toggle
-      label: Web Hook Secret
+      label: PLUGIN_GIT_SYNC.WEBHOOK_ENABLED
       highlight: 1
       default: 0
       options:
-        1: Enabled
-        0: Disabled
-      description: With this setting enabled, only authorized webhook calls will be able to trigger a synchronization (recommended)
+        1: PLUGIN_ADMIN.ENABLED
+        0: PLUGIN_ADMIN.DISABLED
+      description: PLUGIN_GIT_SYNC.WEBHOOK_ENABLED_DESCRIPTION
 
     webhook_secret:
       type: text
-      label: Repository Web Hook Secret
-      placeholder: Your Web Hook Secret
+      label: PLUGIN_GIT_SYNC.WEBHOOK_SECRET
+      placeholder: PLUGIN_GIT_SYNC.WEBHOOK_SECRET_PLACEHOLDER
       data-default@: '\Grav\Plugin\GitSyncPlugin::generateWebhookSecret'
-      description: You can either use this randomly generated string or enter your own secret. <br /> **Bitbucket** does not yet support Webhook Secrets.
+      description: PLUGIN_GIT_SYNC.WEBHOOK_SECRET_DESCRIPTION
       markdown: true
 
     Advanced:
       type: section
-      title: Advanced Git Settings
+      title: PLUGIN_GIT_SYNC.ADVANCED_TITLE
       underline: true
 
     branch:
       type: text
       default: main
-      label: Local Branch
-      placeholder: main
+      label: PLUGIN_GIT_SYNC.BRANCH
+      placeholder: PLUGIN_GIT_SYNC.BRANCH_PLACEHOLDER
 
     remote.name:
       type: text
       default: origin
-      label: Remote Name
-      placeholder: origin
+      label: PLUGIN_GIT_SYNC.REMOTE_NAME
+      placeholder: PLUGIN_GIT_SYNC.REMOTE_NAME_PLACEHOLDER
 
     remote.branch:
       type: text
       default: main
-      label: Remote Branch
-      placeholder: main
+      label: PLUGIN_GIT_SYNC.REMOTE_BRANCH
+      placeholder: PLUGIN_GIT_SYNC.REMOTE_BRANCH_PLACEHOLDER
 
     git.author:
       type: select
       default: gituser
-      label: Commits Author
+      label: PLUGIN_GIT_SYNC.GIT_AUTHOR
       options:
-        gituser: Use Git User Name
-        gitsync: Use GitSync Committer Name
-        gravuser: Use Grav User Name
-        gravfull: Use Grav User Full Name
+        gituser: PLUGIN_GIT_SYNC.GIT_AUTHOR_GITUSER
+        gitsync: PLUGIN_GIT_SYNC.GIT_AUTHOR_GITSYNC
+        gravuser: PLUGIN_GIT_SYNC.GIT_AUTHOR_GRAVUSER
+        gravfull: PLUGIN_GIT_SYNC.GIT_AUTHOR_GRAVFULL
 
     git.message:
       type: text
       default: (Grav GitSync) Automatic Commit
-      label: Commit message
-      placeholder: (Grav GitSync) Automatic Commit
-      help: You can use {{pageTitle}} or {{pageRoute}} in your message as placeholders for the title or route of the page being saved
+      label: PLUGIN_GIT_SYNC.GIT_MESSAGE
+      placeholder: PLUGIN_GIT_SYNC.GIT_MESSAGE_PLACEHOLDER
+      help: PLUGIN_GIT_SYNC.GIT_MESSAGE_HELP
 
     git.name:
       type: text
       default: GitSync
-      label: Committer Name
-      placeholder: GitSync
+      label: PLUGIN_GIT_SYNC.GIT_NAME
+      placeholder: PLUGIN_GIT_SYNC.GIT_NAME_PLACEHOLDER
 
     git.email:
       type: text
       default: git-sync@trilby.media
-      label: Committer Email
-      placeholder: git-sync@trilby.media
+      label: PLUGIN_GIT_SYNC.GIT_EMAIL
+      placeholder: PLUGIN_GIT_SYNC.GIT_EMAIL_PLACEHOLDER
 
     git.bin:
       type: text
       default: git
-      label: Git Binary Path
-      help: If the default `git` command doesn't work on your machine or if you want to specify a custom path, do it in here
-      placeholder: /usr/bin/git
+      label: PLUGIN_GIT_SYNC.GIT_BINARY
+      help: PLUGIN_GIT_SYNC.GIT_BINARY_HELP
+      placeholder: PLUGIN_GIT_SYNC.GIT_BINARY_PLACEHOLDER
 
     git.ignore:
       type: textarea
-      label: Git Ignore
-      help: Add custom git ignore rules to go along with GitSync. One per line
+      label: PLUGIN_GIT_SYNC.GIT_IGNORE
+      help: PLUGIN_GIT_SYNC.GIT_IGNORE_HELP
       rows: 6
-      placeholder: |
-        node_modules
-        /.idea
+      placeholder: PLUGIN_GIT_SYNC.GIT_IGNORE_PLACEHOLDER
 
     git.private_key:
       type: text
-      label: Private SSH Key
-      placeholder: ~/.ssh/id_rsa
+      label: PLUGIN_GIT_SYNC.PRIVATE_SSH_KEY
+      placeholder: PLUGIN_GIT_SYNC.PRIVATE_SSH_KEY_PLACEHOLDER
       markdown: true
-      description: >
-        In order to be able to sparse-checkout and push changes, it is expected you have an ssh-key configured for accessing the repository. This is usually found under `~/.ssh` and it needs to be configured for the same user that runs the web-server. <br />
-        <br />
-        Point it to the secret (not the public) and make also sure you have strict permissions to the file. (`-rw-------`). <br />
-        <br />
-        Example: `private_key: /home/www-data/.ssh/id_rsa`<br />
-        <br />
-        **IMPORTANT**: SSH keys with passphrase are __NOT__ supported. To remove a passphrase, run the `ssh-keygen -p` command and when asked for the new passphrase leave blank and return.
+      description: PLUGIN_GIT_SYNC.PRIVATE_SSH_KEY_DESCRIPTION
 
     logging:
       type: toggle
       default: 0
-      label: Log Git Commands
-      help: Logs git commands. Useful to debug and troubleshoot git execution
+      label: PLUGIN_GIT_SYNC.LOGGING
+      help: PLUGIN_GIT_SYNC.LOGGING_HELP
       highlight: 0
       options:
         1: PLUGIN_ADMIN.YES
@@ -292,10 +282,10 @@ form:
 
     Actions:
       type: section
-      title: Actions
+      title: PLUGIN_GIT_SYNC.ACTIONS_TITLE
       underline: true
 
     _wizard:
       type: git-wizard
-      label: Text Variable
-      help: Text to add to the top of a page
+      label: PLUGIN_GIT_SYNC.WIZARD
+      help: PLUGIN_GIT_SYNC.WIZARD_HELP
