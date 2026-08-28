@@ -538,7 +538,7 @@ class WizardModal {
                 <li>${t('WIZARD_STEP0_LI3', 'Optionally configure a webhook so the remote can notify your site of changes.')}</li>
                 <li>${tHtml('WIZARD_STEP0_LI4', 'Choose which <code>user/</code> folders to keep in sync.')}</li>
             </ol>
-            <p>${tHtml('WIZARD_STEP0_P2', 'Press <strong>Next</strong> to begin.')}</p>
+            <p>${tHtml('WIZARD_STEP0_P2', 'Press <strong>Next</strong> to continue.')}</p>
         `;
     }
 
@@ -551,7 +551,7 @@ class WizardModal {
             { id: 'allothers', label: 'Other Git' },
         ];
         return `
-            <p>${t('WIZARD_STEP1_P1', "Choose the git host you'll be using and enter your username and password (or an access token / app password).")}</p>
+            <p>${tHtml('WIZARD_STEP1_P1', "Choose the <i class=\"fa fa-fw fa-git\"></i> hosting service you'll be using and enter your username and password (or an access token / app password).")}</p>
             <div class="hosting-grid">
                 ${services.map(s => `
                     <div class="host-card ${sel === s.id ? 'selected' : ''}" data-svc="${s.id}">
@@ -597,7 +597,7 @@ class WizardModal {
             : 'https://github.com/your-user/your-repo.git';
         const isValid = !this.draft.repository || GIT_REGEX.test(this.draft.repository);
         return `
-            <p>${tHtml('WIZARD_STEP2_P1', 'Paste the full **HTTPS** clone URL of your repository. Most hosts list it on the project page next to "Clone".')}</p>
+            <p>${tHtml('WIZARD_STEP2_P1', 'Paste the full <strong>HTTPS</strong> clone URL of your repository. Most hosts list it on the project page next to "Clone".')}</p>
             <p style="font-size:0.8125rem;color:var(--muted-foreground);">${tHtml('WIZARD_STEP2_P2', 'If you\'re starting from scratch, create the repo on the host first and check "initialize with a README" — Git Sync needs an initial commit to clone from.')}</p>
             <label class="field">
                 <span class="lbl"><span>${t('WIZARD_REPO_LABEL', 'Git Repository')}</span></span>
@@ -678,7 +678,7 @@ class WizardModal {
             { id: 'data',    label: 'Data',    warn: true,  hint: t('WIZARD_FOLDER_DATA_HINT', 'Plugin-stored data. May contain sensitive data.') },
         ];
         return `
-            <p>${tHtml('WIZARD_STEP4_P1', 'Pick which `user/` folders to keep under git control. You can change this later from the settings form.')}</p>
+            <p>${tHtml('WIZARD_STEP4_P1', 'Pick which <code>user/</code> folders to keep under git control. You can change this later from the settings form.')}</p>
             <div class="folder-grid">
                 ${folders.map(f => `
                     <label class="folder-card ${this.draft.folders.includes(f.id) ? 'selected' : ''}">
