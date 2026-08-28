@@ -399,17 +399,19 @@ class GitSyncPlugin extends Plugin
                     'name'     => 'admin_next_notice',
                     'type'     => 'display',
                     'markdown' => true,
-                    'content'  => "**Git Sync** has its own admin page with the full configuration form, the setup Wizard, and the Synchronize / Reset actions. Open it from the **Git Sync** entry in the sidebar.",
+                    'content'  => $this->adminString('ADMIN_NEXT_NOTICE', '**Git Sync** has its own admin page with the full configuration form, the setup Wizard, and the Synchronize / Reset actions. Open it from the **Git Sync** entry in the sidebar.'),
                 ],
                 [
                     'name'      => 'enabled',
                     'type'      => 'toggle',
-                    'label'     => 'Plugin Status',
+                    // Shared admin vocabulary, not a plugin-private key — matches
+                    // blueprints.yaml:34,38,39, and ships translated in every locale.
+                    'label'     => 'PLUGIN_ADMIN.PLUGIN_STATUS',
                     'highlight' => 1,
                     'default'   => 0,
                     'options'   => [
-                        ['value' => '1', 'label' => 'Enabled'],
-                        ['value' => '0', 'label' => 'Disabled'],
+                        ['value' => '1', 'label' => 'PLUGIN_ADMIN.ENABLED'],
+                        ['value' => '0', 'label' => 'PLUGIN_ADMIN.DISABLED'],
                     ],
                     'validate'  => ['type' => 'bool'],
                 ],
