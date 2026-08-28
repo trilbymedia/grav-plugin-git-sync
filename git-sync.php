@@ -287,7 +287,7 @@ class GitSyncPlugin extends Plugin
         $items[] = [
             'id'        => 'git-sync-quick',
             'plugin'    => 'git-sync',
-            'label'     => 'Synchronize Git Sync',
+            'label'     => $this->adminString('MENUBAR_SYNC_LABEL', 'Synchronize Git Sync'),
             'icon'      => 'fa-code-branch',
             'action'    => 'sync',
             // Sync is a write action — only show the menubar button to users
@@ -332,7 +332,7 @@ class GitSyncPlugin extends Plugin
         $event['definition'] = [
             'id'            => 'git-sync',
             'plugin'        => 'git-sync',
-            'title'         => 'Git Sync',
+            'title'         => $this->adminString('PLUGIN_PAGE_TITLE', 'Git Sync'),
             'icon'          => 'fa-code-branch',
             'page_type'     => 'blueprint',
             'blueprint'     => 'git-sync',
@@ -341,27 +341,27 @@ class GitSyncPlugin extends Plugin
             'actions'       => [
                 [
                     'id'    => 'wizard',
-                    'label' => 'Wizard',
+                    'label' => $this->adminString('ACTION_WIZARD', 'Wizard'),
                     'icon'  => 'fa-wand-magic-sparkles',
                     // No endpoint — admin-next dispatches grav:plugin-page-action
                     // and the auto-loaded git-sync widget script catches it.
                 ],
                 [
                     'id'       => 'sync',
-                    'label'    => 'Synchronize',
+                    'label'    => $this->adminString('ACTION_SYNCHRONIZE', 'Synchronize'),
                     'icon'     => 'fa-cloud-arrow-up',
                     'endpoint' => '/git-sync/sync',
                 ],
                 [
                     'id'       => 'reset',
-                    'label'    => 'Reset Local Copy',
+                    'label'    => $this->adminString('ACTION_RESET_LOCAL_COPY', 'Reset Local Copy'),
                     'icon'     => 'fa-clock-rotate-left',
                     'endpoint' => '/git-sync/reset',
-                    'confirm'  => 'Discard all local changes and re-pull from the remote? Any uncommitted edits will be lost.',
+                    'confirm'  => $this->adminString('RESET_CONFIRM_MSG', 'Discard all local changes and re-pull from the remote? Any uncommitted edits will be lost.'),
                 ],
                 [
                     'id'      => 'save',
-                    'label'   => 'Save',
+                    'label'   => $this->adminString('ACTION_SAVE', 'Save'),
                     'icon'    => 'fa-check',
                     'primary' => true,
                 ],
@@ -399,20 +399,17 @@ class GitSyncPlugin extends Plugin
                     'name'     => 'admin_next_notice',
                     'type'     => 'display',
                     'markdown' => true,
-                    'content'  => $this->adminString(
-                        'ADMIN_NEXT_NOTICE',
-                        '**Git Sync** has its own admin page with the full configuration form, the setup Wizard, and the Synchronize / Reset actions. Open it from the **Git Sync** entry in the sidebar.'
-                    ),
+                    'content'  => "**Git Sync** has its own admin page with the full configuration form, the setup Wizard, and the Synchronize / Reset actions. Open it from the **Git Sync** entry in the sidebar.",
                 ],
                 [
                     'name'      => 'enabled',
                     'type'      => 'toggle',
-                    'label'     => $this->adminString('PLUGIN_STATUS', 'Plugin Status'),
+                    'label'     => 'Plugin Status',
                     'highlight' => 1,
                     'default'   => 0,
                     'options'   => [
-                        ['value' => '1', 'label' => $this->adminString('ENABLED', 'Enabled')],
-                        ['value' => '0', 'label' => $this->adminString('DISABLED', 'Disabled')],
+                        ['value' => '1', 'label' => 'Enabled'],
+                        ['value' => '0', 'label' => 'Disabled'],
                     ],
                     'validate'  => ['type' => 'bool'],
                 ],
@@ -461,7 +458,7 @@ class GitSyncPlugin extends Plugin
         $widgets[] = [
             'id'       => 'git-sync',
             'plugin'   => 'git-sync',
-            'label'    => 'Git Sync Wizard',
+            'label'    => $this->adminString('FLOATING_WIDGET_LABEL', 'Git Sync Wizard'),
             'icon'     => 'fa-wand-magic-sparkles',
             'autoLoad' => true,
             'showFab'  => false,
@@ -846,12 +843,15 @@ class GitSyncPlugin extends Plugin
     }
 
     /**
-     * Translate a plugin string for fields handed to the admin through an event.
+     * Translate a plugin string for labels handed to the admin through an
+     * API event.
      *
-     * Fields supplied via onApiBlueprintResolved are injected after the API has
-     * already translated the blueprint, so they never pass through its label
-     * lookup and a bare `PLUGIN_*` key would reach the UI raw. Resolve them here
-     * instead, and fall back to the English source if the key does not resolve.
+     * onApiMenubarItems, onApiPluginPageInfo and onApiFloatingWidgets build
+     * their payloads directly (not through a blueprint), so nothing on the
+     * way out runs them through the API's translation lookup. A bare
+     * `PLUGIN_GIT_SYNC.FOO` key would reach the browser as that literal
+     * string. Resolve it here instead, and fall back to the English source
+     * if the key doesn't resolve.
      *
      * @param string $key Key within the PLUGIN_GIT_SYNC namespace.
      * @param string $fallback English text to use when the key does not resolve.
@@ -864,5 +864,4 @@ class GitSyncPlugin extends Plugin
 
         return ($translated === '' || $translated === $lookup) ? $fallback : $translated;
     }
-
 }
