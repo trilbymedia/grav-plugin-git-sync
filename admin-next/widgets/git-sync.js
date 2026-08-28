@@ -50,6 +50,31 @@ async function apiCall(method, path, body) {
     return json.data ?? json;
 }
 
+// ─── i18n bridge ─────────────────────────────────────────────────────────
+//
+// window.__GRAV_I18N is admin-next's reactive translation bridge (t(),
+// tHtml(), has(), locale, dir, subscribe()). We look it up lazily on every
+// call rather than caching it, since it isn't guaranteed to exist yet the
+// instant this script runs.
+
+const I18N = () => window.__GRAV_I18N;
+
+function t(key, fallback, params) {
+    const i18n = I18N();
+    if (!i18n) return fallback;
+    const full = 'PLUGIN_GIT_SYNC.' + key;
+    // has() matters: a missing key humanizes to something like "Wizard
+    // Title" instead of falling back to our real English string.
+    return i18n.has(full) ? i18n.t(full, params) : fallback;
+}
+
+function tHtml(key, fallback, params) {
+    const i18n = I18N();
+    if (!i18n) return fallback;
+    const full = 'PLUGIN_GIT_SYNC.' + key;
+    return i18n.has(full) ? i18n.tHtml(full, params) : fallback;
+}
+
 // ─── Service catalogue (mirrors admin-classic wizard) ───────────────────
 
 const SERVICES = {
@@ -114,6 +139,18 @@ class WizardModal {
         this._onKeydown = (e) => { if (e.key === 'Escape') this.close(); };
         window.addEventListener('keydown', this._onKeydown);
 
+        // Reflect the current locale's direction on the host so the
+        // :host([dir="rtl"]) rule (used for the Next-button arrow) applies.
+        this._syncDir();
+
+        // Re-render on language switch. _render() already rebuilds
+        // container.innerHTML wholesale, so this is all the reactivity
+        // the wizard needs.
+        this._i18nUnsub = I18N()?.subscribe?.(() => {
+            this._syncDir();
+            this._render();
+        });
+
         // Render skeleton, then load state
         this._render();
         try {
@@ -142,10 +179,16 @@ class WizardModal {
         this._render();
     }
 
+    _syncDir() {
+        if (this.host) this.host.dir = I18N()?.dir || 'ltr';
+    }
+
     close() {
         if (!this.host) return;
         document.body.style.overflow = this._prevOverflow || '';
         window.removeEventListener('keydown', this._onKeydown);
+        this._i18nUnsub?.();
+        this._i18nUnsub = null;
         this.host.remove();
         this.host = null;
         this.shadow = null;
@@ -159,6 +202,10 @@ class WizardModal {
         style.textContent = `
             :host { all: initial; font-family: inherit; }
             * { box-sizing: border-box; }
+            /* WIZARD_NEXT is a plain "Next" string with no baked-in
+               direction; the arrow lives here in markup and flips for
+               RTL locales instead of pointing the wrong way. */
+            :host([dir="rtl"]) .gs-arrow { display: inline-block; transform: scaleX(-1); }
             .backdrop {
                 position: fixed; inset: 0;
                 background: rgb(23 23 23 / 0.75);
@@ -407,18 +454,28 @@ class WizardModal {
             return el;
         })();
 
-        const stepLabel = ['Welcome', 'Hosting Service', 'Repository', 'Webhook', 'Folders'][this.step];
+        const stepKeys = ['WIZARD_STEP_WELCOME', 'WIZARD_STEP_HOSTING', 'WIZARD_STEP_REPOSITORY', 'WIZARD_STEP_WEBHOOK', 'WIZARD_STEP_FOLDERS'];
+        const stepFallbacks = ['Welcome', 'Hosting Service', 'Repository', 'Webhook', 'Folders'];
+        const stepLabel = t(stepKeys[this.step], stepFallbacks[this.step]);
         const isReady = this.state !== null;
         const gitInstalled = !this.state || this.state.git_installed !== false;
+
+        // WIZARD_STEP_OF is one ICU string ("Step {current} of {total}")
+        // rather than two concatenated fragments, so languages that need
+        // to reorder "step"/"of"/the numbers can do so.
+        const stepOfText = t('WIZARD_STEP_OF', `Step ${this.step} of ${this.maxStep}`, {
+            current: this.step,
+            total: this.maxStep,
+        });
 
         container.innerHTML = `
             <div class="modal" role="dialog" aria-modal="true" aria-labelledby="gs-wiz-title">
                 <div class="header">
                     <div>
-                        <span class="title" id="gs-wiz-title">Git Sync — Wizard</span>
-                        ${isReady && gitInstalled ? `<span class="step-pill">Step ${this.step} of ${this.maxStep} · ${stepLabel}</span>` : ''}
+                        <span class="title" id="gs-wiz-title">${t('WIZARD_TITLE', 'Git Sync — Wizard')}</span>
+                        ${isReady && gitInstalled ? `<span class="step-pill">${stepOfText} · ${stepLabel}</span>` : ''}
                     </div>
-                    <button class="close-btn" aria-label="Close" data-close>
+                    <button class="close-btn" aria-label="${t('WIZARD_CLOSE', 'Close')}" data-close>
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                     </button>
                 </div>
@@ -431,7 +488,7 @@ class WizardModal {
                     <div class="footer">
                         <span></span>
                         <div class="footer-right">
-                            <button class="btn" data-close>Close</button>
+                            <button class="btn" data-close>${t('WIZARD_CLOSE', 'Close')}</button>
                         </div>
                     </div>
                 `}
@@ -451,13 +508,13 @@ class WizardModal {
     }
 
     _renderLoading() {
-        return `<p style="text-align:center; color:var(--muted-foreground);"><span class="spin"></span> Loading wizard…</p>`;
+        return `<p style="text-align:center; color:var(--muted-foreground);"><span class="spin"></span> ${t('WIZARD_LOADING', 'Loading wizard…')}</p>`;
     }
 
     _renderNoGit() {
         return `
-            <p>The <strong>Git Sync</strong> plugin requires the <code>git</code> binary to be installed and reachable on the server's PATH.</p>
-            <p>If <code>git</code> is missing, ask your hosting provider to install it, or set a custom <strong>Git Binary Path</strong> on the settings form below the wizard.</p>
+            <p>${tHtml('WIZARD_NO_GIT_P1', 'The <strong>Git Sync</strong> plugin requires the <code>git</code> binary to be installed and reachable on the server\'s PATH.')}</p>
+            <p>${tHtml('WIZARD_NO_GIT_P2', 'If <code>git</code> is missing, ask your hosting provider to install it, or set a custom <strong>Git Binary Path</strong> on the settings form below the wizard.')}</p>
         `;
     }
 
@@ -474,14 +531,14 @@ class WizardModal {
 
     _step0() {
         return `
-            <p>This wizard walks you through setting up <strong>Git Sync</strong> in four steps. When done, your site will keep itself in sync with a remote git repository.</p>
+            <p>${tHtml('WIZARD_STEP0_P1', 'This wizard walks you through setting up <strong>Git Sync</strong> in four steps. When done, your site will keep itself in sync with a remote git repository.')}</p>
             <ol>
-                <li>Pick the hosting service and enter your access credentials.</li>
-                <li>Point Git Sync at the repository and verify the connection.</li>
-                <li>Optionally configure a webhook so the remote can notify your site of changes.</li>
-                <li>Choose which <code>user/</code> folders to keep in sync.</li>
+                <li>${t('WIZARD_STEP0_LI1', 'Pick the hosting service and enter your access credentials.')}</li>
+                <li>${t('WIZARD_STEP0_LI2', 'Point Git Sync at the repository and verify the connection.')}</li>
+                <li>${t('WIZARD_STEP0_LI3', 'Optionally configure a webhook so the remote can notify your site of changes.')}</li>
+                <li>${tHtml('WIZARD_STEP0_LI4', 'Choose which <code>user/</code> folders to keep in sync.')}</li>
             </ol>
-            <p>Press <strong>Next</strong> to begin.</p>
+            <p>${tHtml('WIZARD_STEP0_P2', 'Press <strong>Next</strong> to begin.')}</p>
         `;
     }
 
@@ -494,12 +551,12 @@ class WizardModal {
             { id: 'allothers', label: 'Other Git' },
         ];
         return `
-            <p>Choose the git host you'll be using and enter your username and password (or an access token / app password).</p>
+            <p>${t('WIZARD_STEP1_P1', "Choose the git host you'll be using and enter your username and password (or an access token / app password).")}</p>
             <div class="hosting-grid">
                 ${services.map(s => `
                     <div class="host-card ${sel === s.id ? 'selected' : ''}" data-svc="${s.id}">
                         <span class="name">${s.label}</span>
-                        ${SERVICES[s.id].create ? `<a class="small" href="${SERVICES[s.id].create}" target="_blank" rel="noopener">create account</a>` : `<span class="small">any git service with webhooks</span>`}
+                        ${SERVICES[s.id].create ? `<a class="small" href="${SERVICES[s.id].create}" target="_blank" rel="noopener">${t('WIZARD_CREATE_ACCOUNT', 'create account')}</a>` : `<span class="small">${t('WIZARD_ANY_SERVICE', 'any git service with webhooks')}</span>`}
                     </div>
                 `).join('')}
             </div>
@@ -507,27 +564,27 @@ class WizardModal {
             <div style="margin-top:1rem;">
                 <label class="field">
                     <span class="lbl">
-                        <span>Git User</span>
+                        <span>${t('WIZARD_USER_LABEL', 'Git User')}</span>
                         <label class="inline-checkbox">
                             <input type="checkbox" data-no-user ${this.draft.no_user ? 'checked' : ''} />
-                            No user (token-only auth)
+                            ${t('WIZARD_NO_USER_LABEL', 'No user (token-only auth)')}
                         </label>
                     </span>
                     <input
                         type="text"
                         data-user
                         value="${(this.draft.user || '').replace(/"/g, '&quot;')}"
-                        placeholder="${this.draft.no_user ? 'username not required' : 'Username, not email'}"
+                        placeholder="${this.draft.no_user ? t('WIZARD_USER_PLACEHOLDER_NO_USER', 'username not required') : t('WIZARD_USER_PLACEHOLDER', 'Username, not email')}"
                         ${this.draft.no_user ? 'disabled' : ''}
                     />
                 </label>
                 <label class="field">
-                    <span class="lbl"><span>Git Password or Token</span></span>
+                    <span class="lbl"><span>${t('WIZARD_PASSWORD_LABEL', 'Git Password or Token')}</span></span>
                     <input
                         type="password"
                         data-password
                         value="${(this.draft.password || '').replace(/"/g, '&quot;')}"
-                        placeholder="${this.state?.settings?.password_stored ? 'Leave blank to reuse stored password' : 'Password or access token'}"
+                        placeholder="${this.state?.settings?.password_stored ? t('WIZARD_PASSWORD_PLACEHOLDER_STORED', 'Leave blank to reuse stored password') : t('WIZARD_PASSWORD_PLACEHOLDER', 'Password or access token')}"
                     />
                 </label>
             </div>
@@ -540,10 +597,10 @@ class WizardModal {
             : 'https://github.com/your-user/your-repo.git';
         const isValid = !this.draft.repository || GIT_REGEX.test(this.draft.repository);
         return `
-            <p>Paste the full <strong>HTTPS</strong> clone URL of your repository. Most hosts list it on the project page next to "Clone".</p>
-            <p style="font-size:0.8125rem;color:var(--muted-foreground);">If you're starting from scratch, create the repo on the host first and check "initialize with a README" — Git Sync needs an initial commit to clone from.</p>
+            <p>${tHtml('WIZARD_STEP2_P1', 'Paste the full **HTTPS** clone URL of your repository. Most hosts list it on the project page next to "Clone".')}</p>
+            <p style="font-size:0.8125rem;color:var(--muted-foreground);">${tHtml('WIZARD_STEP2_P2', 'If you\'re starting from scratch, create the repo on the host first and check "initialize with a README" — Git Sync needs an initial commit to clone from.')}</p>
             <label class="field">
-                <span class="lbl"><span>Git Repository</span></span>
+                <span class="lbl"><span>${t('WIZARD_REPO_LABEL', 'Git Repository')}</span></span>
                 <input
                     type="text"
                     data-repo
@@ -553,7 +610,7 @@ class WizardModal {
                 />
             </label>
             <label class="field">
-                <span class="lbl"><span>Branch (master / main)</span></span>
+                <span class="lbl"><span>${t('WIZARD_BRANCH_LABEL', 'Branch (master / main)')}</span></span>
                 <input
                     type="text"
                     data-branch
@@ -565,8 +622,8 @@ class WizardModal {
             <div class="verify-row">
                 <button class="btn" data-test ${this.testing ? 'disabled' : ''}>
                     ${this.testing
-                        ? `<span class="spin"></span> Testing…`
-                        : `Verify Authentication, Connection &amp; Branch`}
+                        ? `<span class="spin"></span> ${t('WIZARD_TESTING', 'Testing…')}`
+                        : t('WIZARD_VERIFY_BTN', 'Verify Authentication, Connection & Branch')}
                 </button>
             </div>
             ${this.testResult ? `
@@ -580,9 +637,9 @@ class WizardModal {
     _step3() {
         const frontendUrl = this.frontendUrl || window.location.origin;
         return `
-            <p>A webhook lets the remote repository tell your site about pushes so changes show up immediately. Set the URL below in the repo's webhook settings on your git host.</p>
+            <p>${t('WIZARD_STEP3_P1', "A webhook lets the remote repository tell your site about pushes so changes show up immediately. Set the URL below in the repo's webhook settings on your git host.")}</p>
             <label class="field">
-                <span class="lbl"><span>Webhook URL path</span></span>
+                <span class="lbl"><span>${t('WIZARD_WEBHOOK_PATH_LABEL', 'Webhook URL path')}</span></span>
                 <input
                     type="text"
                     data-webhook
@@ -591,21 +648,21 @@ class WizardModal {
                 />
             </label>
             <p style="font-size:0.8125rem;">
-                Full URL: <code>${frontendUrl}<span data-webhook-preview>${this.draft.webhook || '/_git-sync'}</span></code>
+                ${t('WIZARD_FULL_URL', 'Full URL:')} <code>${frontendUrl}<span data-webhook-preview>${this.draft.webhook || '/_git-sync'}</span></code>
             </p>
 
             <label class="inline-checkbox" style="margin: 0.75rem 0; display: block;">
                 <input type="checkbox" data-webhook-enabled ${this.draft.webhook_enabled ? 'checked' : ''} />
-                Use a webhook secret (recommended; not supported by Bitbucket)
+                ${t('WIZARD_WEBHOOK_SECRET_CHECK', 'Use a webhook secret (recommended; not supported by Bitbucket)')}
             </label>
             ${this.draft.webhook_enabled ? `
                 <label class="field">
-                    <span class="lbl"><span>Webhook Secret</span></span>
+                    <span class="lbl"><span>${t('WIZARD_WEBHOOK_SECRET_LABEL', 'Webhook Secret')}</span></span>
                     <input
                         type="text"
                         data-webhook-secret
                         value="${(this.draft.webhook_secret || '').replace(/"/g, '&quot;')}"
-                        placeholder="random secret"
+                        placeholder="${t('WIZARD_WEBHOOK_SECRET_PLACEHOLDER', 'random secret')}"
                     />
                 </label>
             ` : ''}
@@ -614,14 +671,14 @@ class WizardModal {
 
     _step4() {
         const folders = [
-            { id: 'pages',   label: 'Pages',   warn: false, hint: 'Page content for the site.' },
-            { id: 'themes',  label: 'Themes',  warn: false, hint: 'Theme files. Manual sync usually required for themes.' },
-            { id: 'plugins', label: 'Plugins', warn: false, hint: 'Plugin packages.' },
-            { id: 'config',  label: 'Config',  warn: true,  hint: 'Site configuration. May contain sensitive data.' },
-            { id: 'data',    label: 'Data',    warn: true,  hint: 'Plugin-stored data. May contain sensitive data.' },
+            { id: 'pages',   label: 'Pages',   warn: false, hint: t('WIZARD_FOLDER_PAGES_HINT', 'Page content for the site.') },
+            { id: 'themes',  label: 'Themes',  warn: false, hint: t('WIZARD_FOLDER_THEMES_HINT', 'Theme files. Manual sync usually required for themes.') },
+            { id: 'plugins', label: 'Plugins', warn: false, hint: t('WIZARD_FOLDER_PLUGINS_HINT', 'Plugin packages.') },
+            { id: 'config',  label: 'Config',  warn: true,  hint: t('WIZARD_FOLDER_CONFIG_HINT', 'Site configuration. May contain sensitive data.') },
+            { id: 'data',    label: 'Data',    warn: true,  hint: t('WIZARD_FOLDER_DATA_HINT', 'Plugin-stored data. May contain sensitive data.') },
         ];
         return `
-            <p>Pick which <code>user/</code> folders to keep under git control. You can change this later from the settings form.</p>
+            <p>${tHtml('WIZARD_STEP4_P1', 'Pick which `user/` folders to keep under git control. You can change this later from the settings form.')}</p>
             <div class="folder-grid">
                 ${folders.map(f => `
                     <label class="folder-card ${this.draft.folders.includes(f.id) ? 'selected' : ''}">
@@ -629,7 +686,7 @@ class WizardModal {
                         <div>
                             <div style="font-weight:600;font-size:0.875rem;">${f.label}</div>
                             <div style="font-size:0.75rem;color:var(--muted-foreground);">${f.hint}</div>
-                            ${f.warn ? `<div class="warn">⚠ Use a private repo if syncing this folder.</div>` : ''}
+                            ${f.warn ? `<div class="warn">${t('WIZARD_FOLDER_WARN', '⚠ Use a private repo if syncing this folder.')}</div>` : ''}
                         </div>
                     </label>
                 `).join('')}
@@ -643,13 +700,13 @@ class WizardModal {
         const canNext = this._canAdvance();
         return `
             <div class="footer">
-                <button class="btn" data-cancel>Cancel</button>
+                <button class="btn" data-cancel>${t('WIZARD_CANCEL', 'Cancel')}</button>
                 <div class="footer-right">
-                    ${this.step > 0 ? `<button class="btn" data-prev>Previous</button>` : ''}
+                    ${this.step > 0 ? `<button class="btn" data-prev>${t('WIZARD_PREVIOUS', 'Previous')}</button>` : ''}
                     ${!isLast
-                        ? `<button class="btn btn-primary" data-next ${!canNext ? 'disabled' : ''}>Next →</button>`
+                        ? `<button class="btn btn-primary" data-next ${!canNext ? 'disabled' : ''}>${t('WIZARD_NEXT', 'Next')} <span class="gs-arrow" aria-hidden="true">→</span></button>`
                         : `<button class="btn btn-primary" data-save ${this.saving ? 'disabled' : ''}>
-                            ${this.saving ? `<span class="spin"></span> Saving…` : 'Save & Finish'}
+                            ${this.saving ? `<span class="spin"></span> ${t('WIZARD_SAVING', 'Saving…')}` : t('WIZARD_SAVE_FINISH', 'Save & Finish')}
                           </button>`}
                 </div>
             </div>
