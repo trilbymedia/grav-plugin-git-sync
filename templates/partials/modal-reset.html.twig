@@ -1,17 +1,17 @@
 <div class="remodal" data-remodal-id="reset-local" data-remodal-options="hashTracking: false">
 
-    <h1>Git Sync - Reset Local Copy</h1>
+    <h1>{{ 'PLUGIN_GIT_SYNC.RESET_TITLE'|t }}</h1>
     <div class="step-0">
         <div class="panel">
-            <p>By proceeding with the reset, all your local changes, if any, will be reverted to the repository state.</p>
+            <p>{{ 'PLUGIN_GIT_SYNC.RESET_P1'|t }}</p>
 
             <p>
-                Are you sure you want to continue?
+                {{ 'PLUGIN_GIT_SYNC.RESET_P2'|t }}
             </p>
         </div>
     </div>
     <div class="button-bar">
-        <a class="button secondary" data-remodal-action="cancel" href="#">No</a>
-        <a class="button" data-gitsync-action="reset-local" href="#"> Yes</a>
+        <a class="button secondary" data-remodal-action="cancel" href="#">{{ 'PLUGIN_ADMIN.NO'|t }}</a>
+        <a class="button" data-gitsync-action="reset-local" href="#"> {{ 'PLUGIN_ADMIN.YES'|t }}</a>
     </div>
 </div>
