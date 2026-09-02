@@ -676,6 +676,7 @@ class WizardModal {
             { id: 'plugins', label: 'Plugins', warn: false, hint: t('WIZARD_FOLDER_PLUGINS_HINT', 'Plugin packages.') },
             { id: 'config',  label: 'Config',  warn: true,  hint: t('WIZARD_FOLDER_CONFIG_HINT', 'Site configuration. May contain sensitive data.') },
             { id: 'data',    label: 'Data',    warn: true,  hint: t('WIZARD_FOLDER_DATA_HINT', 'Plugin-stored data. May contain sensitive data.') },
+            { id: 'media',   label: 'Media',   warn: false, hint: t('WIZARD_FOLDER_MEDIA_HINT', 'Site-wide media uploaded from the Media page. Can be large.') },
         ];
         return `
             <p>${tHtml('WIZARD_STEP4_P1', 'Pick which <code>user/</code> folders to keep under git control. You can change this later from the settings form.')}</p>

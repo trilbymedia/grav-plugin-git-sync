@@ -5,7 +5,7 @@ PLUGIN_GIT_SYNC:
   SYNC_DIRECTION_PULL: 'One-way (Pull only)'
   SYNC_DIRECTION_BOTH: 'Both-ways (Pull and Push)'
   FOLDERS: 'Folders to Sync'
-  FOLDERS_DESCRIPTION: 'Removing folders after they have been synced may cause undesired results.'
+  FOLDERS_DESCRIPTION: 'Removing folders after they have been synced may cause undesired results. Add <b>media</b> if you upload files on the Media page, otherwise those files stay on this site only.'
   AUTOMATIC_SYNC_TITLE: 'Automatic Synchronization Settings'
   SYNC_NOTICE: |
     ! To improve the speed of saving pages you can disable automatic sync. Then, changes to a page will not be sent to the remote repository on every save. To sync your changes to the repository tap the GitSync button (<i class="fa fa-git"></i>) in the top left of the Administration Panel, or use the below Scheduler option to add the GitSync Syncronization Job to the Scheduler (<strong>Grav 1.6 required</strong>).
@@ -215,6 +215,7 @@ PLUGIN_GIT_SYNC:
   WIZARD_FOLDER_PLUGINS_HINT: 'Plugin packages.'
   WIZARD_FOLDER_CONFIG_HINT: 'Site configuration. May contain sensitive data.'
   WIZARD_FOLDER_DATA_HINT: 'Plugin-stored data. May contain sensitive data.'
+  WIZARD_FOLDER_MEDIA_HINT: 'Site-wide media uploaded from the Media page. Can be large.'
   WIZARD_FOLDER_WARN: '⚠ Use a private repo if syncing this folder.'
 
 ICU:
@@ -225,7 +226,7 @@ ICU:
     SYNC_DIRECTION_PULL: 'One-way (Pull only)'
     SYNC_DIRECTION_BOTH: 'Both-ways (Pull and Push)'
     FOLDERS: 'Folders to Sync'
-    FOLDERS_DESCRIPTION: 'Removing folders after they have been synced may cause undesired results.'
+    FOLDERS_DESCRIPTION: 'Removing folders after they have been synced may cause undesired results. Add <b>media</b> if you upload files on the Media page, otherwise those files stay on this site only.'
     AUTOMATIC_SYNC_TITLE: 'Automatic Synchronization Settings'
     SYNC_NOTICE: |
       ! To improve the speed of saving pages you can disable automatic sync. Then, changes to a page will not be sent to the remote repository on every save. To sync your changes to the repository tap the GitSync button (<i class="fa fa-git"></i>) in the top left of the Administration Panel, or use the below Scheduler option to add the GitSync Syncronization Job to the Scheduler (<strong>Grav 1.6 required</strong>).
@@ -435,4 +436,5 @@ ICU:
     WIZARD_FOLDER_PLUGINS_HINT: 'Plugin packages.'
     WIZARD_FOLDER_CONFIG_HINT: 'Site configuration. May contain sensitive data.'
     WIZARD_FOLDER_DATA_HINT: 'Plugin-stored data. May contain sensitive data.'
+    WIZARD_FOLDER_MEDIA_HINT: 'Site-wide media uploaded from the Media page. Can be large.'
     WIZARD_FOLDER_WARN: '⚠ Use a private repo if syncing this folder.'

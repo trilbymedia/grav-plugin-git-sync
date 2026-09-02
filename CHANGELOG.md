@@ -1,3 +1,10 @@
+# v3.4.9
+## 09/02/2026
+
+1. [](#new)
+    * `media` is now offered in the Folders to Sync list, in the settings form and in the setup Wizard. Files uploaded on Admin 2's Media page live in `user/media`, which was not one of the folders you could pick, so they never reached the remote and went missing on the live site. Existing sites are unchanged until you tick the new option. Thanks to @onetrev [#261](https://github.com/trilbymedia/grav-plugin-git-sync/issues/261)
+    * The setup Wizard is now translated too, and follows the site's language without a reload. Thanks to @pmoreno-rodriguez [#260](https://github.com/trilbymedia/grav-plugin-git-sync/pull/260)
+
 # v3.4.8
 ## 08/27/2026
 
