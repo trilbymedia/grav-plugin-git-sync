@@ -48,15 +48,33 @@ class EncPasswordField extends HTMLElement {
     }
     get value() { return this._value; }
 
+    t(key, fallback = '') {
+        const i18n = window.__GRAV_I18N;
+        if (!i18n) return fallback;
+        const full = 'PLUGIN_GIT_SYNC.' + key;
+        // has() matters here: a missing key would otherwise humanize to
+        // something like "Password Securely Stored" instead of falling
+        // back to our real English string.
+        return i18n.has(full) ? i18n.t(full) : fallback;
+    }
+
     connectedCallback() {
         this._render();
+        // Re-render on language switch so the placeholder/hint update
+        // without a page reload.
+        this._i18nUnsub = window.__GRAV_I18N?.subscribe?.(() => this._render());
+    }
+
+    disconnectedCallback() {
+        this._i18nUnsub?.();
+        this._i18nUnsub = null;
     }
 
     _placeholder() {
         if (this._value) return this._field.placeholder || '';
-        if (this._stored && this._encrypted) return 'Your password is securely stored.';
-        if (this._stored && !this._encrypted) return 'Your password is stored but not encrypted.';
-        return this._field.placeholder || 'Your Git Password or Token';
+        if (this._stored && this._encrypted) return this.t('PASSWORD_SECURELY_STORED', 'Your password is securely stored.');
+        if (this._stored && !this._encrypted) return this.t('PASSWORD_STORED_NOT_ENCRYPTED', 'Your password is stored but not encrypted.');
+        return this._field.placeholder || this.t('GIT_PASSWORD_PLACEHOLDER', 'Your Git Password or Token');
     }
 
     _onInput(e) {
@@ -161,7 +179,7 @@ class EncPasswordField extends HTMLElement {
                     ${this._eye()}
                 </button>
             </div>
-            ${this._stored && !this._encrypted ? '<div class="stored-hint">Existing password is stored unencrypted — saving the form will encrypt it.</div>' : ''}
+            ${this._stored && !this._encrypted ? `<div class="stored-hint">${this.t('PASSWORD_UNENCRYPTED_HINT', 'Existing password is stored unencrypted — saving the form will encrypt it.')}</div>` : ''}
         `;
 
         const input = this.shadowRoot.querySelector('input');
