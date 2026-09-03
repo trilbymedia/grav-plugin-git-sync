@@ -1,3 +1,9 @@
+# v3.4.11
+## 09/03/2026
+
+1. [](#bugfix)
+    * Your own rules in `user/.gitignore` are kept when Git Sync settings are saved. Git Sync's rules now sit in a marked block and everything outside it is left alone, where previously the whole file was replaced and the replacement pushed [#263](https://github.com/trilbymedia/grav-plugin-git-sync/issues/263)
+
 # v3.4.10
 ## 09/03/2026
 
