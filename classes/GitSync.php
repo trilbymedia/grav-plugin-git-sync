@@ -192,6 +192,98 @@ class GitSync extends Git
     }
 
     /**
+     * Top-level trees recorded in HEAD.
+     *
+     * HEAD rather than the index because that is what `reset --hard` rebuilds the
+     * working tree from, and top-level only because that is the granularity
+     * `folders:` works at -- listing every tracked file would mean reading the
+     * whole page tree.
+     *
+     * Nothing is tracked before the first commit. That has to be checked separately
+     * rather than by looking for empty `ls-tree` output, because `execute()` folds
+     * stderr into its return value -- on a repository with no commits `ls-tree`
+     * yields "fatal: Not a valid object name HEAD", which would otherwise read as a
+     * tracked folder called exactly that. `rev-parse --quiet` prints nothing at all
+     * when HEAD is unborn.
+     *
+     * @return array
+     */
+    protected function getTrackedFolders()
+    {
+        if (!array_filter(array_map('trim', $this->execute('rev-parse --quiet --verify HEAD', true)))) {
+            return [];
+        }
+
+        return array_values(array_filter(array_map('trim', $this->execute('ls-tree -d --name-only HEAD', true))));
+    }
+
+    /**
+     * The folder list Git Sync narrowed this repository down to on the last save,
+     * keyed by first path segment.
+     *
+     * Kept in the repository's own git config rather than derived from
+     * `.git/info/sparse-checkout`, because the patterns now also carry folders Git
+     * Sync does not manage -- reading them back would make those look like ours on
+     * the next save, which is the bug this exists to prevent. Local to the clone and
+     * never pushed.
+     *
+     * An install upgrading from a release that did not record it has no key yet, so
+     * fall back to the sparse patterns once: for those installs the patterns are
+     * exactly the managed list, and the value is written back on this save.
+     *
+     * @return array
+     */
+    protected function getManagedFolders()
+    {
+        $recorded = trim(implode('', $this->execute('config --local --get gitsync.folders', true)));
+
+        if ($recorded !== '' && strpos($recorded, 'error:') === false && strpos($recorded, 'fatal:') === false) {
+            return $this->firstSegments(explode(',', $recorded));
+        }
+
+        $file = rtrim($this->repositoryPath, '/') . '/.git/info/sparse-checkout';
+        if (!is_file($file)) {
+            return [];
+        }
+
+        $patterns = array_filter(array_map('trim', (array) file($file)));
+
+        return $this->firstSegments(array_map(static function ($pattern) {
+            return rtrim($pattern, '*');
+        }, $patterns));
+    }
+
+    /**
+     * Record the folder list Git Sync is managing from this save onwards.
+     *
+     * @param array $folders
+     * @return void
+     */
+    protected function setManagedFolders(array $folders)
+    {
+        $this->execute('config --local gitsync.folders ' . escapeshellarg(implode(',', $folders)), true);
+    }
+
+    /**
+     * Reduce folder paths to the set of their first path segments.
+     *
+     * @param array $folders
+     * @return array
+     */
+    protected function firstSegments(array $folders)
+    {
+        $segments = [];
+        foreach ($folders as $folder) {
+            $folder = trim(str_replace('\\', '/', (string) $folder), '/');
+            if ($folder !== '') {
+                $segments[explode('/', $folder)[0]] = true;
+            }
+        }
+
+        return $segments;
+    }
+
+    /**
      * Stop tracking folders that are no longer in the sync list, leaving them
      * untouched on disk.
      *
@@ -206,26 +298,28 @@ class GitSync extends Git
      * Dropping those paths from the index first puts them out of git's reach, so
      * no later sync or reset can touch them.
      *
+     * Only folders Git Sync itself was tracking are candidates. A repository root
+     * is an ordinary git repository and can legitimately hold anything alongside
+     * the folders in the sync list -- `docs`, `.github`, editor directories -- and
+     * those were never Git Sync's to remove. Comparing HEAD against the sync list
+     * alone could not tell one apart from a folder just de-listed, so connecting to
+     * an existing repository untracked them and pushed the removal, taking them off
+     * the remote and out of every other clone (#262).
+     *
      * @param array $folders the folders that should remain tracked
+     * @param array $previous the folders Git Sync was tracking before this save,
+     *                        keyed by first path segment; empty when unknown
      * @return void
      */
-    protected function pruneUnsyncedFolders(array $folders)
+    protected function pruneUnsyncedFolders(array $folders, array $previous)
     {
-        // Nothing is tracked before the first commit. This has to be checked
-        // separately rather than by looking for empty `ls-tree` output, because
-        // `execute()` folds stderr into its return value -- on a repository with
-        // no commits `ls-tree` yields "fatal: Not a valid object name HEAD",
-        // which would otherwise read as a tracked folder called exactly that.
-        // `rev-parse --quiet` prints nothing at all when HEAD is unborn.
-        if (!array_filter(array_map('trim', $this->execute('rev-parse --quiet --verify HEAD', true)))) {
+        // No record of a previous list means Git Sync has never narrowed this
+        // repository down, so nothing here was ever ours to untrack.
+        if (!$previous) {
             return;
         }
 
-        // Top-level trees recorded in HEAD. HEAD rather than the index because
-        // that is what `reset --hard` rebuilds the working tree from, and
-        // top-level only because that is the granularity `folders:` works at --
-        // listing every tracked file would mean reading the whole page tree.
-        $tracked = array_filter(array_map('trim', $this->execute('ls-tree -d --name-only HEAD', true)));
+        $tracked = $this->getTrackedFolders();
         if (!$tracked) {
             return;
         }
@@ -240,8 +334,12 @@ class GitSync extends Git
             }
         }
 
-        $stale = array_values(array_filter($tracked, static function ($folder) use ($keep) {
-            return !isset($keep[$folder]);
+        // Prune only what the previous list tracked and the new one drops. Note
+        // `rm --cached` is deliberately left without `--sparse`: git refuses to touch
+        // index entries outside the active sparse patterns, which is a second line of
+        // defence against untracking someone else's folders.
+        $stale = array_values(array_filter($tracked, static function ($folder) use ($keep, $previous) {
+            return isset($previous[$folder]) && !isset($keep[$folder]);
         }));
 
         if (!$stale) {
@@ -261,7 +359,7 @@ class GitSync extends Git
         $name = ($gitConfig['name'] ?? '') ?: 'GitSync';
         $email = ($gitConfig['email'] ?? '') ?: 'git-sync@trilby.media';
         $message = '(Grav GitSync) Stopped tracking ' . implode(', ', $stale)
-            . ' after removal from the sync list';
+            . ' after removal from the sync list (files left on disk)';
 
         $this->execute(
             '-c ' . escapeshellarg('user.name=' . $name)
@@ -275,14 +373,24 @@ class GitSync extends Git
     {
         $folders = $this->config['folders'] ?? ['pages'];
 
-        // Must run before the new patterns are written, while HEAD still
-        // reflects what the previous folder list was tracking.
-        $this->pruneUnsyncedFolders($folders);
+        // Must be read before the new list is recorded, and the prune must run
+        // before the new patterns are written, while HEAD still reflects what the
+        // previous folder list was tracking.
+        $previous = $this->getManagedFolders();
+
+        $this->pruneUnsyncedFolders($folders, $previous);
 
         $this->execute('config core.sparsecheckout true');
 
+        // A tracked folder Git Sync does not manage still has to match a pattern.
+        // Sparse checkout reads anything unmatched as "must not exist in the working
+        // tree", so leaving it out deleted it from disk on the next pull or reset --
+        // the same way de-listing a folder used to (#257), but aimed at folders
+        // nobody asked us to handle (#262).
+        $unmanaged = array_diff($this->getTrackedFolders(), array_keys($this->firstSegments($folders)));
+
         $sparse = [];
-        foreach ($folders as $folder) {
+        foreach (array_merge($folders, $unmanaged) as $folder) {
             $sparse[] = $folder . '/';
             $sparse[] = $folder . '/*';
         }
@@ -290,6 +398,10 @@ class GitSync extends Git
         $file = File::instance(rtrim($this->repositoryPath, '/') . '/.git/info/sparse-checkout');
         $file->save(implode("\r\n", $sparse));
         $file->free();
+
+        // From here on this is the list we own, and the only one a later save may
+        // prune against.
+        $this->setManagedFolders($folders);
 
         $ignore = ['/*'];
         foreach ($folders as $folder) {
