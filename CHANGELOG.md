@@ -4,6 +4,7 @@
 1. [](#bugfix)
     * Fixed Git Sync removing a repository's other top-level folders from the remote when it was first connected. Only folders you had Git Sync syncing and then removed from the list are untracked now, and anything else in the repository is left alone on disk and on the remote. Thanks to @onetrev [#262](https://github.com/trilbymedia/grav-plugin-git-sync/issues/262)
     * A folder the repository tracks but Git Sync does not sync is no longer deleted from your own copy on the next pull or reset
+    * Your own rules in `user/.gitignore` are kept when Git Sync settings are saved. Git Sync's rules now sit in a marked block and everything outside it is left alone, where previously the whole file was replaced and the replacement pushed [#263](https://github.com/trilbymedia/grav-plugin-git-sync/issues/263)
 
 # v3.4.9
 ## 09/02/2026

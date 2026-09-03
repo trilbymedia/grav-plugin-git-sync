@@ -12,6 +12,12 @@ use SebastianBergmann\Git\Git;
 
 class GitSync extends Git
 {
+    /** @var string marks the start of the rules Git Sync manages in `.gitignore` */
+    public const IGNORE_BEGIN = '# BEGIN Grav GitSync';
+
+    /** @var string marks the end of the rules Git Sync manages in `.gitignore` */
+    public const IGNORE_END = '# END Grav GitSync';
+
     /** @var static */
     static public $instance;
 
@@ -189,6 +195,56 @@ class GitSync extends Git
         $remotes = array_map('trim', $this->execute('remote', true));
 
         return in_array($name, $remotes, true);
+    }
+
+    /**
+     * Put the generated ignore rules into an existing `.gitignore` without
+     * disturbing anything else in it.
+     *
+     * The repository root is `user/`, which is an ordinary git repository the site
+     * owner may well manage themselves, so the file can carry rules that have
+     * nothing to do with Git Sync. It used to be written wholesale, which threw
+     * those away -- and because the file sits at the root, `add('.')` committed and
+     * pushed the replacement, so they were lost for every clone (#263).
+     *
+     * Our rules live between two markers. On a later save only that region is
+     * rewritten. A file from a release that predates the markers is adopted whole
+     * when every line in it is one we could have written, and otherwise kept and
+     * appended to -- erring towards leaving something in place we are not certain
+     * about.
+     *
+     * @param string $existing current file contents, empty when there is no file
+     * @param array $ignore the generated rules
+     * @return string
+     */
+    protected function mergeIgnoreFile($existing, array $ignore)
+    {
+        $block = implode("\r\n", array_merge([self::IGNORE_BEGIN], $ignore, [self::IGNORE_END]));
+
+        if (trim($existing) === '') {
+            return $block;
+        }
+
+        $begin = strpos($existing, self::IGNORE_BEGIN);
+        $end = strpos($existing, self::IGNORE_END);
+
+        if ($begin !== false && $end !== false && $end > $begin) {
+            return substr($existing, 0, $begin) . $block . substr($existing, $end + strlen(self::IGNORE_END));
+        }
+
+        // No markers: either a file we wrote before they existed, or the user's own.
+        $lines = array_filter(array_map('trim', preg_split('/\R/', $existing) ?: []));
+        $known = array_flip($ignore);
+        foreach ($lines as $line) {
+            if ($line === '/*' || isset($known[$line]) || strpos($line, '!/') === 0) {
+                continue;
+            }
+
+            // Something we would never have written. Keep the file and add to it.
+            return rtrim($existing, "\r\n") . "\r\n\r\n" . $block;
+        }
+
+        return $block;
     }
 
     /**
@@ -424,11 +480,12 @@ class GitSync extends Git
             }
         }
 
-        $ignoreEntries = explode("\n", $this->getGitConfig('ignore', ''));
+        $ignoreEntries = array_filter(array_map('trim', explode("\n", $this->getGitConfig('ignore', ''))));
         $ignore = array_merge($ignore, $ignoreEntries);
 
-        $file = File::instance(rtrim($this->repositoryPath, '/') . '/.gitignore');
-        $file->save(implode("\r\n", $ignore));
+        $path = rtrim($this->repositoryPath, '/') . '/.gitignore';
+        $file = File::instance($path);
+        $file->save($this->mergeIgnoreFile(is_file($path) ? (string) file_get_contents($path) : '', $ignore));
         $file->free();
     }
 
