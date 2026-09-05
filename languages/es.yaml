@@ -5,7 +5,7 @@ PLUGIN_GIT_SYNC:
   SYNC_DIRECTION_PULL: 'Unidireccional (solo Pull)'
   SYNC_DIRECTION_BOTH: 'Bidireccional (Pull y Push)'
   FOLDERS: 'Carpetas que sincronizar'
-  FOLDERS_DESCRIPTION: 'Eliminar carpetas después de haber sido sincronizadas puede provocar resultados no deseados.'
+  FOLDERS_DESCRIPTION: 'Eliminar carpetas después de haber sido sincronizadas puede provocar resultados no deseados. Añade <b>media</b> si subes archivos desde la página Medios; de lo contrario, esos archivos permanecerán solo en este sitio.'
   AUTOMATIC_SYNC_TITLE: 'Configuración de la sincronización automática'
   SYNC_NOTICE: |
     ! Para mejorar la velocidad al guardar páginas puedes desactivar la sincronización automática. De este modo, los cambios realizados en una página no se enviarán al repositorio remoto cada vez que se guarde. Para sincronizar los cambios con el repositorio, pulsa el botón GitSync (<i class="fa fa-git"></i>) situado en la parte superior izquierda del Panel de Administración, o utiliza la opción de Programador que aparece a continuación para añadir el trabajo de sincronización de GitSync al Programador (<strong>se requiere Grav 1.6</strong>).
@@ -215,6 +215,7 @@ PLUGIN_GIT_SYNC:
   WIZARD_FOLDER_PLUGINS_HINT: 'Paquetes de plugins.'
   WIZARD_FOLDER_CONFIG_HINT: 'Configuración del sitio. Puede contener datos confidenciales.'
   WIZARD_FOLDER_DATA_HINT: 'Datos guardados por plugins. Puede contener datos confidenciales.'
+  WIZARD_FOLDER_MEDIA_HINT: 'Archivos multimedia de todo el sitio subidos desde la página Medios. Pueden ocupar mucho espacio.'
   WIZARD_FOLDER_WARN: '⚠ Usa un repositorio privado si sincronizas esta carpeta.'
 
 ICU:
@@ -225,7 +226,7 @@ ICU:
     SYNC_DIRECTION_PULL: 'Unidireccional (solo Pull)'
     SYNC_DIRECTION_BOTH: 'Bidireccional (Pull y Push)'
     FOLDERS: 'Carpetas que sincronizar'
-    FOLDERS_DESCRIPTION: 'Eliminar carpetas después de haber sido sincronizadas puede provocar resultados no deseados.'
+    FOLDERS_DESCRIPTION: 'Eliminar carpetas después de haber sido sincronizadas puede provocar resultados no deseados. Añade <b>media</b> si subes archivos desde la página Medios; de lo contrario, esos archivos permanecerán solo en este sitio.'
     AUTOMATIC_SYNC_TITLE: 'Configuración de la sincronización automática'
     SYNC_NOTICE: |
       ! Para mejorar la velocidad al guardar páginas puedes desactivar la sincronización automática. De este modo, los cambios realizados en una página no se enviarán al repositorio remoto cada vez que se guarde. Para sincronizar los cambios con el repositorio, pulsa el botón GitSync (<i class="fa fa-git"></i>) situado en la parte superior izquierda del Panel de Administración, o utiliza la opción de Programador que aparece a continuación para añadir el trabajo de sincronización de GitSync al Programador (<strong>se requiere Grav 1.6</strong>).
@@ -435,4 +436,5 @@ ICU:
     WIZARD_FOLDER_PLUGINS_HINT: 'Paquetes de plugins.'
     WIZARD_FOLDER_CONFIG_HINT: 'Configuración del sitio. Puede contener datos confidenciales.'
     WIZARD_FOLDER_DATA_HINT: 'Datos guardados por plugins. Puede contener datos confidenciales.'
+    WIZARD_FOLDER_MEDIA_HINT: 'Archivos multimedia de todo el sitio subidos desde la página Medios. Pueden ocupar mucho espacio.'
     WIZARD_FOLDER_WARN: '⚠ Usa un repositorio privado si sincronizas esta carpeta.'
