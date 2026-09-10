@@ -36,6 +36,8 @@ class GitSync extends Git
     private $user;
     /** @var string|null */
     private $password;
+    /** @var bool true while the remote URL in `.git/config` carries the password */
+    private $credentialsInRemote = false;
 
     public function __construct()
     {
@@ -131,7 +133,11 @@ class GitSync extends Git
         }
 
         $branch = $branch ? '"' . $branch . '"' : '';
-        return $this->execute("ls-remote \"{$url}\" {$branch}");
+        // Same reason as in withAuthenticatedRemote(): a password in the URL would
+        // be handed to any credential helper configured on the server.
+        $helper = Helper::hasEmbeddedPassword($url) ? '-c credential.helper= ' : '';
+
+        return $this->execute("{$helper}ls-remote \"{$url}\" {$branch}");
     }
 
     /**
@@ -743,17 +749,68 @@ class GitSync extends Git
     {
         $name = $this->getRemote('name', $name);
         $branch = $this->getRemote('branch', $branch);
-        $this->addRemote(null, null, true);
 
-        $this->fetch($name, $branch);
-        $this->pull($name, $branch);
-        if ($this->grav['config']->get('plugins.git-sync.sync.direction', 'both') == 'both') {
-            $this->push($name, $branch);
-        }
-
-        $this->addRemote();
+        $this->withAuthenticatedRemote(function () use ($name, $branch) {
+            $this->fetch($name, $branch);
+            $this->pull($name, $branch);
+            if ($this->grav['config']->get('plugins.git-sync.sync.direction', 'both') == 'both') {
+                $this->push($name, $branch);
+            }
+        });
 
         return true;
+    }
+
+    /**
+     * Run commands against the remote with the stored credentials in its URL,
+     * and take them back out of `.git/config` however those commands end.
+     *
+     * fetch / pull / push only see the credentials if the authenticated URL is
+     * written into the repository config, which puts the password there in
+     * cleartext. It used to be removed only after a clean run, so an unreachable
+     * remote, a rejected push or an expired token left it on disk until the next
+     * successful sync (#265).
+     *
+     * Credential helpers are switched off for the duration too. Once credentials
+     * taken from a URL work, git hands them to every configured helper, so a
+     * `store` or `cache` helper on the server kept its own copy of the password
+     * outside the repository, even when the sync succeeded.
+     *
+     * @param callable $callback
+     * @return mixed whatever the callback returns
+     */
+    public function withAuthenticatedRemote(callable $callback)
+    {
+        $this->addRemote(null, null, true);
+        $this->credentialsInRemote = (string) $this->password !== '';
+
+        try {
+            $result = $callback();
+        } catch (\Throwable $e) {
+            try {
+                $this->removeCredentialsFromRemote();
+            } catch (\Throwable $restore) {
+                // The failure that got us here is the one to report.
+                $this->grav['log']->error('gitsync: could not remove the credentials from the remote URL: ' . $restore->getMessage());
+            }
+
+            throw $e;
+        }
+
+        $this->removeCredentialsFromRemote();
+
+        return $result;
+    }
+
+    /**
+     * Point the remote back at the plain repository URL.
+     *
+     * @return void
+     */
+    private function removeCredentialsFromRemote()
+    {
+        $this->credentialsInRemote = false;
+        $this->addRemote();
     }
 
     /**
@@ -805,6 +862,12 @@ class GitSync extends Git
             $bin = Helper::getGitBinary($this->getGitConfig('bin', 'git'));
             /** @var string $version */
             $version = Helper::isGitInstalled(true);
+
+            // An empty helper resets the list, so no helper sees the password
+            // while it is in the remote URL (see withAuthenticatedRemote()).
+            if ($this->credentialsInRemote) {
+                $command = '-c credential.helper= ' . $command;
+            }
 
             // -C <path> supported from 1.8.5 and above
             if (version_compare($version, '1.8.5', '>=')) {

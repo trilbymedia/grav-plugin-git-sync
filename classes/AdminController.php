@@ -95,7 +95,7 @@ class AdminController extends AdminBaseController
                 'message' => 'GitSync has successfully synchronized with the repository.'
             ]);
         } catch (\Exception $e) {
-            $invalid = str_replace($this->git->getConfig('password', null), '{password}', $e->getMessage());
+            $invalid = Helper::preventReadablePassword($e->getMessage(), $this->git->getPassword() ?? '');
             echo json_encode([
                 'status'  => 'error',
                 'message' => $invalid
@@ -114,7 +114,7 @@ class AdminController extends AdminBaseController
                 'message' => 'GitSync has successfully reset your local changes and synchronized with the repository.'
             ]);
         } catch (\Exception $e) {
-            $invalid = str_replace($this->git->getConfig('password', null), '{password}', $e->getMessage());
+            $invalid = Helper::preventReadablePassword($e->getMessage(), $this->git->getPassword() ?? '');
             echo json_encode([
                 'status'  => 'error',
                 'message' => $invalid
