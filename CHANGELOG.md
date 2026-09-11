@@ -5,6 +5,7 @@
     * Your repository password is no longer left in plain text in `user/.git/config` when a sync fails. It used to stay there until the next successful sync. Thanks to @onetrev [#265](https://github.com/trilbymedia/grav-plugin-git-sync/issues/265)
     * A Git credential helper set up on the server no longer keeps its own copy of the Git Sync password after a sync or a connection test
     * With logging turned on, the connection test no longer writes the password it is checking to the log
+    * An API key limited to specific permissions can no longer read or change Git Sync settings unless it was given Git Sync access, even when the account that created it is a super admin
 
 # v3.4.11
 ## 09/03/2026
