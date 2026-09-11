@@ -106,6 +106,19 @@ class Helper
     }
 
     /**
+     * Whether a repository URL carries a password in its user info.
+     *
+     * @param string $url
+     * @return bool
+     */
+    public static function hasEmbeddedPassword($url)
+    {
+        $password = parse_url((string) $url, PHP_URL_PASS);
+
+        return is_string($password) && $password !== '';
+    }
+
+    /**
      * @param string $user
      * @param string $password
      * @param string $repository
@@ -177,7 +190,13 @@ class Helper
     public static function preventReadablePassword($str, $password)
     {
         $encoded = urlencode(self::decrypt($password));
+        if ($encoded !== '') {
+            $str = str_replace($encoded, '{password}', $str);
+        }
 
-        return str_replace($encoded, '{password}', $str);
+        // Mask any password sitting in a URL as well, not only the stored one.
+        // The connection test runs with credentials that have not been saved
+        // yet, so with logging on they reached the log in cleartext.
+        return preg_replace('#(://[^/\s:@"\']*):[^/\s@"\']+@#', '$1:{password}@', $str) ?? $str;
     }
 }
