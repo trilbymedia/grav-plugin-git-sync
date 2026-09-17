@@ -1,3 +1,9 @@
+# v3.4.13
+## 09/17/2026
+
+1. [](#bugfix)
+    * Disabling automatic sync on save now also applies to Flex objects and configuration saves, so automatic sync can be fully disabled. Saving Git Sync settings still configures the repository. [#266](https://github.com/trilbymedia/grav-plugin-git-sync/issues/266)
+
 # v3.4.12
 ## 09/10/2026
 

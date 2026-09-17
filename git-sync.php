@@ -636,10 +636,6 @@ class GitSyncPlugin extends Plugin
     {
         $obj = $event['object'];
 
-        if ($obj instanceof PageInterface && !$this->grav['config']->get('plugins.git-sync.sync.on_save', true)) {
-            return;
-        }
-
         // Hand the page to GitSync so {{pageTitle}} / {{pageRoute}} resolve from
         // the object rather than from a scraped admin-classic form POST (#254).
         $this->git->setPage($obj);
@@ -668,7 +664,11 @@ class GitSyncPlugin extends Plugin
             }
         }
 
-        $this->synchronize();
+        // Saving this plugin's settings must still configure the repository above,
+        // but automatic synchronization follows the save switch for every object.
+        if ($this->grav['config']->get('plugins.git-sync.sync.on_save', true)) {
+            $this->synchronize();
+        }
     }
 
     public function onAdminAfterSaveAs()
