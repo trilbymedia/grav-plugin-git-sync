@@ -2,6 +2,8 @@
 ## 09/17/2026
 
 1. [](#bugfix)
+    * **[security] A user's name and email address are now passed to Git as data, never as part of the command.** The commit author was assembled into the command line with only its outer quotes, so a full name containing the right punctuation could run commands on the server as the web user. Thanks to @AlpetGexha
+    * **[security] Webhook secrets are now compared in constant time, and only recognized signature algorithms are accepted.** The GitHub signature header was also split apart without checking its shape, so a malformed header could error instead of being rejected. Thanks to @AlpetGexha
     * Disabling automatic sync on save now also applies to Flex objects and configuration saves, so automatic sync can be fully disabled. Saving Git Sync settings still configures the repository. [#266](https://github.com/trilbymedia/grav-plugin-git-sync/issues/266)
 
 # v3.4.12
