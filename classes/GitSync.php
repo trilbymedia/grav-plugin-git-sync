@@ -684,8 +684,7 @@ class GitSync extends Git
         $user = $user ?: 'GitSync';
         $email = $email ?: 'git-sync@trilby.media';
 
-        $author = $user . ' <' . $email . '>';
-        $author = '--author="' . $author . '"';
+        $author = escapeshellarg('--author=' . $user . ' <' . $email . '>');
         $message .= ' from ' . $user;
         $this->add();
 

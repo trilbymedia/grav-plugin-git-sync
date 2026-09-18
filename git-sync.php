@@ -188,9 +188,14 @@ class GitSyncPlugin extends Plugin
      */
     public function isGithubSignatureValid($secret, $signatureHeader, $payload)
     {
-        [$algorithm, $signature] = explode('=', $signatureHeader);
+        if (!preg_match('/\\A(sha1|sha256)=([0-9a-f]+)\\z/i', (string) $signatureHeader, $matches)) {
+            return false;
+        }
 
-        return $signature === hash_hmac($algorithm, $payload, $secret);
+        $algorithm = strtolower($matches[1]);
+        $signature = strtolower($matches[2]);
+
+        return hash_equals(hash_hmac($algorithm, $payload, $secret), $signature);
     }
 
     /**
@@ -201,7 +206,7 @@ class GitSyncPlugin extends Plugin
      */
     public function isGitlabTokenValid($secret, $token)
     {
-        return $secret === $token;
+        return hash_equals((string) $secret, (string) $token);
     }
 
     /**
@@ -215,8 +220,8 @@ class GitSyncPlugin extends Plugin
     public function isGiteaSecretValid($secret, $payload)
     {
         $payload = json_decode($payload, true);
-        if (!empty($payload) && isset($payload['secret'])) {
-            return $secret === $payload['secret'];
+        if (is_array($payload) && isset($payload['secret']) && is_string($payload['secret'])) {
+            return hash_equals((string) $secret, (string) $payload['secret']);
         }
 
         return false;
@@ -636,10 +641,6 @@ class GitSyncPlugin extends Plugin
     {
         $obj = $event['object'];
 
-        if ($obj instanceof PageInterface && !$this->grav['config']->get('plugins.git-sync.sync.on_save', true)) {
-            return;
-        }
-
         // Hand the page to GitSync so {{pageTitle}} / {{pageRoute}} resolve from
         // the object rather than from a scraped admin-classic form POST (#254).
         $this->git->setPage($obj);
@@ -668,7 +669,11 @@ class GitSyncPlugin extends Plugin
             }
         }
 
-        $this->synchronize();
+        // Saving this plugin's settings must still configure the repository above,
+        // but automatic synchronization follows the save switch for every object.
+        if ($this->grav['config']->get('plugins.git-sync.sync.on_save', true)) {
+            $this->synchronize();
+        }
     }
 
     public function onAdminAfterSaveAs()

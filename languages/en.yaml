@@ -9,8 +9,8 @@ PLUGIN_GIT_SYNC:
   AUTOMATIC_SYNC_TITLE: 'Automatic Synchronization Settings'
   SYNC_NOTICE: |
     ! To improve the speed of saving pages you can disable automatic sync. Then, changes to a page will not be sent to the remote repository on every save. To sync your changes to the repository tap the GitSync button (<i class="fa fa-git"></i>) in the top left of the Administration Panel, or use the below Scheduler option to add the GitSync Syncronization Job to the Scheduler (<strong>Grav 1.6 required</strong>).
-  SYNC_ON_SAVE: 'Sync on Page Save'
-  SYNC_ON_SAVE_HELP: 'Sync with the remote directory when a page is saved through the admin'
+  SYNC_ON_SAVE: 'Sync on Save'
+  SYNC_ON_SAVE_HELP: 'Sync with the remote directory when a page, Flex object, or configuration is saved through the admin'
   SYNC_ON_DELETE: 'Sync on Page Delete'
   SYNC_ON_DELETE_HELP: 'Sync with the remote directory when a page is deleted through the admin'
   SYNC_ON_MEDIA: 'Sync on Media Changes'
@@ -230,8 +230,8 @@ ICU:
     AUTOMATIC_SYNC_TITLE: 'Automatic Synchronization Settings'
     SYNC_NOTICE: |
       ! To improve the speed of saving pages you can disable automatic sync. Then, changes to a page will not be sent to the remote repository on every save. To sync your changes to the repository tap the GitSync button (<i class="fa fa-git"></i>) in the top left of the Administration Panel, or use the below Scheduler option to add the GitSync Syncronization Job to the Scheduler (<strong>Grav 1.6 required</strong>).
-    SYNC_ON_SAVE: 'Sync on Page Save'
-    SYNC_ON_SAVE_HELP: 'Sync with the remote directory when a page is saved through the admin'
+    SYNC_ON_SAVE: 'Sync on Save'
+    SYNC_ON_SAVE_HELP: 'Sync with the remote directory when a page, Flex object, or configuration is saved through the admin'
     SYNC_ON_DELETE: 'Sync on Page Delete'
     SYNC_ON_DELETE_HELP: 'Sync with the remote directory when a page is deleted through the admin'
     SYNC_ON_MEDIA: 'Sync on Media Changes'
