@@ -10,6 +10,8 @@ use Grav\Plugin\Api\Controllers\AbstractApiController;
 use Grav\Plugin\Api\Exceptions\ForbiddenException;
 use Grav\Plugin\Api\Exceptions\ValidationException;
 use Grav\Plugin\Api\Response\ApiResponse;
+use Grav\Plugin\Api\Services\ConfigStore;
+use Grav\Plugin\Api\Services\EnvironmentService;
 use Grav\Plugin\GitSync\GitSync;
 use Grav\Plugin\GitSync\Helper;
 use Grav\Plugin\GitSyncPlugin;
@@ -20,12 +22,16 @@ use Psr\Http\Message\ServerRequestInterface;
  * Admin-Next API controller for git-sync.
  *
  * Endpoints back the blueprint-mode plugin settings page plus the wizard
- * modal hosted by the auto-loaded floating widget script. Settings are
- * persisted to config://plugins/git-sync.yaml — the same file admin-classic
- * reads/writes — so the two admins stay interchangeable.
+ * modal hosted by the auto-loaded floating widget script. With API 1.0.50+
+ * settings are read from and saved to the config layer the request targets
+ * (Admin2's environment picker, `X-Config-Environment`) through the API's
+ * ConfigStore, storing only what differs from the layers beneath it. With an
+ * older API plugin they go to config://plugins/git-sync.yaml, as before.
  */
 class GitSyncApiController extends AbstractApiController
 {
+    private const CONFIG_SCOPE = 'plugins/git-sync';
+
     private function requireGitSyncPermission(ServerRequestInterface $request, string $level): void
     {
         $user = $this->getUser($request);
@@ -86,7 +92,7 @@ class GitSyncApiController extends AbstractApiController
     {
         $this->requireGitSyncPermission($request, 'read');
 
-        $cfg = (array) $this->config->get('plugins.git-sync', []);
+        $cfg = $this->settingsFor($request);
         $sync = (array) ($cfg['sync'] ?? []);
         $remote = (array) ($cfg['remote'] ?? []);
         $git = (array) ($cfg['git'] ?? []);
@@ -144,8 +150,20 @@ class GitSyncApiController extends AbstractApiController
     {
         $this->requireGitSyncPermission($request, 'write');
 
+        $store = $this->configStore();
+        $targetEnv = null;
+        if ($store) {
+            $targetEnv = $store->targetFor($request);
+            // Fail before touching anything when the named environment is missing.
+            $store->writeDir($targetEnv);
+        }
+
         $body = $this->getRequestBody($request);
-        $existing = (array) $this->config->get('plugins.git-sync', []);
+        // Edit against the baseline for THIS target, not the live config, so a
+        // base save never copies the booted host's overlay values into base.
+        $existing = $store
+            ? $store->effective(self::CONFIG_SCOPE, $targetEnv)
+            : (array) $this->config->get('plugins.git-sync', []);
         $merged = $existing;
 
         // Top-level scalars / lists
@@ -184,14 +202,28 @@ class GitSyncApiController extends AbstractApiController
             $merged['webhook_secret'] = GitSyncPlugin::generateWebhookSecret();
         }
 
-        $this->writePluginConfig($merged);
+        $repoConfig = $merged;
+        if ($store) {
+            $store->save(self::CONFIG_SCOPE, $merged, $targetEnv);
+            // The repository on disk belongs to this host, so set it up with
+            // the settings this host now runs with, even when the save went to
+            // another layer (base under an overlay, or another environment).
+            $activeEnv = (new EnvironmentService($this->grav))->activeEnvironment();
+            if ($targetEnv !== $activeEnv) {
+                $repoConfig = $store->effective(self::CONFIG_SCOPE, $activeEnv);
+            }
+            $repoConfigured = !empty($repoConfig['repository']);
+        } else {
+            $this->writePluginConfig($merged);
+            $repoConfigured = Helper::isGitSyncConfigured();
+        }
 
         // Mirror admin-classic onAdminAfterSave: initialize repo / set remote
         // when the plugin page form is saved with a configured repository.
-        if (Helper::isGitInstalled() && Helper::isGitSyncConfigured()) {
+        if (Helper::isGitInstalled() && $repoConfigured) {
             try {
                 $git = new GitSync();
-                $git->setConfig($merged);
+                $git->setConfig($repoConfig);
                 $git->initializeRepository();
                 $git->setUser();
                 $git->addRemote();
@@ -199,7 +231,7 @@ class GitSyncApiController extends AbstractApiController
                 // Don't fail the save — surface as a warning in the response.
                 return ApiResponse::create([
                     'message' => 'Settings saved, but repository setup ran into an issue: '
-                        . Helper::preventReadablePassword($e->getMessage(), $merged['password'] ?? ''),
+                        . Helper::preventReadablePassword($e->getMessage(), $repoConfig['password'] ?? ''),
                 ]);
             }
         }
@@ -343,7 +375,7 @@ class GitSyncApiController extends AbstractApiController
     {
         $this->requireGitSyncPermission($request, 'read');
 
-        $cfg = (array) $this->config->get('plugins.git-sync', []);
+        $cfg = $this->settingsFor($request);
         $password = (string) ($cfg['password'] ?? '');
 
         // Compute the public site URL the way Twig admin-classic does it
@@ -390,6 +422,35 @@ class GitSyncApiController extends AbstractApiController
         return $plugin;
     }
 
+    /**
+     * The API's shared config store (API 1.0.50+), or null with an older API
+     * plugin, in which case the controller keeps its previous behaviour.
+     */
+    private function configStore(): ?ConfigStore
+    {
+        return class_exists(ConfigStore::class) ? new ConfigStore($this->grav) : null;
+    }
+
+    /**
+     * Settings for the config layer the request targets ("Default" = base),
+     * not the live config of the environment the request booted under. With
+     * an older API plugin, the live config as before.
+     *
+     * @return array<mixed>
+     */
+    private function settingsFor(ServerRequestInterface $request): array
+    {
+        $store = $this->configStore();
+
+        return $store
+            ? $store->effective(self::CONFIG_SCOPE, $store->targetFor($request))
+            : (array) $this->config->get('plugins.git-sync', []);
+    }
+
+    /**
+     * Fallback for API plugins without ConfigStore: write the full settings to
+     * config://plugins/git-sync.yaml, as this controller always did.
+     */
     private function writePluginConfig(array $data): void
     {
         $locator = $this->grav['locator'];

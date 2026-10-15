@@ -1,3 +1,9 @@
+# v3.4.14
+## 10/14/2026
+
+1. [](#bugfix)
+    * With API plugin 1.0.50 or later, saving Git Sync settings in Admin2 (the settings page or the wizard) goes to the environment picked in the environment selector instead of always to the host's environment folder, and only settings that differ from the layers beneath it are stored
+
 # v3.4.13
 ## 09/17/2026
 
