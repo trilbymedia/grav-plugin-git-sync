@@ -1,3 +1,10 @@
+# v3.4.15
+## 10/27/2026
+
+1. [](#bugfix)
+    * The webhook's on/off switch was labelled as a secret option, so leaving it off made the webhook URL answer 404. It is now labelled Enable Web Hook, a disabled webhook says so instead of returning Page Not Found, and the URL works whether it's saved with or without the leading slash, with a trailing slash, or as the full address [#267](https://github.com/trilbymedia/grav-plugin-git-sync/issues/267)
+    * Webhooks signed only with SHA-256 (newer GitHub setups, Gitea and Forgejo) are accepted
+
 # v3.4.14
 ## 10/14/2026
 

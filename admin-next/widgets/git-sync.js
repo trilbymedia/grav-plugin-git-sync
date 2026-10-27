@@ -658,7 +658,7 @@ class WizardModal {
 
             <label class="inline-checkbox" style="margin: 0.75rem 0; display: block;">
                 <input type="checkbox" data-webhook-enabled ${this.draft.webhook_enabled ? 'checked' : ''} />
-                ${t('WIZARD_WEBHOOK_SECRET_CHECK', 'Use a webhook secret (recommended; not supported by Bitbucket)')}
+                ${t('WIZARD_WEBHOOK_SECRET_CHECK', 'Enable the webhook (calls must be signed with the secret below)')}
             </label>
             ${this.draft.webhook_enabled ? `
                 <label class="field">
