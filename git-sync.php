@@ -119,63 +119,118 @@ class GitSyncPlugin extends Plugin
             return;
         }
 
-        $config = $this->config->get('plugins.' . $this->name);
-        $route = $this->grav['uri']->route();
-        $webhook = $config['webhook'] ?? false;
-        $secret = $config['webhook_secret'] ?? false;
-        $enabled = $config['webhook_enabled'] ?? false;
-
-        if ($enabled && $route === $webhook && $_SERVER['REQUEST_METHOD'] === 'POST') {
-            if ($secret) {
-                if (!$this->isRequestAuthorized($secret)) {
-                    http_response_code(401);
-                    header('Content-Type: application/json');
-                    echo json_encode([
-                        'status' => 'error',
-                        'message' => 'Unauthorized request'
-                    ]);
-                    exit;
-                }
+        $uri = $this->grav['uri'];
+        $response = $this->handleWebhookRequest($uri->route(), $_SERVER['REQUEST_METHOD'] ?? 'GET', $uri->rootUrl(false));
+        if ($response !== null) {
+            [$status, $state, $message] = $response;
+            http_response_code($status);
+            if ($status === 405) {
+                header('Allow: POST');
             }
-            try {
-                $this->synchronize();
-                header('Content-Type: application/json');
-                echo json_encode([
-                    'status' => 'success',
-                    'message' => 'GitSync completed the synchronization'
-                ]);
-            } catch (\Exception $e) {
-                http_response_code(500);
-                header('Content-Type: application/json');
-                echo json_encode([
-                    'status' => 'error',
-                    'message' => 'GitSync failed to synchronize'
-                ]);
-            }
+            header('Content-Type: application/json');
+            echo json_encode(['status' => $state, 'message' => $message]);
             exit;
         }
     }
 
     /**
-     * Returns true if the request contains a valid signature or token
-     * @param  string $secret local secret
-     * @return bool           whether or not the request is authorized
+     * Answers a request sent to the configured webhook path.
+     *
+     * @param  string $route    The request route, relative to the site base
+     * @param  string $method   The request method
+     * @param  string $basePath The site base path (sub-folder installs)
+     * @return array|null       [status code, status, message], or null when the request is not for the webhook
      */
-    public function isRequestAuthorized($secret)
+    public function handleWebhookRequest($route, $method, $basePath = '')
     {
-        if (isset($_SERVER['HTTP_X_HUB_SIGNATURE'])) {
-            $payload = file_get_contents('php://input') ?: '';
+        $config = (array) $this->config->get('plugins.' . $this->name);
+        $webhook = static::normalizeWebhookPath($config['webhook'] ?? '', $basePath);
 
-            return $this->isGithubSignatureValid($secret, $_SERVER['HTTP_X_HUB_SIGNATURE'], $payload);
+        if ($webhook === '' || $route !== $webhook) {
+            return null;
+        }
+
+        if (empty($config['webhook_enabled'])) {
+            return [403, 'error', 'The GitSync webhook is disabled. Turn on "Enable Web Hook" in the GitSync settings.'];
+        }
+
+        if (strtoupper((string) $method) !== 'POST') {
+            return [405, 'error', 'The GitSync webhook only accepts POST requests'];
+        }
+
+        $secret = $config['webhook_secret'] ?? false;
+        if ($secret && !$this->isRequestAuthorized($secret)) {
+            return [401, 'error', 'Unauthorized request'];
+        }
+
+        try {
+            $this->synchronize();
+        } catch (\Exception $e) {
+            return [500, 'error', 'GitSync failed to synchronize'];
+        }
+
+        return [200, 'success', 'GitSync completed the synchronization'];
+    }
+
+    /**
+     * Turns the configured webhook into a route that can be compared with the
+     * request route, so `/_git-sync`, `_git-sync`, `/_git-sync/` and the full
+     * URL copied from the wizard (sub-folder included) all match.
+     *
+     * @param  string $webhook  The configured webhook
+     * @param  string $basePath The site base path (sub-folder installs)
+     * @return string           The route, or '' when no usable path is set
+     */
+    public static function normalizeWebhookPath($webhook, $basePath = '')
+    {
+        $path = trim((string) $webhook);
+        if (preg_match('#^[a-z][a-z0-9+.-]*://#i', $path)) {
+            $path = (string) parse_url($path, PHP_URL_PATH);
+        }
+
+        $path = '/' . trim($path, '/');
+        $base = '/' . trim((string) $basePath, '/');
+        if ($base !== '/' && ($path === $base || strpos($path, $base . '/') === 0)) {
+            $path = '/' . trim(substr($path, strlen($base)), '/');
+        }
+
+        // An empty path would turn the home page into the webhook.
+        return $path === '/' ? '' : $path;
+    }
+
+    /**
+     * Returns true if the request contains a valid signature or token
+     * @param  string      $secret  local secret
+     * @param  string|null $payload the request body, read from php://input when null
+     * @return bool                 whether or not the request is authorized
+     */
+    public function isRequestAuthorized($secret, $payload = null)
+    {
+        // GitHub, Bitbucket Cloud, Gitea and Forgejo sign the body with HMAC. Prefer SHA-256.
+        foreach (['HTTP_X_HUB_SIGNATURE_256', 'HTTP_X_HUB_SIGNATURE'] as $header) {
+            if (!empty($_SERVER[$header])) {
+                return $this->isGithubSignatureValid($secret, $_SERVER[$header], $payload ?? $this->readPayload());
+            }
+        }
+        // Gitea and Gogs also send a bare SHA-256 hex digest.
+        foreach (['HTTP_X_GITEA_SIGNATURE', 'HTTP_X_GOGS_SIGNATURE'] as $header) {
+            if (!empty($_SERVER[$header])) {
+                return $this->isGithubSignatureValid($secret, 'sha256=' . $_SERVER[$header], $payload ?? $this->readPayload());
+            }
         }
         if (isset($_SERVER['HTTP_X_GITLAB_TOKEN'])) {
             return $this->isGitlabTokenValid($secret, $_SERVER['HTTP_X_GITLAB_TOKEN']);
-        } else {
-            $payload = file_get_contents('php://input');
-            return $this->isGiteaSecretValid($secret, $payload);
         }
 
-        return false;
+        return $this->isGiteaSecretValid($secret, $payload ?? $this->readPayload());
+    }
+
+    /**
+     * @return string The raw request body
+     */
+    protected function readPayload()
+    {
+        return file_get_contents('php://input') ?: '';
     }
 
     /**
