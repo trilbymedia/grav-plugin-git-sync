@@ -76,6 +76,20 @@ class Helper
     }
 
     /**
+     * Whether `-c credential.helper=` clears the configured helpers. Git 2.9.0 added that;
+     * older versions either reject the empty value (1.x) or ignore it and still run the helpers.
+     *
+     * @param string|bool|null $version installed git version, looked up when not given
+     * @return bool
+     */
+    public static function canResetCredentialHelper($version = null)
+    {
+        $version = $version ?? static::isGitInstalled(true);
+
+        return is_string($version) && version_compare($version, '2.9.0', '>=');
+    }
+
+    /**
      * @param bool $override
      * @return string
      */
