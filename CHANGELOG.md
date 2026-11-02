@@ -1,3 +1,9 @@
+# v3.4.16
+## 11/01/2026
+
+1. [](#bugfix)
+    * Git Sync works again with Git versions older than 2.9, which stopped with a "Missing value for 'credential.helper'" error [#268](https://github.com/trilbymedia/grav-plugin-git-sync/pull/268)
+
 # v3.4.15
 ## 10/29/2026
 

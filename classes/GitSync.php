@@ -135,7 +135,7 @@ class GitSync extends Git
         $branch = $branch ? '"' . $branch . '"' : '';
         // Same reason as in withAuthenticatedRemote(): a password in the URL would
         // be handed to any credential helper configured on the server.
-        $helper = Helper::hasEmbeddedPassword($url) ? '-c credential.helper= ' : '';
+        $helper = Helper::hasEmbeddedPassword($url) && Helper::canResetCredentialHelper() ? '-c credential.helper= ' : '';
 
         return $this->execute("{$helper}ls-remote \"{$url}\" {$branch}");
     }
@@ -864,7 +864,7 @@ class GitSync extends Git
 
             // An empty helper resets the list, so no helper sees the password
             // while it is in the remote URL (see withAuthenticatedRemote()).
-            if ($this->credentialsInRemote) {
+            if ($this->credentialsInRemote && Helper::canResetCredentialHelper($version)) {
                 $command = '-c credential.helper= ' . $command;
             }
 
